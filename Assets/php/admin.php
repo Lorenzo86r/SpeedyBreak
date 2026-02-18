@@ -24,6 +24,18 @@
             </div>
         </div>
 
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title text-center"> Seleziona una tabella sopra </h3>
+                
+                <div class="table-responsive mt-4">
+                    <p class="text-center text-muted">Nessun dato visualizzato al momento.</p>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+
         
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

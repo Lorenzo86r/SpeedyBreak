@@ -1,4 +1,9 @@
 
+<?php
+
+ require ('gestione-ordine.php');
+
+?>
 
 <html>
 

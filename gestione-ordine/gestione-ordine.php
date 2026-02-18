@@ -23,24 +23,39 @@
 
       }
 
-      function updateOrdine()
+      private function get_Result_Set($sql,$tabella="",$id="",$fetch=PDO::FETCH_BOTH)
+      {
+        $stmt= $this->conn -> prepare($sql);
+        $stmt->execute();
+
+        $data=$stmt->fetchAll($fetch);
+
+        return $data;
+      }
+
+      private function getSql($tabella,$id)
       {
 
+      }
+
+      function updateOrdine($tabella,$id)
+      {
+        $query=getSql($tabella,$id,0);
       }
 
       function deleteOrdine()
       {
-
+        $query=getSql($tabella,$id,1);
       }
 
       function getOrdineById()
       {
-
+        $query=getSql($tabella,$id,2);
       }
 
       function changeStatus()
       {
-
+        $query=getSql($tabella,$id,3);
       }
 
     }

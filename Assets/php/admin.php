@@ -3,7 +3,7 @@
 $host = "localhost"; 
 $user = "root"; 
 $pass = ""; 
-$db = "my_input789";
+$db = "my_marcucci200";
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) die("Connessione fallita: " . $conn->connect_error);
@@ -224,7 +224,7 @@ document.getElementById('modalTitle').innerText = "Aggiungi Nuovo";
 document.getElementById('formAzione').value = "add";
 document.getElementById('formId').value = "";
 
-document.querySelectorAll('#modalBody input, #modalBody select')
+document.querySelectorAll('#modalBody input:not([type=hidden]), #modalBody select')
 .forEach(i => i.value = "");
 
 modal.show();

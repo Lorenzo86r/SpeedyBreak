@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `SB_prodotto` (
   CONSTRAINT `fk_SB_prodotto_categoria`
     FOREIGN KEY (`id_categoria`)
     REFERENCES `SB_categoria` (`id_categoria`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `SB_ordine` (
   CONSTRAINT `fk_SB_ordine_utente`
     FOREIGN KEY (`id_utente`)
     REFERENCES `SB_utente` (`id_utente`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `SB_dettaglio_ordine` (
   CONSTRAINT `fk_SB_dettaglio_prodotto`
     FOREIGN KEY (`id_prodotto`)
     REFERENCES `SB_prodotto` (`id_prodotto`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 

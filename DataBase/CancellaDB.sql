@@ -1,0 +1,11 @@
+USE `my_vignali`;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS `SB_dettaglio_ordine`;
+DROP TABLE IF EXISTS `SB_ordine`;
+DROP TABLE IF EXISTS `SB_prodotto`;
+DROP TABLE IF EXISTS `SB_utente`;
+DROP TABLE IF EXISTS `SB_categoria`;
+
+SET FOREIGN_KEY_CHECKS = 1;

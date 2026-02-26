@@ -1,15 +1,14 @@
 <?php
 require_once "gestione-ordine.php";
 
+/* connessione al database  */
 $db = new Database("localhost", "", "root", "");
 $message = "";
 
 
 if (!isset($_GET["id"])) {
 
-    // Recupero tutti gli ordini
     $ordini = $db->getAllOrdini();
-
     ?>
     <!DOCTYPE html>
     <html>
@@ -55,6 +54,7 @@ if (!isset($_GET["id"])) {
                 </td>
             </tr>
         <?php endforeach; ?>
+
     </table>
 
     </body>
@@ -67,7 +67,7 @@ if (!isset($_GET["id"])) {
 
 $id = intval($_GET["id"]);
 
-// UPDATE
+/* update */
 if (isset($_POST["update"])) {
 
     $data = [
@@ -84,7 +84,7 @@ if (isset($_POST["update"])) {
     }
 }
 
-// DELETE
+/* delete */
 if (isset($_POST["delete"])) {
     if ($db->deleteOrdine($id)) {
         header("Location: manage.php");
@@ -94,15 +94,16 @@ if (isset($_POST["delete"])) {
     }
 }
 
-// CAMBIO STATO
+/* cambio stato */
 if (isset($_POST["change_status"])) {
     if ($db->changeStatus($id, $_POST["new_status"])) {
         $message = "Stato aggiornato!";
     } else {
-        $message = "Errore cambio stato.";
+        $message = "Errore nel cambio stato.";
     }
 }
 
+/* recupero ordine */
 $ordine = $db->getOrdineById($id);
 
 if (!$ordine) {
@@ -120,7 +121,7 @@ if (!$ordine) {
         table { border-collapse: collapse; width: 100%; }
         th, td { border: 1px solid #ddd; padding: 8px; }
         button { padding: 8px 12px; margin: 5px 0; }
-        .msg { color: green; }
+        .msg { color: green; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -138,13 +139,14 @@ if (!$ordine) {
 </div>
 
 <div class="box">
-    <h3>Prodotti</h3>
+    <h3>Prodotti Ordinati</h3>
     <table>
         <tr>
             <th>Prodotto</th>
             <th>Prezzo</th>
             <th>Quantità</th>
         </tr>
+
         <?php foreach ($ordine["prodotti"] as $p): ?>
         <tr>
             <td><?= $p["nome"]; ?></td>
@@ -159,6 +161,7 @@ if (!$ordine) {
     <h3>Modifica Ordine</h3>
 
     <form method="POST">
+
         <label>Stato:</label><br>
         <select name="stato">
             <option <?= $ordine["stato"]=="In Preparazione"?"selected":""; ?>>In Preparazione</option>
@@ -167,7 +170,7 @@ if (!$ordine) {
         </select>
         <br><br>
 
-        <label>Metodo:</label><br>
+        <label>Metodo di pagamento:</label><br>
         <input type="text" name="metodo" value="<?= $ordine["metodo"]; ?>">
         <br><br>
 
@@ -180,10 +183,11 @@ if (!$ordine) {
             value="<?= date('Y-m-d\TH:i', strtotime($ordine["data_ritiro"])); ?>">
         <br><br>
 
-        <button type="submit" name="update">Salva</button>
-        <button type="submit" name="delete" onclick="return confirm('Sei sicuro?')">
-            Elimina
+        <button type="submit" name="update">Salva Modifiche</button>
+        <button type="submit" name="delete" onclick="return confirm('Sei sicuro di eliminare?')">
+            Elimina Ordine
         </button>
+
     </form>
 </div>
 
@@ -201,7 +205,7 @@ if (!$ordine) {
     </form>
 </div>
 
-<p><a href="manage.php">← Torna alla lista</a></p>
+<p><a href="manage.php">← Torna alla lista ordini</a></p>
 
 </body>
 </html>

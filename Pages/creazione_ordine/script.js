@@ -1,38 +1,67 @@
 let cart = [];
 
 function addToCart(name, price) {
-    const existingItem = cart.find(item => item.name === name);
-    if (existingItem) {
-        existingItem.quantity++;
+    const item = cart.find(p => p.name === name);
+
+    if (item) {
+        item.quantity++;
     } else {
-        cart.push({ name, price, quantity: 1 });
+        cart.push({
+            name: name,
+            price: price,
+            quantity: 1
+        });
     }
-    renderCart();
+
+    updateCart();
 }
 
-function renderCart() {
-    const cartItems = document.getElementById('cart-items');
-    const totalEl = document.getElementById('total');
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCart();
+}
 
-    cartItems.innerHTML = '';
+function updateCart() {
+    const cartList = document.getElementById("cart-list");
+    const totalText = document.getElementById("total");
+
+    cartList.innerHTML = "";
     let total = 0;
 
-    cart.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} x${item.quantity} - €${(item.price * item.quantity).toFixed(2)}`;
-        cartItems.appendChild(li);
+    cart.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            ${item.name} x${item.quantity} - €${(item.price * item.quantity).toFixed(2)}
+            <button onclick="removeFromCart(${index})">❌</button>
+        `;
+        cartList.appendChild(li);
         total += item.price * item.quantity;
     });
 
-    totalEl.textContent = `Totale: €${total.toFixed(2)}`;
+    totalText.textContent = "Totale: €" + total.toFixed(2);
 }
 
-function checkout() {
+function sendOrder() {
     if (cart.length === 0) {
         alert("Il carrello è vuoto!");
         return;
     }
-    alert("Ordine confermato!\nGrazie per aver ordinato.");
-    cart = [];
-    renderCart();
+
+    fetch("../DataBase/orders.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(cart)
+    })
+        .then(res => res.text())
+        .then(data => {
+            alert("Ordine inviato con successo!");
+            cart = [];
+            updateCart();
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Errore nell'invio dell'ordine");
+        });
 }

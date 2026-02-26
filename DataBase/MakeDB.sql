@@ -8,7 +8,7 @@ USE `my_vignali`;
 
 -- Categoria
 CREATE TABLE IF NOT EXISTS `SB_categoria` (
-  `id_categoria` INT NOT NULL,
+  `id_categoria` INT NOT NULL AUTO_INCREMENT,
   `descrizione` VARCHAR(45) NULL,
   PRIMARY KEY (`id_categoria`)
 ) ENGINE = InnoDB;

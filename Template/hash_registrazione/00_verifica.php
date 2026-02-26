@@ -4,7 +4,7 @@ $loginAttempt = "MySecretPassword123";
 
 // 2. Fetch the stored hash from the database based on the username
 // (Pseudo-code: SELECT password_hash FROM users WHERE username = 'alice')
-// Let's pretend this is the string we retrieved from the DB in step 1:
+// Let's pretend this is the string we retrieved from the classDBBiso in step 1:
 $storedHashFromDB = '$2y$10$Qj/t.y.z.x.w.v.u.t.s.r.q.p.o.n.m.l.k.j.i.h.g.f.e.d.c.b.a'; 
 // (Note: In a real lesson, copy-paste the output from register.php here to test)
 

@@ -7,7 +7,7 @@ require 'auth_check.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Ordini - SpeedyBreak</title>
-    <link rel="stylesheet" href="Styles/style.css">
+    <link rel="stylesheet" href="../../Assets/Styles/style.css">
 </head>
 <body>
     <div class="container">
@@ -18,7 +18,7 @@ require 'auth_check.php';
             <h2>Benvenuto, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
             <p>Sei autenticato correttamente.</p>
             <br>
-            <a href="logout.php" class="btn">Logout</a>
+            <a href="../auth/logout.php" class="btn">Logout</a>
         </main>
         <footer>
             <p>&copy; 2026 SpeedyBreak</p>

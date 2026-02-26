@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require 'classDBBiso.php';
 
 // Simulate login data
 $inputUser = 'Student1';
@@ -13,7 +13,7 @@ $user = $stmt->fetch();
 
 if ($user) {
     // 2. Verify the password hash
-    // $user['password_hash'] is what came from the DB
+    // $user['password_hash'] is what came from the classDBBiso
     if (password_verify($inputPass, $user['password_hash'])) {
         echo "Login Successful! Welcome, " . htmlspecialchars($user['username']) . ".";
         // Start session here usually: session_start(); $_SESSION['user_id'] = $user['id'];

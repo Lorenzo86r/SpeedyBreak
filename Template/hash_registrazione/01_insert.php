@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require 'classDBBiso.php';
 
 // Simulate form data (In a real form, use $_POST['username'] and $_POST['password'])
 $newUsername = 'Student1';

@@ -27,7 +27,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
             exit();
         }
     } catch (PDOException $e) {
-        // DB error
+        // classDBBiso error
         header("Location: login.php?error=db");
         exit();
     }

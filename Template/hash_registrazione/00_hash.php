@@ -13,5 +13,5 @@ $hashedPassword = password_hash($userInputPassword, PASSWORD_DEFAULT);
 
 echo "<h3>Registration Successful</h3>";
 echo "<strong>Original:</strong> " . $userInputPassword . "<br>";
-echo "<strong>Stored in DB:</strong> " . $hashedPassword;
+echo "<strong>Stored in classDBBiso:</strong> " . $hashedPassword;
 ?>

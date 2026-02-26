@@ -1,0 +1,4 @@
+fare una pagina admin, per ora quando si entra sul sito si è gia direttamente admin 
+
+--> gestire la possibilità di creare, cancellare, aggiornare entry sulle tabelle di categoria, prodotto e utenti 
+--> magari fare una carina interfaccia CRUD con i pulsanti(tipo quello del magazzzino hardware)

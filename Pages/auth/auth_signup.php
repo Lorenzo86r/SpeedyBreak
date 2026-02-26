@@ -5,6 +5,12 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
     $newUsername = $_POST["username"];
     $newPassword = $_POST["password"];
 
+    // Validate email domain
+    if (!preg_match('/.+@(aldini\.istruzioneer\.it|avbo\.it)$/', $newUsername)) {
+        header("Location: signup.php?error=invalid_email");
+        exit();
+    }
+
     // 1. Hash the password
     $hash = password_hash($newPassword, PASSWORD_DEFAULT);
 

@@ -19,7 +19,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
             $_SESSION["username"] = $user['username'];
             
             // Redirect to management page
-            header("Location: ../../index.html");
+            header("Location: ../../index.php");
             exit();
         } else {
             // Invalid credentials

@@ -18,8 +18,8 @@
      <main>
          <form action="auth_signup.php" method="POST" class="login-form">
             <div class="form-group">
-                <label for="fusername">Username:</label><br>
-                <input type="text" id="fusername" name="username" required><br>
+                <label for="fusername">Email (@aldini.istruzioneer.it o @avbo.it):</label><br>
+                <input type="email" id="fusername" name="username" required pattern=".+@(aldini\.istruzioneer\.it|avbo\.it)$" title="Inserisci un'email valida terminante con @aldini.istruzioneer.it o @avbo.it"><br>
             </div>
             <div class="form-group">
                 <label for="fpassword">Password:</label><br>
@@ -29,9 +29,11 @@
         </form> 
         <?php if(isset($_GET['error'])): ?>
             <?php if($_GET['error'] == 'exists'): ?>
-                <p style="color: red; text-align: center;">Username già esistente.</p>
+                <p style="color: red; text-align: center;">Email già registrata.</p>
             <?php elseif($_GET['error'] == 'db'): ?>
                  <p style="color: red; text-align: center;">Errore del database.</p>
+            <?php elseif($_GET['error'] == 'invalid_email'): ?>
+                 <p style="color: red; text-align: center;">Dominio email non valido. Utilizzare @aldini.istruzioneer.it o @avbo.it.</p>
             <?php endif; ?>
         <?php endif; ?>
         <p style="text-align: center; margin-top: 20px;">

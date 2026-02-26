@@ -8,7 +8,7 @@ USE `my_vignali`;
 
 -- Categoria
 CREATE TABLE IF NOT EXISTS `SB_categoria` (
-  `id_categoria` INT NOT NULL,
+  `id_categoria` INT NOT NULL AUTO_INCREMENT,
   `descrizione` VARCHAR(45) NULL,
   PRIMARY KEY (`id_categoria`)
 ) ENGINE = InnoDB;
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `SB_utente` (
   `ruolo` VARCHAR(50) NULL DEFAULT 'customer',
   PRIMARY KEY (`id_utente`),
   UNIQUE INDEX (`email` ASC) VISIBLE
-);
+) ENGINE = InnoDB;
 
 -- Prodotto (FK verso SB_categoria)
 CREATE TABLE IF NOT EXISTS `SB_prodotto` (
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `SB_prodotto` (
   `nome` VARCHAR(150) NOT NULL,
   `descrizione` TEXT NULL DEFAULT NULL,
   `prezzo` DECIMAL(10,2) NOT NULL,
-  `giacenza` TINYINT NULL DEFAULT TRUE,
+  `giacenza` TINYINT NULL DEFAULT 1,
   `id_categoria` INT NOT NULL,
   PRIMARY KEY (`id_prodotto`),
   INDEX `fk_prodotto_categoria_idx` (`id_categoria` ASC) VISIBLE,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `SB_prodotto` (
     REFERENCES `SB_categoria` (`id_categoria`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
-);
+) ENGINE = InnoDB;
 
 -- Ordine (FK verso SB_utente)
 CREATE TABLE IF NOT EXISTS `SB_ordine` (
@@ -57,22 +57,28 @@ CREATE TABLE IF NOT EXISTS `SB_ordine` (
   CONSTRAINT `fk_SB_ordine_utente`
     FOREIGN KEY (`id_utente`)
     REFERENCES `SB_utente` (`id_utente`)
-);
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 -- Dettaglio ordine (FK verso SB_ordine e SB_prodotto)
 CREATE TABLE IF NOT EXISTS `SB_dettaglio_ordine` (
   `id_ordine` INT NOT NULL,
   `id_prodotto` INT NOT NULL,
-  `quantità` INT NULL DEFAULT 1,
+  `quantita` INT NULL DEFAULT 1,
   PRIMARY KEY (`id_ordine`, `id_prodotto`),
   INDEX `fk_SB_dettaglio_prodotto_idx` (`id_prodotto` ASC) VISIBLE,
   CONSTRAINT `fk_SB_dettaglio_ordine`
     FOREIGN KEY (`id_ordine`)
-    REFERENCES `SB_ordine` (`id_ordine`),
+    REFERENCES `SB_ordine` (`id_ordine`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
   CONSTRAINT `fk_SB_dettaglio_prodotto`
     FOREIGN KEY (`id_prodotto`)
     REFERENCES `SB_prodotto` (`id_prodotto`)
-);
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

@@ -81,6 +81,12 @@ class Database
         }
     }
 
+    function getAllOrdini()
+    {
+        $sql = "SELECT * FROM SB_ordine ORDER BY data_ordine DESC";
+        return $this->get_Result_Set($sql);
+    }
+
     // Recupera un ordine completo (ordine + utente + prodotti)
     function getOrdineById($id)
     {

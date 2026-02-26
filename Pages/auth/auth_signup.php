@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'db.php';
 
 if(isset($_POST["username"]) && isset($_POST["password"])){
@@ -25,8 +26,12 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
             'pword' => $hash
         ]);
         
-        // Redirect to login with success message
-        header("Location: login.php?signup=success");
+        // Auto-login after successful registration
+        $_SESSION["user_id"] = $pdo->lastInsertId();
+        $_SESSION["username"] = $newUsername;
+        
+        // Redirect to homepage
+        header("Location: ../../index.php");
         exit();
 
     } catch (PDOException $e) {

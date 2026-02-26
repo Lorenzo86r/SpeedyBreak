@@ -28,7 +28,7 @@ INSERT INTO `SB_ordine` (`data_ordine`, `stato`, `metodo`, `id_utente`, `nota`, 
 (NOW(), 'Completato', 'Carta di Credito', 1, 'Nessuna nota', NOW()),
 (NOW(), 'In Preparazione', 'Contanti', 2, 'Scaldare il panino', DATE_ADD(NOW(), INTERVAL 1 HOUR));
 
-INSERT INTO `SB_dettaglio_ordine` (`id_ordine`, `id_prodotto`, `quantità`) VALUES
+INSERT INTO `SB_dettaglio_ordine` (`id_ordine`, `id_prodotto`, `quantita`) VALUES
 (1, 1, 1),
 (1, 3, 1),
 (2, 2, 2);

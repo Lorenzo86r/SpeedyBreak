@@ -18,8 +18,8 @@
      <main>
          <form action="auth_login.php" method="POST" class="login-form">
             <div class="form-group">
-                <label for="femail">Email:</label><br>
-                <input type="email" id="femail" name="email" required><br>
+                <label for="femail">Username o Email:</label><br>
+                <input type="text" id="femail" name="email" required><br>
             </div>
             <div class="form-group">
                 <label for="fpassword">Password:</label><br>

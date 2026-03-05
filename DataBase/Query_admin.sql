@@ -120,12 +120,12 @@ SELECT
 	o.nota,
 	u.id_utente,
 	CONCAT(u.nome, ' ', u.cognome) AS cliente,
-	SUM(d.quantità * p.prezzo) AS totale
+	SUM(d.quantita * p.prezzo) AS totale
 FROM SB_ordine o
 JOIN SB_utente u ON u.id_utente = o.id_utente
 JOIN SB_dettaglio_ordine d ON d.id_ordine = o.id_ordine
 JOIN SB_prodotto p ON p.id_prodotto = d.id_prodotto
-GROUP BY o.id_ordine, o.data_ordine, o.data_ritiro, o.stato, o.metodo, o.nota, u.id_utente, cliente
+GROUP BY o.id_ordine, o.data_ordine, o.data_ritiro, o.stato, o.metodo, o.nota, u.id_utente, CONCAT(u.nome, ' ', u.cognome)
 ORDER BY o.data_ordine DESC;
 
 -- Filtra ordini per stato
@@ -165,7 +165,7 @@ WHERE id_ordine = :id_ordine;
 -- Incasso totale per giorno
 SELECT
 	DATE(o.data_ordine) AS giorno,
-	SUM(d.quantità * p.prezzo) AS incasso
+	SUM(d.quantita * p.prezzo) AS incasso
 FROM SB_ordine o
 JOIN SB_dettaglio_ordine d ON d.id_ordine = o.id_ordine
 JOIN SB_prodotto p ON p.id_prodotto = d.id_prodotto
@@ -177,8 +177,8 @@ ORDER BY giorno DESC;
 SELECT
 	p.id_prodotto,
 	p.nome,
-	SUM(d.quantità) AS quantita_venduta,
-	SUM(d.quantità * p.prezzo) AS ricavo
+	SUM(d.quantita) AS quantita_venduta,
+	SUM(d.quantita * p.prezzo) AS ricavo
 FROM SB_dettaglio_ordine d
 JOIN SB_prodotto p ON p.id_prodotto = d.id_prodotto
 JOIN SB_ordine o ON o.id_ordine = d.id_ordine

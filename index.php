@@ -1,4 +1,3 @@
-<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -6,25 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Gestione Ordini</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="Assets/Styles/style.css">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
-  <div class="container">
-     <a class="navbar-brand d-flex align-items-center" href="#">
-    <img src="Assets\Images\logo.png" alt="Logo Speedy Break" height="45" class="me-2">
-    <span class="fw-bold">Speedy Break</span>
-</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="brand">
+            <img src="Assets/Images/logo.png" alt="Logo Speedy Break">
+            <span>Speedy Break</span>
+        </div>
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="./Pages/creazione_ordine/ordine.php">Ordina</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/creazione_ordine/ordine.html">Ordina</a></li>
         <li class="nav-item"><a class="nav-link" href="./Pages/gestione_ordini/gestione-ordine.php">Gestione Ordini</a></li>
         <li class="nav-item"><a class="nav-link" href="./Pages/amministrazione/admin.php">Admin</a></li>
         <li class="nav-item">
@@ -36,66 +31,46 @@
         </li>
       </ul>
     </div>
-  </div>
 </nav>
 
-
-<header class="bg-light text-center py-5">
-    <div class="container">
-        <h1 class="display-4 fw-bold">Benvenuto in Speedy Break ☕</h1>
-    
+<header>
+    <div class="hero">
+        <h1>Benvenuto in Speedy Break ☕</h1>
     </div>
 </header>
 
-<!-- Parte centrale -->
-<main class="container my-5">
+<main>
 
-    <div class="text-center mb-4">
+    <section class="presentazione">
         <h2>Presentazione del Progetto</h2>
-        <p class="text-muted">
+        <p>
             Questo sito permette di inserire nuovi ordini, visualizzare quelli esistenti
             e controllare lo stato delle richieste in modo efficiente.
         </p>
-    </div>
+    </section>
 
-    <div class="row text-center">
-        <div class="col-md-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body">
-                    <h5 class="card-title"> Organizzazione</h5>
-                    <p class="card-text">Gestione ordinata di tutti gli ordini ricevuti.</p>
-                </div>
-            </div>
+    <section class="cards">
+        <div class="card">
+            <h3>Organizzazione</h3>
+            <p>Gestione ordinata di tutti gli ordini ricevuti.</p>
         </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body">
-                    <h5 class="card-title"> Velocità</h5>
-                    <p class="card-text">Riduce i tempi di attesa e migliora il servizio.</p>
-                </div>
-            </div>
+        <div class="card">
+            <h3>Velocità</h3>
+            <p>Riduce i tempi di attesa e migliora il servizio.</p>
         </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-body">
-                    <h5 class="card-title"> Precisione</h5>
-                    <p class="card-text">Diminuisce gli errori negli ordini.</p>
-                </div>
-            </div>
+        <div class="card">
+            <h3>Precisione</h3>
+            <p>Diminuisce gli errori negli ordini.</p>
         </div>
-    </div>
+    </section>
 
 </main>
 
-<!-- FOOTER -->
-<footer class="bg-dark text-white text-center py-3">
-    <p class="mb-0">Progetto Speedy Break - 5CIN © 2026</p>
+<footer>
+    <p>Progetto Speedy Break - 5CIN © 2026</p>
 </footer>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

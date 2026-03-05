@@ -14,7 +14,7 @@ $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) die("Connessione fallita: " . $conn->connect_error);
 
 // --- SICUREZZA TABELLA ---
-$allowed = ['SB_categoria', 'SB_prodotto', 'SB_utente', 'SB_ordine'];
+$allowed = ['SB_categoria', 'SB_prodotto', 'SB_utente'];
 $tabella = $_GET['tabella'] ?? 'SB_prodotto';
 if (!in_array($tabella, $allowed)) {
     die("Tabella non valida");
@@ -27,24 +27,19 @@ $options_cat = [];
 $res_cat = $conn->query("SELECT id_categoria, descrizione FROM SB_categoria ORDER BY descrizione ASC");
 if ($res_cat) while ($c = $res_cat->fetch_assoc()) $options_cat[] = $c;
 
-// --- 1b. RECUPERO UTENTI (username + email) ---
-$options_utenti = [];
-$res_utenti = $conn->query("SELECT id_utente, username, email FROM SB_utente ORDER BY username ASC");
-if ($res_utenti) while ($u = $res_utenti->fetch_assoc()) $options_utenti[] = $u;
-
-// --- 1c. RECUPERO PRODOTTI ---
-$options_prodotti = [];
-$res_prod = $conn->query("SELECT id_prodotto, nome FROM SB_prodotto ORDER BY nome ASC");
-if ($res_prod) while ($p = $res_prod->fetch_assoc()) $options_prodotti[] = $p;
-
 // --- 2. LOGICA DELETE ---
 if (isset($_GET['delete_id']) && isset($_GET['id_col'])) {
-    $id_col = $_GET['id_col'];
-    $id_val = intval($_GET['delete_id']);
-    if ($conn->query("DELETE FROM $tabella WHERE $id_col = $id_val")) {
-        $message = "<div class='alert alert-success'>Eliminato con successo!</div>";
+    // Impedisci eliminazione utenti
+    if ($tabella === 'SB_utente') {
+        $message = "<div class='alert alert-danger'>Non è consentito eliminare utenti.</div>";
     } else {
-        $message = "<div class='alert alert-danger'>Errore: " . $conn->error . "</div>";
+        $id_col = $_GET['id_col'];
+        $id_val = intval($_GET['delete_id']);
+        if ($conn->query("DELETE FROM $tabella WHERE $id_col = $id_val")) {
+            $message = "<div class='alert alert-success'>Eliminato con successo!</div>";
+        } else {
+            $message = "<div class='alert alert-danger'>Errore: " . $conn->error . "</div>";
+        }
     }
 }
 
@@ -70,37 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             : "UPDATE SB_prodotto SET nome='$nome', descrizione='$desc_prod', prezzo=$prezzo, id_categoria=$cat, giacenza=$giacenza WHERE id_prodotto=" . intval($_POST['id']);
 
     } elseif ($tabella == 'SB_utente') {
-        $username      = $conn->real_escape_string($_POST['username']);
-        $email         = $conn->real_escape_string($_POST['email']);
-        $password_hash = $conn->real_escape_string($_POST['password_hash']);
+        $username = $conn->real_escape_string($_POST['username']);
+        $email    = $conn->real_escape_string($_POST['email']);
         if ($azione == 'add') {
-            $sql = "INSERT INTO SB_utente (username, email, password_hash)
-                    VALUES ('$username', '$email', '$password_hash')";
+            $sql = "INSERT INTO SB_utente (username, email) VALUES ('$username', '$email')";
         } else {
-            // Se password_hash vuota in modifica, non aggiornarla
-            if (!empty($password_hash)) {
-                $sql = "UPDATE SB_utente SET
-                            username='$username',
-                            email='$email',
-                            password_hash='$password_hash'
-                        WHERE id_utente=" . intval($_POST['id']);
-            } else {
-                $sql = "UPDATE SB_utente SET
-                            username='$username',
-                            email='$email'
-                        WHERE id_utente=" . intval($_POST['id']);
-            }
+            $sql = "UPDATE SB_utente SET username='$username', email='$email' WHERE id_utente=" . intval($_POST['id']);
         }
-
-    } elseif ($tabella == 'SB_ordine') {
-        $id_utente   = intval($_POST['id_utente']);
-        $stato       = $conn->real_escape_string($_POST['stato']);
-        $metodo      = $conn->real_escape_string($_POST['metodo']);
-        $nota        = $conn->real_escape_string($_POST['nota']);
-        $data_ritiro = $conn->real_escape_string($_POST['data_ritiro']);
-        $sql = ($azione == 'add')
-            ? "INSERT INTO SB_ordine (id_utente, stato, metodo, nota, data_ritiro) VALUES ($id_utente, '$stato', '$metodo', '$nota', '$data_ritiro')"
-            : "UPDATE SB_ordine SET id_utente=$id_utente, stato='$stato', metodo='$metodo', nota='$nota', data_ritiro='$data_ritiro' WHERE id_ordine=" . intval($_POST['id']);
     }
 
     if ($sql && $conn->query($sql)) {
@@ -116,11 +87,6 @@ if ($tabella == 'SB_prodotto') {
                   c.descrizione AS categoria, p.giacenza, p.id_categoria
                   FROM SB_prodotto p
                   LEFT JOIN SB_categoria c ON p.id_categoria = c.id_categoria";
-} elseif ($tabella == 'SB_ordine') {
-    $query_sql = "SELECT o.id_ordine, u.username AS utente, o.data_ordine, o.stato,
-                         o.metodo, o.nota, o.data_ritiro, o.id_utente
-                  FROM SB_ordine o
-                  LEFT JOIN SB_utente u ON o.id_utente = u.id_utente";
 } elseif ($tabella == 'SB_utente') {
     $query_sql = "SELECT id_utente, username, email FROM SB_utente";
 } else {
@@ -131,6 +97,15 @@ $query_tabella = $conn->query($query_sql);
 if (!$query_tabella) die("Errore query: " . $conn->error . "<br>Query: " . $query_sql);
 
 $campi = $query_tabella->fetch_fields();
+
+// --- 5. CONTEGGIO PRODOTTI PER CATEGORIA (per alert JS) ---
+$prodotti_per_categoria = [];
+$res_count = $conn->query("SELECT id_categoria, COUNT(*) AS totale FROM SB_prodotto GROUP BY id_categoria");
+if ($res_count) {
+    while ($r = $res_count->fetch_assoc()) {
+        $prodotti_per_categoria[$r['id_categoria']] = (int)$r['totale'];
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -177,7 +152,6 @@ $campi = $query_tabella->fetch_fields();
                     <a href="?tabella=SB_categoria" class="nav-link text-white <?= $tabella == 'SB_categoria' ? 'active' : '' ?>">Categorie</a>
                     <a href="?tabella=SB_prodotto"  class="nav-link text-white <?= $tabella == 'SB_prodotto'  ? 'active' : '' ?>">Prodotti</a>
                     <a href="?tabella=SB_utente"    class="nav-link text-white <?= $tabella == 'SB_utente'    ? 'active' : '' ?>">Utenti</a>
-                    <a href="?tabella=SB_ordine"    class="nav-link text-white <?= $tabella == 'SB_ordine'    ? 'active' : '' ?>">Ordini</a>
                 </div>
             </div>
 
@@ -195,7 +169,6 @@ $campi = $query_tabella->fetch_fields();
                             <tr>
                                 <?php
                                 foreach ($campi as $f) {
-                                    // Nascondi le FK interne usate solo per il form
                                     if (in_array($f->name, ['id_categoria', 'id_utente', 'id_prodotto'])) continue;
                                     echo "<th>" . ucfirst($f->name) . "</th>";
                                 }
@@ -218,11 +191,23 @@ $campi = $query_tabella->fetch_fields();
                                         <button class="btn btn-sm btn-warning" onclick='apriModalModifica(<?= $json_data ?>)'>
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <a href="?tabella=<?= $tabella ?>&delete_id=<?= $row[$pk] ?>&id_col=<?= $pk ?>"
-                                            class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Eliminare questo record?')">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+                                        <?php if ($tabella !== 'SB_utente'): ?>
+                                            <?php
+                                                // Parametro extra per l'alert categoria
+                                                $extra = '';
+                                                if ($tabella === 'SB_categoria') {
+                                                    $id_cat = $row[$pk];
+                                                    $num_prod = $prodotti_per_categoria[$id_cat] ?? 0;
+                                                    $extra = "data-num-prodotti=\"$num_prod\"";
+                                                }
+                                            ?>
+                                            <a href="?tabella=<?= $tabella ?>&delete_id=<?= $row[$pk] ?>&id_col=<?= $pk ?>"
+                                                class="btn btn-sm btn-danger btn-elimina"
+                                                <?= $extra ?>
+                                                data-tabella="<?= $tabella ?>">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -280,43 +265,6 @@ $campi = $query_tabella->fetch_fields();
                         <label class="form-label">Email</label>
                         <input type="email" name="email" id="input_email" class="form-control mb-2" required>
 
-                        <label class="form-label">Password Hash <small class="text-muted">(lascia vuoto per non modificare)</small></label>
-                        <input type="text" name="password_hash" id="input_password_hash" class="form-control mb-2">
-
-                    <?php elseif ($tabella == 'SB_ordine'): ?>
-
-                        <label class="form-label">Utente</label>
-                        <select name="id_utente" id="input_id_utente" class="form-select mb-2" required>
-                            <option value="">-- Seleziona Utente --</option>
-                            <?php foreach ($options_utenti as $u): ?>
-                                <option value="<?= $u['id_utente'] ?>"><?= htmlspecialchars($u['username'] . ' (' . $u['email'] . ')') ?></option>
-                            <?php endforeach; ?>
-                        </select>
-
-                        <label class="form-label">Stato</label>
-                        <select name="stato" id="input_stato" class="form-select mb-2" required>
-                            <option value="">-- Seleziona Stato --</option>
-                            <option value="In attesa">In attesa</option>
-                            <option value="In Preparazione">In Preparazione</option>
-                            <option value="Pronto">Pronto</option>
-                            <option value="Completato">Completato</option>
-                            <option value="Annullato">Annullato</option>
-                        </select>
-
-                        <label class="form-label">Metodo di Pagamento</label>
-                        <select name="metodo" id="input_metodo" class="form-select mb-2" required>
-                            <option value="">-- Seleziona Metodo --</option>
-                            <option value="Contanti">Contanti</option>
-                            <option value="Carta di Credito">Carta di Credito</option>
-                            <option value="Satispay">Satispay</option>
-                        </select>
-
-                        <label class="form-label">Note</label>
-                        <textarea name="nota" id="input_nota" class="form-control mb-2" rows="2"></textarea>
-
-                        <label class="form-label">Data Ritiro</label>
-                        <input type="datetime-local" name="data_ritiro" id="input_data_ritiro" class="form-control" required>
-
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
@@ -345,15 +293,12 @@ $campi = $query_tabella->fetch_fields();
             document.getElementById('modalTitle').innerText = "Modifica Record";
             document.getElementById('formAzione').value = "edit";
 
-            // Prima chiave = primary key
             const pkName = Object.keys(data)[0];
             document.getElementById('formId').value = data[pkName];
 
             for (let key in data) {
                 let el = document.getElementById('input_' + key);
                 if (!el) continue;
-
-                // Gestione speciale per datetime-local: sostituisce spazio con T
                 if (el.type === 'datetime-local' && data[key]) {
                     el.value = data[key].replace(' ', 'T');
                 } else {
@@ -362,6 +307,28 @@ $campi = $query_tabella->fetch_fields();
             }
             modal.show();
         }
+
+        // Alert eliminazione con conteggio prodotti per le categorie
+        document.querySelectorAll('.btn-elimina').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tabella = this.dataset.tabella;
+                let messaggio = 'Eliminare questo record?';
+
+                if (tabella === 'SB_categoria') {
+                    const numProdotti = parseInt(this.dataset.numProdotti || '0');
+                    if (numProdotti > 0) {
+                        messaggio = `Attenzione! Questa categoria contiene ${numProdotti} prodott${numProdotti === 1 ? 'o' : 'i'} che verranno eliminat${numProdotti === 1 ? 'o' : 'i'} insieme ad essa.\n\nProcedere con l'eliminazione?`;
+                    } else {
+                        messaggio = 'Questa categoria non contiene prodotti. Eliminare?';
+                    }
+                }
+
+                if (confirm(messaggio)) {
+                    window.location.href = this.href;
+                }
+            });
+        });
     </script>
 </body>
 

@@ -28,7 +28,7 @@ if (!isset($_GET["id"])) {
                 border-radius: 4px;
             }
         </style>
-        <link rel="stylesheet" href="Assets/Styles/style.css">
+        <link rel="stylesheet" href="./Assets/Styles/style.css">
     </head>
     <body>
 
@@ -36,7 +36,7 @@ if (!isset($_GET["id"])) {
         <div class="nav-container">
     
             <div class="brand">
-                <img src="Assets/Images/logo.png" alt="Logo Speedy Break">
+                <img src="./Assets/Images/logo.png" alt="Logo Speedy Break">
                 <span>Speedy Break</span>
             </div>
     

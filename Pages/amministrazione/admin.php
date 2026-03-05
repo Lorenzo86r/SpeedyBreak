@@ -27,9 +27,9 @@ $options_cat = [];
 $res_cat = $conn->query("SELECT id_categoria, descrizione FROM SB_categoria ORDER BY descrizione ASC");
 if ($res_cat) while ($c = $res_cat->fetch_assoc()) $options_cat[] = $c;
 
-// --- 1b. RECUPERO UTENTI (tutti i campi necessari per il form) ---
+// --- 1b. RECUPERO UTENTI (username + email) ---
 $options_utenti = [];
-$res_utenti = $conn->query("SELECT id_utente, nome, cognome, email, telefono, ruolo FROM SB_utente ORDER BY nome ASC");
+$res_utenti = $conn->query("SELECT id_utente, username, email FROM SB_utente ORDER BY username ASC");
 if ($res_utenti) while ($u = $res_utenti->fetch_assoc()) $options_utenti[] = $u;
 
 // --- 1c. RECUPERO PRODOTTI ---
@@ -70,29 +70,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             : "UPDATE SB_prodotto SET nome='$nome', descrizione='$desc_prod', prezzo=$prezzo, id_categoria=$cat, giacenza=$giacenza WHERE id_prodotto=" . intval($_POST['id']);
 
     } elseif ($tabella == 'SB_utente') {
-        $nome     = $conn->real_escape_string($_POST['nome']);
-        $cognome  = $conn->real_escape_string($_POST['cognome']);
-        $email    = $conn->real_escape_string($_POST['email']);
-        $telefono = $conn->real_escape_string($_POST['telefono']);
-        $ruolo    = $conn->real_escape_string($_POST['ruolo']);
+        $username      = $conn->real_escape_string($_POST['username']);
+        $email         = $conn->real_escape_string($_POST['email']);
+        $password_hash = $conn->real_escape_string($_POST['password_hash']);
         if ($azione == 'add') {
-            $sql = "INSERT INTO SB_utente (nome, cognome, email, telefono, ruolo, password_hash)
-                    VALUES ('$nome', '$cognome', '$email', '$telefono', '$ruolo', 'hash_default')";
+            $sql = "INSERT INTO SB_utente (username, email, password_hash)
+                    VALUES ('$username', '$email', '$password_hash')";
         } else {
-            $sql = "UPDATE SB_utente SET
-                        nome='$nome',
-                        cognome='$cognome',
-                        email='$email',
-                        telefono='$telefono',
-                        ruolo='$ruolo'
-                    WHERE id_utente=" . intval($_POST['id']);
+            // Se password_hash vuota in modifica, non aggiornarla
+            if (!empty($password_hash)) {
+                $sql = "UPDATE SB_utente SET
+                            username='$username',
+                            email='$email',
+                            password_hash='$password_hash'
+                        WHERE id_utente=" . intval($_POST['id']);
+            } else {
+                $sql = "UPDATE SB_utente SET
+                            username='$username',
+                            email='$email'
+                        WHERE id_utente=" . intval($_POST['id']);
+            }
         }
 
     } elseif ($tabella == 'SB_ordine') {
-        $id_utente  = intval($_POST['id_utente']);
-        $stato      = $conn->real_escape_string($_POST['stato']);
-        $metodo     = $conn->real_escape_string($_POST['metodo']);
-        $nota       = $conn->real_escape_string($_POST['nota']);
+        $id_utente   = intval($_POST['id_utente']);
+        $stato       = $conn->real_escape_string($_POST['stato']);
+        $metodo      = $conn->real_escape_string($_POST['metodo']);
+        $nota        = $conn->real_escape_string($_POST['nota']);
         $data_ritiro = $conn->real_escape_string($_POST['data_ritiro']);
         $sql = ($azione == 'add')
             ? "INSERT INTO SB_ordine (id_utente, stato, metodo, nota, data_ritiro) VALUES ($id_utente, '$stato', '$metodo', '$nota', '$data_ritiro')"
@@ -113,12 +117,12 @@ if ($tabella == 'SB_prodotto') {
                   FROM SB_prodotto p
                   LEFT JOIN SB_categoria c ON p.id_categoria = c.id_categoria";
 } elseif ($tabella == 'SB_ordine') {
-    $query_sql = "SELECT o.id_ordine, u.nome AS utente, o.data_ordine, o.stato,
+    $query_sql = "SELECT o.id_ordine, u.username AS utente, o.data_ordine, o.stato,
                          o.metodo, o.nota, o.data_ritiro, o.id_utente
                   FROM SB_ordine o
                   LEFT JOIN SB_utente u ON o.id_utente = u.id_utente";
 } elseif ($tabella == 'SB_utente') {
-    $query_sql = "SELECT id_utente, nome, cognome, email, telefono, ruolo FROM SB_utente";
+    $query_sql = "SELECT id_utente, username, email FROM SB_utente";
 } else {
     $query_sql = "SELECT * FROM $tabella";
 }
@@ -270,25 +274,14 @@ $campi = $query_tabella->fetch_fields();
 
                     <?php elseif ($tabella == 'SB_utente'): ?>
 
-                        <label class="form-label">Nome</label>
-                        <input type="text" name="nome" id="input_nome" class="form-control mb-2" required>
-
-                        <label class="form-label">Cognome</label>
-                        <input type="text" name="cognome" id="input_cognome" class="form-control mb-2" required>
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" id="input_username" class="form-control mb-2" required>
 
                         <label class="form-label">Email</label>
                         <input type="email" name="email" id="input_email" class="form-control mb-2" required>
 
-                        <label class="form-label">Telefono</label>
-                        <input type="text" name="telefono" id="input_telefono" class="form-control mb-2">
-
-                        <label class="form-label">Ruolo</label>
-                        <select name="ruolo" id="input_ruolo" class="form-select mb-2" required>
-                            <option value="">-- Seleziona Ruolo --</option>
-                            <option value="admin">Admin</option>
-                            <option value="staff">Staff</option>
-                            <option value="cliente">Cliente</option>
-                        </select>
+                        <label class="form-label">Password Hash <small class="text-muted">(lascia vuoto per non modificare)</small></label>
+                        <input type="text" name="password_hash" id="input_password_hash" class="form-control mb-2">
 
                     <?php elseif ($tabella == 'SB_ordine'): ?>
 
@@ -296,7 +289,7 @@ $campi = $query_tabella->fetch_fields();
                         <select name="id_utente" id="input_id_utente" class="form-select mb-2" required>
                             <option value="">-- Seleziona Utente --</option>
                             <?php foreach ($options_utenti as $u): ?>
-                                <option value="<?= $u['id_utente'] ?>"><?= htmlspecialchars($u['nome'] . ' ' . $u['cognome']) ?></option>
+                                <option value="<?= $u['id_utente'] ?>"><?= htmlspecialchars($u['username'] . ' (' . $u['email'] . ')') ?></option>
                             <?php endforeach; ?>
                         </select>
 

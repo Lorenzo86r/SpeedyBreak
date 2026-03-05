@@ -29,17 +29,12 @@ if ($res_cat) while ($c = $res_cat->fetch_assoc()) $options_cat[] = $c;
 
 // --- 2. LOGICA DELETE ---
 if (isset($_GET['delete_id']) && isset($_GET['id_col'])) {
-    // Impedisci eliminazione utenti
-    if ($tabella === 'SB_utente') {
-        $message = "<div class='alert alert-danger'>Non è consentito eliminare utenti.</div>";
+    $id_col = $_GET['id_col'];
+    $id_val = intval($_GET['delete_id']);
+    if ($conn->query("DELETE FROM $tabella WHERE $id_col = $id_val")) {
+        $message = "<div class='alert alert-success'>Eliminato con successo!</div>";
     } else {
-        $id_col = $_GET['id_col'];
-        $id_val = intval($_GET['delete_id']);
-        if ($conn->query("DELETE FROM $tabella WHERE $id_col = $id_val")) {
-            $message = "<div class='alert alert-success'>Eliminato con successo!</div>";
-        } else {
-            $message = "<div class='alert alert-danger'>Errore: " . $conn->error . "</div>";
-        }
+        $message = "<div class='alert alert-danger'>Errore: " . $conn->error . "</div>";
     }
 }
 
@@ -191,7 +186,7 @@ if ($res_count) {
                                         <button class="btn btn-sm btn-warning" onclick='apriModalModifica(<?= $json_data ?>)'>
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <?php if ($tabella !== 'SB_utente'): ?>
+                                        <?php if (true): ?>
                                             <?php
                                                 // Parametro extra per l'alert categoria
                                                 $extra = '';

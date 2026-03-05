@@ -27,9 +27,9 @@ $options_cat = [];
 $res_cat = $conn->query("SELECT id_categoria, descrizione FROM SB_categoria ORDER BY descrizione ASC");
 if ($res_cat) while ($c = $res_cat->fetch_assoc()) $options_cat[] = $c;
 
-// --- 1b. RECUPERO UTENTI ---
+// --- 1b. RECUPERO UTENTI (tutti i campi necessari per il form) ---
 $options_utenti = [];
-$res_utenti = $conn->query("SELECT id_utente, nome FROM SB_utente ORDER BY nome ASC");
+$res_utenti = $conn->query("SELECT id_utente, nome, cognome, email, telefono, ruolo FROM SB_utente ORDER BY nome ASC");
 if ($res_utenti) while ($u = $res_utenti->fetch_assoc()) $options_utenti[] = $u;
 
 // --- 1c. RECUPERO PRODOTTI ---
@@ -58,21 +58,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = ($azione == 'add')
             ? "INSERT INTO SB_categoria (descrizione) VALUES ('$desc')"
             : "UPDATE SB_categoria SET descrizione='$desc' WHERE id_categoria=" . intval($_POST['id']);
+
     } elseif ($tabella == 'SB_prodotto') {
-        $nome = $conn->real_escape_string($_POST['nome']);
+        $nome      = $conn->real_escape_string($_POST['nome']);
         $desc_prod = $conn->real_escape_string($_POST['descrizione']);
-        $prezzo = floatval($_POST['prezzo']);
-        $cat = intval($_POST['id_categoria']);
-        $giacenza = intval($_POST['giacenza']);
+        $prezzo    = floatval($_POST['prezzo']);
+        $cat       = intval($_POST['id_categoria']);
+        $giacenza  = intval($_POST['giacenza']);
         $sql = ($azione == 'add')
             ? "INSERT INTO SB_prodotto (nome, descrizione, prezzo, id_categoria, giacenza) VALUES ('$nome', '$desc_prod', $prezzo, $cat, $giacenza)"
             : "UPDATE SB_prodotto SET nome='$nome', descrizione='$desc_prod', prezzo=$prezzo, id_categoria=$cat, giacenza=$giacenza WHERE id_prodotto=" . intval($_POST['id']);
+
     } elseif ($tabella == 'SB_utente') {
-        $nome = $conn->real_escape_string($_POST['nome']);
-        $cognome = $conn->real_escape_string($_POST['cognome']);
-        $email = $conn->real_escape_string($_POST['email']);
+        $nome     = $conn->real_escape_string($_POST['nome']);
+        $cognome  = $conn->real_escape_string($_POST['cognome']);
+        $email    = $conn->real_escape_string($_POST['email']);
         $telefono = $conn->real_escape_string($_POST['telefono']);
-        $ruolo = $conn->real_escape_string($_POST['ruolo']);
+        $ruolo    = $conn->real_escape_string($_POST['ruolo']);
         if ($azione == 'add') {
             $sql = "INSERT INTO SB_utente (nome, cognome, email, telefono, ruolo, password_hash)
                     VALUES ('$nome', '$cognome', '$email', '$telefono', '$ruolo', 'hash_default')";
@@ -85,11 +87,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         ruolo='$ruolo'
                     WHERE id_utente=" . intval($_POST['id']);
         }
+
     } elseif ($tabella == 'SB_ordine') {
-        $id_utente = intval($_POST['id_utente']);
-        $stato = $conn->real_escape_string($_POST['stato']);
-        $metodo = $conn->real_escape_string($_POST['metodo']);
-        $nota = $conn->real_escape_string($_POST['nota']);
+        $id_utente  = intval($_POST['id_utente']);
+        $stato      = $conn->real_escape_string($_POST['stato']);
+        $metodo     = $conn->real_escape_string($_POST['metodo']);
+        $nota       = $conn->real_escape_string($_POST['nota']);
         $data_ritiro = $conn->real_escape_string($_POST['data_ritiro']);
         $sql = ($azione == 'add')
             ? "INSERT INTO SB_ordine (id_utente, stato, metodo, nota, data_ritiro) VALUES ($id_utente, '$stato', '$metodo', '$nota', '$data_ritiro')"
@@ -114,11 +117,12 @@ if ($tabella == 'SB_prodotto') {
                          o.metodo, o.nota, o.data_ritiro, o.id_utente
                   FROM SB_ordine o
                   LEFT JOIN SB_utente u ON o.id_utente = u.id_utente";
+} elseif ($tabella == 'SB_utente') {
+    $query_sql = "SELECT id_utente, nome, cognome, email, telefono, ruolo FROM SB_utente";
 } else {
     $query_sql = "SELECT * FROM $tabella";
 }
 
-// --- Controllo errore query ---
 $query_tabella = $conn->query($query_sql);
 if (!$query_tabella) die("Errore query: " . $conn->error . "<br>Query: " . $query_sql);
 
@@ -162,16 +166,18 @@ $campi = $query_tabella->fetch_fields();
 
     <div class="container-fluid" style="margin-top: 20px;">
         <div class="row">
+            <!-- Sidebar -->
             <div class="col-md-2 bg-dark min-vh-100 p-3 text-white">
                 <h3 class="h5 mb-4 text-primary">SpeedyBreak</h3>
                 <div class="nav flex-column nav-pills">
                     <a href="?tabella=SB_categoria" class="nav-link text-white <?= $tabella == 'SB_categoria' ? 'active' : '' ?>">Categorie</a>
-                    <a href="?tabella=SB_prodotto" class="nav-link text-white <?= $tabella == 'SB_prodotto' ? 'active' : '' ?>">Prodotti</a>
-                    <a href="?tabella=SB_utente" class="nav-link text-white <?= $tabella == 'SB_utente' ? 'active' : '' ?>">Utenti</a>
-                    <a href="?tabella=SB_ordine" class="nav-link text-white <?= $tabella == 'SB_ordine' ? 'active' : '' ?>">Ordini</a>
+                    <a href="?tabella=SB_prodotto"  class="nav-link text-white <?= $tabella == 'SB_prodotto'  ? 'active' : '' ?>">Prodotti</a>
+                    <a href="?tabella=SB_utente"    class="nav-link text-white <?= $tabella == 'SB_utente'    ? 'active' : '' ?>">Utenti</a>
+                    <a href="?tabella=SB_ordine"    class="nav-link text-white <?= $tabella == 'SB_ordine'    ? 'active' : '' ?>">Ordini</a>
                 </div>
             </div>
 
+            <!-- Main content -->
             <main class="col-md-10 p-4">
                 <?= $message ?>
                 <div class="d-flex justify-content-between mb-3">
@@ -185,7 +191,8 @@ $campi = $query_tabella->fetch_fields();
                             <tr>
                                 <?php
                                 foreach ($campi as $f) {
-                                    if ($f->name == 'id_categoria' || $f->name == 'id_utente' || $f->name == 'id_prodotto') continue;
+                                    // Nascondi le FK interne usate solo per il form
+                                    if (in_array($f->name, ['id_categoria', 'id_utente', 'id_prodotto'])) continue;
                                     echo "<th>" . ucfirst($f->name) . "</th>";
                                 }
                                 ?>
@@ -199,16 +206,17 @@ $campi = $query_tabella->fetch_fields();
                             ?>
                                 <tr>
                                     <?php foreach ($campi as $f):
-                                        if ($f->name == 'id_categoria' || $f->name == 'id_utente' || $f->name == 'id_prodotto') continue;
+                                        if (in_array($f->name, ['id_categoria', 'id_utente', 'id_prodotto'])) continue;
                                     ?>
-                                        <td><?= $row[$f->name] ?></td>
+                                        <td><?= htmlspecialchars($row[$f->name] ?? '') ?></td>
                                     <?php endforeach; ?>
                                     <td>
                                         <button class="btn btn-sm btn-warning" onclick='apriModalModifica(<?= $json_data ?>)'>
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <a href="?tabella=<?= $tabella ?>&delete_id=<?= $row[$pk] ?>&id_col=<?= $pk ?>"
-                                            class="btn btn-sm btn-danger" onclick="return confirm('Eliminare?')">
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Eliminare questo record?')">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     </td>
@@ -221,6 +229,7 @@ $campi = $query_tabella->fetch_fields();
         </div>
     </div>
 
+    <!-- MODAL CRUD -->
     <div class="modal fade" id="crudModal" tabindex="-1">
         <div class="modal-dialog">
             <form method="POST" class="modal-content">
@@ -230,33 +239,50 @@ $campi = $query_tabella->fetch_fields();
                 </div>
                 <div class="modal-body" id="modalBody">
                     <input type="hidden" name="azione" id="formAzione">
-                    <input type="hidden" name="id" id="formId">
+                    <input type="hidden" name="id"     id="formId">
 
                     <?php if ($tabella == 'SB_categoria'): ?>
-                        <label>Descrizione Categoria</label>
+
+                        <label class="form-label">Descrizione Categoria</label>
                         <input type="text" name="descrizione" id="input_descrizione" class="form-control" required>
 
                     <?php elseif ($tabella == 'SB_prodotto'): ?>
-                        <label>Nome Prodotto</label>
+
+                        <label class="form-label">Nome Prodotto</label>
                         <input type="text" name="nome" id="input_nome" class="form-control mb-2" required>
-                        <label>Descrizione Prodotto</label>
+
+                        <label class="form-label">Descrizione Prodotto</label>
                         <textarea name="descrizione" id="input_descrizione" class="form-control mb-2" rows="2"></textarea>
-                        <label>Prezzo (€)</label>
+
+                        <label class="form-label">Prezzo (€)</label>
                         <input type="number" step="0.01" name="prezzo" id="input_prezzo" class="form-control mb-2" required>
-                        <label>Categoria</label>
+
+                        <label class="form-label">Categoria</label>
                         <select name="id_categoria" id="input_id_categoria" class="form-select mb-2" required>
                             <option value="">-- Seleziona --</option>
                             <?php foreach ($options_cat as $c): ?>
                                 <option value="<?= $c['id_categoria'] ?>"><?= htmlspecialchars($c['descrizione']) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <label>Quantità Disponibile</label>
+
+                        <label class="form-label">Quantità Disponibile</label>
                         <input type="number" name="giacenza" id="input_giacenza" class="form-control" required>
 
                     <?php elseif ($tabella == 'SB_utente'): ?>
-                        <label>Nome</label>
+
+                        <label class="form-label">Nome</label>
+                        <input type="text" name="nome" id="input_nome" class="form-control mb-2" required>
+
+                        <label class="form-label">Cognome</label>
+                        <input type="text" name="cognome" id="input_cognome" class="form-control mb-2" required>
+
+                        <label class="form-label">Email</label>
                         <input type="email" name="email" id="input_email" class="form-control mb-2" required>
-                        <label>Telefono</label>
+
+                        <label class="form-label">Telefono</label>
+                        <input type="text" name="telefono" id="input_telefono" class="form-control mb-2">
+
+                        <label class="form-label">Ruolo</label>
                         <select name="ruolo" id="input_ruolo" class="form-select mb-2" required>
                             <option value="">-- Seleziona Ruolo --</option>
                             <option value="admin">Admin</option>
@@ -265,14 +291,16 @@ $campi = $query_tabella->fetch_fields();
                         </select>
 
                     <?php elseif ($tabella == 'SB_ordine'): ?>
-                        <label>Utente</label>
+
+                        <label class="form-label">Utente</label>
                         <select name="id_utente" id="input_id_utente" class="form-select mb-2" required>
                             <option value="">-- Seleziona Utente --</option>
                             <?php foreach ($options_utenti as $u): ?>
-                                <option value="<?= $u['id_utente'] ?>"><?= htmlspecialchars($u['nome']) ?></option>
+                                <option value="<?= $u['id_utente'] ?>"><?= htmlspecialchars($u['nome'] . ' ' . $u['cognome']) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <label>Stato</label>
+
+                        <label class="form-label">Stato</label>
                         <select name="stato" id="input_stato" class="form-select mb-2" required>
                             <option value="">-- Seleziona Stato --</option>
                             <option value="In attesa">In attesa</option>
@@ -281,20 +309,25 @@ $campi = $query_tabella->fetch_fields();
                             <option value="Completato">Completato</option>
                             <option value="Annullato">Annullato</option>
                         </select>
-                        <label>Metodo di Pagamento</label>
+
+                        <label class="form-label">Metodo di Pagamento</label>
                         <select name="metodo" id="input_metodo" class="form-select mb-2" required>
                             <option value="">-- Seleziona Metodo --</option>
                             <option value="Contanti">Contanti</option>
                             <option value="Carta di Credito">Carta di Credito</option>
                             <option value="Satispay">Satispay</option>
                         </select>
-                        <label>Note</label>
+
+                        <label class="form-label">Note</label>
                         <textarea name="nota" id="input_nota" class="form-control mb-2" rows="2"></textarea>
-                        <label>Data Ritiro</label>
+
+                        <label class="form-label">Data Ritiro</label>
                         <input type="datetime-local" name="data_ritiro" id="input_data_ritiro" class="form-control" required>
+
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
                     <button type="submit" class="btn btn-primary">Salva</button>
                 </div>
             </form>
@@ -319,12 +352,20 @@ $campi = $query_tabella->fetch_fields();
             document.getElementById('modalTitle').innerText = "Modifica Record";
             document.getElementById('formAzione').value = "edit";
 
+            // Prima chiave = primary key
             const pkName = Object.keys(data)[0];
             document.getElementById('formId').value = data[pkName];
 
             for (let key in data) {
                 let el = document.getElementById('input_' + key);
-                if (el) el.value = data[key];
+                if (!el) continue;
+
+                // Gestione speciale per datetime-local: sostituisce spazio con T
+                if (el.type === 'datetime-local' && data[key]) {
+                    el.value = data[key].replace(' ', 'T');
+                } else {
+                    el.value = data[key];
+                }
             }
             modal.show();
         }

@@ -2,27 +2,26 @@
 session_start();
 require 'db.php';
 
-if(isset($_POST["username"]) && isset($_POST["password"])){
-    $username = $_POST["username"];
+if(isset($_POST["email"]) && isset($_POST["password"])){
+    $login = trim($_POST["email"]);
     $password = $_POST["password"];
 
-    // 1. Fetch the user info by username
-    $sql = "SELECT id, username, password_hash FROM hash_users WHERE username = :username";
+    $sql = "SELECT id_utente, username, email, password_hash, ruolo FROM SB_utente WHERE email = :email OR username = :username";
     try {
         $stmt = $pdo->prepare($sql);
-        $stmt->execute(['username' => $username]);
+        $stmt->execute(['email' => $login, 'username' => $login]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password_hash'])) {
             // Login Successful
-            $_SESSION["user_id"] = $user['id'];
+            $_SESSION["user_id"] = $user['id_utente'];
             $_SESSION["username"] = $user['username'];
+            $_SESSION["email"] = $user['email'];
+            $_SESSION["ruolo"] = $user['ruolo'];
             
-            // Redirect to management page
             header("Location: ../../index.php");
             exit();
         } else {
-            // Invalid credentials
             header("Location: login.php?error=invalid");
             exit();
         }

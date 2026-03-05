@@ -18,8 +18,8 @@
      <main>
          <form action="auth_login.php" method="POST" class="login-form">
             <div class="form-group">
-                <label for="fusername">Email:</label><br>
-                <input type="email" id="fusername" name="username" required><br>
+                <label for="femail">Username o Email:</label><br>
+                <input type="text" id="femail" name="email" required><br>
             </div>
             <div class="form-group">
                 <label for="fpassword">Password:</label><br>
@@ -28,7 +28,7 @@
             <input type="submit" value="Login" class="btn">
         </form> 
         <?php if(isset($_GET['error'])): ?>
-            <p style="color: red; text-align: center;">Username o password non validi.</p>
+            <p style="color: red; text-align: center;">Email o password non validi.</p>
         <?php endif; ?>
         <?php if(isset($_GET['signup']) && $_GET['signup'] == 'success'): ?>
              <p style="color: green; text-align: center;">Registrazione avvenuta con successo! Ora puoi accedere.</p>

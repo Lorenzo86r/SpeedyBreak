@@ -1,39 +1,25 @@
 let cart = [];
 
 function addToCart(name, price){
-
     const item = cart.find(p => p.name === name);
-
-    if(item){
+    if(item && item.quantity < 5) {
         item.quantity++;
     }
-    else{
-
+    else {
         cart.push({
-
             name:name,
             price:price,
             quantity:1
-
         });
-
     }
 
     updateCart();
-
 }
-
-
 
 function removeFromCart(index){
-
     cart.splice(index,1);
-
     updateCart();
-
 }
-
-
 
 function updateCart(){
 
@@ -41,9 +27,7 @@ function updateCart(){
     const totalText = document.getElementById("total");
 
     list.innerHTML="";
-
     let total = 0;
-
     cart.forEach((item,index)=>{
 
         const li = document.createElement("li");
@@ -52,15 +36,10 @@ function updateCart(){
 ${item.name} x${item.quantity} - €${(item.price*item.quantity).toFixed(2)}
 <button onclick="removeFromCart(${index})">❌</button>
 `;
-
         list.appendChild(li);
-
         total += item.price * item.quantity;
-
     });
-
     totalText.textContent = "Totale: €"+total.toFixed(2);
-
 }
 
 
@@ -68,17 +47,13 @@ ${item.name} x${item.quantity} - €${(item.price*item.quantity).toFixed(2)}
 function sendOrder(){
 
     if(cart.length === 0){
-
         alert("Carrello vuoto");
-
         return;
 
     }
 
     fetch("ordine.php",{
-
         method:"POST",
-
         headers:{
             "Content-Type":"application/json"
         },
@@ -90,19 +65,14 @@ function sendOrder(){
         .then(res=>res.text())
 
         .then(data=>{
-
             alert("Ordine inviato!");
-
             cart = [];
-
             updateCart();
 
         })
 
         .catch(err=>{
-
             alert("Errore invio ordine");
-
             console.error(err);
 
         });

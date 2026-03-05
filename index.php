@@ -24,7 +24,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="./Pages/creazione_ordine/ordine.php">Ordina</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/creazione_ordine/ordine.html">Ordina</a></li>
         <li class="nav-item"><a class="nav-link" href="./Pages/gestione_ordini/gestione-ordine.php">Gestione Ordini</a></li>
         <li class="nav-item"><a class="nav-link" href="./Pages/amministrazione/admin.php">Admin</a></li>
         <li class="nav-item">

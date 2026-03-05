@@ -1,118 +1,62 @@
-body{
-
-    font-family: Arial;
-    margin:0;
-    background:#f4f6f9;
-
+/* --- STILE NAVBAR --- */
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: #2c3e50; /* Stesso colore dell'header per continuità */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra i link */
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-header{
-
-    background:#2c3e50;
-    color:white;
-    padding:20px;
-    text-align:center;
-
+.nav-links li {
+    display: inline;
 }
 
-.container{
-
-    display:flex;
-    gap:30px;
-    padding:20px;
-
+.nav-links a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    font-weight: bold;
+    transition: background 0.3s ease;
 }
 
-.menu{
-
-    flex:2;
-
+.nav-links a:hover {
+    background-color: #34495e;
 }
 
-.cart{
-
-    flex:1;
-
-    background:white;
-
-    padding:20px;
-
-    border-radius:10px;
-
-    box-shadow:0 5px 10px rgba(0,0,0,0.1);
-
+/* Evidenzia la pagina corrente */
+.nav-links a.active {
+    background-color: #3498db;
 }
 
-.product{
-
-    background:white;
-
-    padding:15px;
-
-    margin-bottom:15px;
-
-    border-radius:10px;
-
-    box-shadow:0 5px 10px rgba(0,0,0,0.1);
-
+/* Stile specifico per il pulsante Login/Logout */
+.nav-links .login-btn {
+    background-color: #27ae60;
+    margin-left: 10px;
+    border-radius: 4px;
+    padding: 8px 15px;
+    /* Reset per allineamento se necessario */
+    align-self: center;
 }
 
-.product button{
-
-    background:#27ae60;
-    color:white;
-    border:none;
-    padding:8px 15px;
-    border-radius:5px;
-    cursor:pointer;
-
+.nav-links .login-btn:hover {
+    background-color: #219150;
 }
 
-.product button:hover{
-
-    background:#219150;
-
+/* Sovrascrive il colore per il logout se passato via style inline nel PHP */
+.nav-links a[style*="background-color: #dc3545"] {
+    background-color: #dc3545 !important;
 }
 
-.cart ul{
-
-    list-style:none;
-    padding:0;
-
-}
-
-.cart li{
-
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:10px;
-
-}
-
-.order-btn{
-
-    margin-top:20px;
-
-    width:100%;
-
-    padding:12px;
-
-    background:#3498db;
-
-    border:none;
-
-    color:white;
-
-    border-radius:8px;
-
-    font-size:16px;
-
-    cursor:pointer;
-
-}
-
-.order-btn:hover{
-
-    background:#2980b9;
-
+/* --- RESPONSIVE (Per cellulari) --- */
+@media (max-width: 600px) {
+    .nav-links {
+        flex-direction: column;
+    }
+    .container {
+        flex-direction: column;
+    }
 }

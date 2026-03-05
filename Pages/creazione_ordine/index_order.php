@@ -37,9 +37,22 @@ $result = $conn->query($sql);
         </style>
     </head>
     <body>
+    <ul class="nav-links">
+        <li><a class="active" href="../../index.php">Home</a></li>
+        <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
+        <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+            <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+            <li><a href="../amministrazione/admin.php">Admin</a></li>
+        <?php endif; ?>
+        <?php if(isset($_SESSION["user_id"])): ?>
+            <li><a class="login-btn" style="background-color: #dc3545;" href="../auth/logout.php">Logout</a></li>
+        <?php else: ?>
+            <li><a class="login-btn" href="../auth/login.php">Login</a></li>
+        <?php endif; ?>
+    </ul>
 
     <header>
-        <h1>🍔 SpeedyBreak - Ordini Bar</h1>
+        <h1>🍔 Ordina! • SpeedyBreak</h1>
     </header>
 
     <div class="container">

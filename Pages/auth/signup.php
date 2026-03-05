@@ -18,30 +18,30 @@
      <main>
          <form action="auth_signup.php" method="POST" class="login-form">
             <div class="form-group">
-                <label for="fnome">Nome:</label><br>
-                <input type="text" id="fnome" name="nome" required><br>
-            </div>
-            <div class="form-group">
-                <label for="fcognome">Cognome:</label><br>
-                <input type="text" id="fcognome" name="cognome" required><br>
+                <label for="fusername">Username:</label><br>
+                <input type="text" id="fusername" name="username" required><br>
             </div>
             <div class="form-group">
                 <label for="femail">Email (@aldini.istruzioneer.it, @avbo.it o @admin.it):</label><br>
                 <input type="email" id="femail" name="email" required pattern=".+@(aldini\.istruzioneer\.it|avbo\.it|admin\.it)$" title="Inserisci un'email valida terminante con @aldini.istruzioneer.it, @avbo.it o @admin.it"><br>
             </div>
             <div class="form-group">
-                <label for="ftelefono">Telefono (Opzionale):</label><br>
-                <input type="text" id="ftelefono" name="telefono"><br>
-            </div>
-            <div class="form-group">
                 <label for="fpassword">Password:</label><br>
                 <input type="password" id="fpassword" name="password" required>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+                <input type="checkbox" id="ftermini" name="termini" required>
+                <label for="ftermini" style="font-size: 0.9em;">Accetto i <a href="#">Termini e Condizioni</a></label>
             </div>
             <input type="submit" value="Registrati" class="btn">
         </form> 
         <?php if(isset($_GET['error'])): ?>
             <?php if($_GET['error'] == 'exists'): ?>
                 <p style="color: red; text-align: center;">Email già registrata.</p>
+            <?php elseif($_GET['error'] == 'duplicate_username'): ?>
+                <p style="color: red; text-align: center;">Username già in uso. Scegline un altro.</p>
+            <?php elseif($_GET['error'] == 'missing_terms'): ?>
+                <p style="color: red; text-align: center;">Devi accettare i Termini e Condizioni per registrarti.</p>
             <?php elseif($_GET['error'] == 'db'): ?>
                  <p style="color: red; text-align: center;">Errore del database.</p>
             <?php elseif($_GET['error'] == 'invalid_email'): ?>

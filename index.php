@@ -20,7 +20,7 @@
     
             <ul class="nav-links">
                 <li><a class="active" href="index.php">Home</a></li>
-                <li><a href="./Pages/creazione_ordine/ordine.html">Ordina</a></li>
+                <li><a href="Pages/creazione_ordine/index_order.php">Ordina</a></li>
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a href="./Pages/gestione_ordini/manage.php">Gestione Ordini</a></li>
                     <li><a href="./Pages/amministrazione/admin.php">Admin</a></li>

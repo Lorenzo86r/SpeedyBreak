@@ -59,7 +59,7 @@ $result = $conn->query($sql);
 
         <section class="menu">
             <h2>Menu</h2>
-            <h3>Max 5 elementi per prodotto</h3>
+            <h3>Max 5 elementi per prodotto</h3><br>
 
             <?php if ($result && $result->num_rows > 0): ?>
                 <?php while($row = $result->fetch_assoc()): ?>

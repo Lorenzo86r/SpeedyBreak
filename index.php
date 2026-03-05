@@ -16,13 +16,20 @@
             <span>Speedy Break</span>
         </div>
 
-        <ul class="nav-links">
-            <li><a class="active" href="index.html">Home</a></li>
-            <li><a href="order.php">Ordina</a></li>
-            <li><a href="manage.php">Gestione Ordini</a></li>
-            <li><a href="admin.php">Admin</a></li>
-            <li><a class="login-btn" href="login.php">Login</a></li>
-        </ul>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/creazione_ordine/ordine.html">Ordina</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/gestione_ordini/gestione-ordine.php">Gestione Ordini</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/amministrazione/admin.php">Admin</a></li>
+        <li class="nav-item">
+          <?php if(isset($_SESSION["user_id"])): ?>
+            <a class="btn btn-danger ms-2" href="./Pages/auth/logout.php">Logout</a>
+          <?php else: ?>
+            <a class="btn btn-warning ms-2" href="./Pages/auth/login.php">Login</a>
+          <?php endif; ?>
+        </li>
+      </ul>
     </div>
 </nav>
 

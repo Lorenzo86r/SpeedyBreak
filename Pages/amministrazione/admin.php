@@ -255,14 +255,8 @@ $campi = $query_tabella->fetch_fields();
 
                     <?php elseif ($tabella == 'SB_utente'): ?>
                         <label>Nome</label>
-                        <input type="text" name="nome" id="input_nome" class="form-control mb-2" required>
-                        <label>Cognome</label>
-                        <input type="text" name="cognome" id="input_cognome" class="form-control mb-2" required>
-                        <label>Email</label>
                         <input type="email" name="email" id="input_email" class="form-control mb-2" required>
                         <label>Telefono</label>
-                        <input type="text" name="telefono" id="input_telefono" class="form-control mb-2">
-                        <label>Ruolo</label>
                         <select name="ruolo" id="input_ruolo" class="form-select mb-2" required>
                             <option value="">-- Seleziona Ruolo --</option>
                             <option value="admin">Admin</option>

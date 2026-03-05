@@ -1,67 +1,110 @@
 let cart = [];
 
-function addToCart(name, price) {
+function addToCart(name, price){
+
     const item = cart.find(p => p.name === name);
 
-    if (item) {
+    if(item){
         item.quantity++;
-    } else {
+    }
+    else{
+
         cart.push({
-            name: name,
-            price: price,
-            quantity: 1
+
+            name:name,
+            price:price,
+            quantity:1
+
         });
+
     }
 
     updateCart();
+
 }
 
-function removeFromCart(index) {
-    cart.splice(index, 1);
+
+
+function removeFromCart(index){
+
+    cart.splice(index,1);
+
     updateCart();
+
 }
 
-function updateCart() {
-    const cartList = document.getElementById("cart-list");
+
+
+function updateCart(){
+
+    const list = document.getElementById("cart-list");
     const totalText = document.getElementById("total");
 
-    cartList.innerHTML = "";
+    list.innerHTML="";
+
     let total = 0;
 
-    cart.forEach((item, index) => {
+    cart.forEach((item,index)=>{
+
         const li = document.createElement("li");
+
         li.innerHTML = `
-            ${item.name} x${item.quantity} - €${(item.price * item.quantity).toFixed(2)}
-            <button onclick="removeFromCart(${index})">❌</button>
-        `;
-        cartList.appendChild(li);
+${item.name} x${item.quantity} - €${(item.price*item.quantity).toFixed(2)}
+<button onclick="removeFromCart(${index})">❌</button>
+`;
+
+        list.appendChild(li);
+
         total += item.price * item.quantity;
+
     });
 
-    totalText.textContent = "Totale: €" + total.toFixed(2);
+    totalText.textContent = "Totale: €"+total.toFixed(2);
+
 }
 
-function sendOrder() {
-    if (cart.length === 0) {
-        alert("Il carrello è vuoto!");
+
+
+function sendOrder(){
+
+    if(cart.length === 0){
+
+        alert("Carrello vuoto");
+
         return;
+
     }
 
-    fetch("../DataBase/orders.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
+    fetch("ordine.php",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
         },
-        body: JSON.stringify(cart)
+
+        body:JSON.stringify(cart)
+
     })
-        .then(res => res.text())
-        .then(data => {
-            alert("Ordine inviato con successo!");
+
+        .then(res=>res.text())
+
+        .then(data=>{
+
+            alert("Ordine inviato!");
+
             cart = [];
+
             updateCart();
+
         })
-        .catch(err => {
+
+        .catch(err=>{
+
+            alert("Errore invio ordine");
+
             console.error(err);
-            alert("Errore nell'invio dell'ordine");
+
         });
+
 }

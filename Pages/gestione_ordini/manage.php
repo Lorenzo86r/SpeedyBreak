@@ -46,11 +46,17 @@ if (!isset($_GET["id"])) {
             </div>
     
             <ul class="nav-links">
-                <li><a class="active" href="../../index.html">Home</a></li>
+                <li><a class="active" href="../../index.php">Home</a></li>
                 <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
-                <li><a href="manage.php">Gestione Ordini</a></li>
-                <li><a href="../amministrazione/admin.php">Admin</a></li>
-                <li><a class="login-btn" href="../auth/login.php">Login</a></li>
+                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+                    <li><a href="manage.php">Gestione Ordini</a></li>
+                    <li><a href="../amministrazione/admin.php">Admin</a></li>
+                <?php endif; ?>
+                <?php if(isset($_SESSION["user_id"])): ?>
+                    <li><a class="login-btn" style="background-color: #dc3545;" href="../auth/logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li><a class="login-btn" href="../auth/login.php">Login</a></li>
+                <?php endif; ?>
             </ul>
     
         </div>

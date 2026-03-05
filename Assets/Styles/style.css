@@ -127,3 +127,116 @@ footer {
     padding: 15px;
     margin-top: 40px;
 }
+
+/* AUTH PAGES */
+.container {
+    max-width: 450px;
+    margin: 80px auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.container header h1 {
+    text-align: center;
+    color: #222;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.login-form .form-group {
+    margin-bottom: 20px;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+
+.login-form input[type="text"]:focus,
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus {
+    border-color: #ffc107;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+    outline: none;
+}
+
+.login-form input[type="checkbox"] {
+    accent-color: #ffc107;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.login-form .btn {
+    width: 100%;
+    padding: 14px;
+    background: #ffc107;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #222;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+    margin-top: 15px;
+}
+
+.login-form .btn:hover {
+    background: #e0a800;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(224, 168, 0, 0.4);
+}
+
+.login-form .btn:active {
+    transform: translateY(0);
+}
+
+.container p {
+    color: #666;
+    font-size: 14px;
+}
+
+.container a {
+    color: #e0a800;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.container a:hover {
+    color: #c69500;
+    text-decoration: underline;
+}
+
+.container footer {
+    margin-top: 30px;
+    background: transparent;
+    color: #aaa;
+    padding: 0;
+    font-size: 12px;
+}

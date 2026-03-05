@@ -22,8 +22,8 @@
                 <input type="text" id="fusername" name="username" required><br>
             </div>
             <div class="form-group">
-                <label for="femail">Email (@aldini.istruzioneer.it, @avbo.it o @admin.it):</label><br>
-                <input type="email" id="femail" name="email" required pattern=".+@(aldini\.istruzioneer\.it|avbo\.it|admin\.it)$" title="Inserisci un'email valida terminante con @aldini.istruzioneer.it, @avbo.it o @admin.it"><br>
+                <label for="femail">Email (@aldini.istruzioneer.it, @avbo.it, @admin.it o @bar.it):</label><br>
+                <input type="email" id="femail" name="email" required pattern=".+@(aldini\.istruzioneer\.it|avbo\.it|admin\.it|bar\.it)$" title="Inserisci un'email valida terminante con @aldini.istruzioneer.it, @avbo.it, @admin.it o @bar.it"><br>
             </div>
             <div class="form-group">
                 <label for="fpassword">Password:</label><br>
@@ -45,7 +45,7 @@
             <?php elseif($_GET['error'] == 'db'): ?>
                  <p style="color: red; text-align: center;">Errore del database.</p>
             <?php elseif($_GET['error'] == 'invalid_email'): ?>
-                 <p style="color: red; text-align: center;">Dominio email non valido. Utilizzare @aldini.istruzioneer.it, @avbo.it o @admin.it.</p>
+                 <p style="color: red; text-align: center;">Dominio email non valido. Utilizzare @aldini.istruzioneer.it, @avbo.it, @admin.it o @bar.it.</p>
             <?php endif; ?>
         <?php endif; ?>
         <p style="text-align: center; margin-top: 20px;">

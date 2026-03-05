@@ -62,10 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($tabella == 'SB_utente') {
         $username = $conn->real_escape_string($_POST['username']);
         $email    = $conn->real_escape_string($_POST['email']);
+        $ruolo    = $conn->real_escape_string($_POST['ruolo']);
         if ($azione == 'add') {
-            $sql = "INSERT INTO SB_utente (username, email) VALUES ('$username', '$email')";
+            $sql = "INSERT INTO SB_utente (username, email, ruolo, password_hash) VALUES ('$username', '$email', '$ruolo', 'hash_default')";
         } else {
-            $sql = "UPDATE SB_utente SET username='$username', email='$email' WHERE id_utente=" . intval($_POST['id']);
+            $sql = "UPDATE SB_utente SET username='$username', email='$email', ruolo='$ruolo' WHERE id_utente=" . intval($_POST['id']);
         }
     }
 
@@ -83,7 +84,7 @@ if ($tabella == 'SB_prodotto') {
                   FROM SB_prodotto p
                   LEFT JOIN SB_categoria c ON p.id_categoria = c.id_categoria";
 } elseif ($tabella == 'SB_utente') {
-    $query_sql = "SELECT id_utente, username, email FROM SB_utente";
+    $query_sql = "SELECT id_utente, username, email, ruolo FROM SB_utente";
 } else {
     $query_sql = "SELECT * FROM $tabella";
 }
@@ -125,8 +126,10 @@ if ($res_count) {
             <ul class="nav-links">
                 <li><a href="../../index.php">Home</a></li>
                 <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
-                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+                <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                     <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                <?php endif; ?>
+                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a class="active" href="admin.php">Admin</a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user_id"])): ?>
@@ -259,6 +262,13 @@ if ($res_count) {
 
                         <label class="form-label">Email</label>
                         <input type="email" name="email" id="input_email" class="form-control mb-2" required>
+
+                        <label class="form-label">Ruolo</label>
+                        <select name="ruolo" id="input_ruolo" class="form-select mb-2" required>
+                            <option value="customer">Customer</option>
+                            <option value="barista">Barista</option>
+                            <option value="admin">Admin</option>
+                        </select>
 
                     <?php endif; ?>
                 </div>

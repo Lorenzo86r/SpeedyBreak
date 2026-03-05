@@ -13,13 +13,19 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
     $newPassword = $_POST["password"];
 
     // Validate email domain
-    if (!preg_match('/.+@(aldini\.istruzioneer\.it|avbo\.it|admin\.it)$/', $email)) {
+    if (!preg_match('/.+@(aldini\.istruzioneer\.it|avbo\.it|admin\.it|bar\.it)$/', $email)) {
         header("Location: signup.php?error=invalid_email");
         exit();
     }
 
-    // Determine role
-    $ruolo = preg_match('/.+@admin\.it$/', $email) ? 'admin' : 'customer';
+    // Determine initial role based on email domain
+    if (preg_match('/.+@admin\.it$/', $email)) {
+        $ruolo = 'admin';
+    } elseif (preg_match('/.+@bar\.it$/', $email)) {
+        $ruolo = 'barista';
+    } else {
+        $ruolo = 'customer';
+    }
 
     // 1. Hash the password
     $hash = password_hash($newPassword, PASSWORD_DEFAULT);

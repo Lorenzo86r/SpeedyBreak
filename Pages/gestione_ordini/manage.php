@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-/* Solo admin può accedere */
-if (!isset($_SESSION["ruolo"]) || $_SESSION["ruolo"] !== 'admin') {
+/* Solo admin o barista può accedere */
+if (!isset($_SESSION["ruolo"]) || ($_SESSION["ruolo"] !== 'admin' && $_SESSION["ruolo"] !== 'barista')) {
     header("Location: ../../index.php");
     exit();
 }
@@ -51,8 +51,10 @@ if (!isset($_GET["id"])) {
                 <li><a class="active" href="../../index.php">Home</a></li>
                 <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
 
-                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+                <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                     <li><a href="manage.php">Gestione Ordini</a></li>
+                <?php endif; ?>
+                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a href="../amministrazione/admin.php">Admin</a></li>
                 <?php endif; ?>
 

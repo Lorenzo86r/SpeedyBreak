@@ -131,13 +131,36 @@ $campi = $query_tabella->fetch_fields();
 <head>
     <meta charset="UTF-8">
     <title>SpeedyBreak Admin</title>
+    <link rel="stylesheet" href="../../Assets/Styles/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 </head>
 
 <body class="bg-light">
 
-    <div class="container-fluid">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
+                <span>Speedy Break</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../../index.php">Home</a></li>
+                <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
+                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+                    <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                    <li><a class="active" href="admin.php">Admin</a></li>
+                <?php endif; ?>
+                <?php if(isset($_SESSION["user_id"])): ?>
+                    <li><a class="login-btn" style="background-color: #dc3545;" href="../auth/logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li><a class="login-btn" href="../auth/login.php">Login</a></li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container-fluid" style="margin-top: 20px;">
         <div class="row">
             <div class="col-md-2 bg-dark min-vh-100 p-3 text-white">
                 <h3 class="h5 mb-4 text-primary">SpeedyBreak</h3>

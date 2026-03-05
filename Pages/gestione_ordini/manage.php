@@ -216,7 +216,7 @@ if (!$ordine) {
         <label>Data ritiro:</label><br>
         <input type="datetime-local" name="data_ritiro"
             value="<?= $ordine["data_ritiro"] ? date('Y-m-d\TH:i', strtotime($ordine["data_ritiro"])) : '' ?>">
-        <!-- FIX: evita 1970-01-01 se NULL -->
+        <!-- FIX: evita 1970-01-01 se NULL  -->
         <br><br>
 
         <button type="submit" name="update">Salva Modifiche</button>

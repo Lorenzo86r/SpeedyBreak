@@ -10,13 +10,13 @@ VALUES (NOW(), 'In attesa', :metodo, :id_utente, :nota, :data_ritiro);
 SELECT LAST_INSERT_ID() AS id_ordine;
 
 -- Inserimento righe ordine (ripetere per ogni prodotto nel carrello)
-INSERT INTO SB_dettaglio_ordine (id_ordine, id_prodotto, quantità)
+INSERT INTO SB_dettaglio_ordine (id_ordine, id_prodotto, quantita)
 VALUES (:id_ordine, :id_prodotto, :quantita);
 
 -- Totale ordine
 SELECT
 	d.id_ordine,
-	SUM(d.quantità * p.prezzo) AS totale
+	SUM(d.quantita * p.prezzo) AS totale
 FROM SB_dettaglio_ordine d
 JOIN SB_prodotto p ON p.id_prodotto = d.id_prodotto
 WHERE d.id_ordine = :id_ordine
@@ -32,9 +32,9 @@ SELECT
 	o.nota,
 	p.id_prodotto,
 	p.nome AS prodotto,
-	d.quantità,
+	d.quantita,
 	p.prezzo,
-	(d.quantità * p.prezzo) AS subtotale
+	(d.quantita * p.prezzo) AS subtotale
 FROM SB_ordine o
 JOIN SB_dettaglio_ordine d ON d.id_ordine = o.id_ordine
 JOIN SB_prodotto p ON p.id_prodotto = d.id_prodotto
@@ -48,7 +48,7 @@ SELECT
 	o.stato,
 	o.metodo,
 	o.data_ritiro,
-	SUM(d.quantità * p.prezzo) AS totale
+	SUM(d.quantita * p.prezzo) AS totale
 FROM SB_ordine o
 JOIN SB_dettaglio_ordine d ON d.id_ordine = o.id_ordine
 JOIN SB_prodotto p ON p.id_prodotto = d.id_prodotto

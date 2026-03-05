@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Gestione Ordini</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Assets/Styles/style.css">
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-container">
         <div class="brand">
-            <img src="logo.png" alt="Logo Speedy Break">
+            <img src="Assets/Images/logo.png" alt="Logo Speedy Break">
             <span>Speedy Break</span>
         </div>
 

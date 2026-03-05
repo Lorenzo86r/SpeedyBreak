@@ -12,7 +12,7 @@
 <nav class="navbar">
     <div class="nav-container">
         <div class="brand">
-            <img src="logo.png" alt="Logo Speedy Break">
+            <img src="Assets/Images/logo.png" alt="Logo Speedy Break">
             <span>Speedy Break</span>
         </div>
 

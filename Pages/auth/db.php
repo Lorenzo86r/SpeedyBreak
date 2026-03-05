@@ -19,4 +19,5 @@ try {
     // In a real app, log this error instead of showing it
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
+
 ?>

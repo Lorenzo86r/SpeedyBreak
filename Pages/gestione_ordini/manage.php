@@ -2,7 +2,7 @@
 require_once "gestione-ordine.php";
 
 /* connessione al database  */
-$db   = 'my_saqlain';
+$db;
 $db = new Database("localhost", "my_saqlain", "root", "");
 $message = "";
 

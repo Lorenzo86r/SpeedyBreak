@@ -2,7 +2,8 @@
 require_once "gestione-ordine.php";
 
 /* connessione al database  */
-$db = new Database("localhost", "", "root", "");
+$db   = 'my_saqlain';
+$db = new Database("localhost", "my_saqlain", "root", "");
 $message = "";
 
 

@@ -105,7 +105,7 @@ class Database
         }
 
         // Recupero prodotti dell’ordine
-        $sql2 = "SELECT p.nome, p.prezzo, d.quantità
+        $sql2 = "SELECT p.nome, p.prezzo, d.quantita
                  FROM SB_dettaglio_ordine d
                  JOIN SB_prodotto p ON d.id_prodotto = p.id_prodotto
                  WHERE d.id_ordine = :id";

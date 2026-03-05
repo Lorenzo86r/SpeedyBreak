@@ -28,10 +28,32 @@ if (!isset($_GET["id"])) {
                 border-radius: 4px;
             }
         </style>
+        <link rel="stylesheet" href="Assets/Styles/style.css">
     </head>
     <body>
 
+    <nav class="navbar">
+        <div class="nav-container">
+    
+            <div class="brand">
+                <img src="Assets/Images/logo.png" alt="Logo Speedy Break">
+                <span>Speedy Break</span>
+            </div>
+    
+            <ul class="nav-links">
+                <li><a class="active" href="index.html">Home</a></li>
+                <li><a href="./Pages/creazione_ordine/ordine.html">Ordina</a></li>
+                <li><a href="./Pages/gestione_ordini/manage.php">Gestione Ordini</a></li>
+                <li><a href="./Pages/amministrazione/admin.php">Admin</a></li>
+                <li><a class="login-btn" href="./Pages/auth/login.php">Login</a></li>
+            </ul>
+    
+        </div>
+    </nav>
+
     <h2>Lista Ordini</h2>
+
+    
 
     <table>
         <tr>

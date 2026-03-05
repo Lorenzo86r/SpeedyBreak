@@ -1,17 +1,19 @@
 <?php
 session_start();
+
+/* Solo admin può accedere */
 if (!isset($_SESSION["ruolo"]) || $_SESSION["ruolo"] !== 'admin') {
     header("Location: ../../index.php");
     exit();
 }
+
 require_once "gestione-ordine.php";
 
-/* connessione al database  */
-$db;
+/* Connessione al database */
 $db = new Database("localhost", "my_saqlain", "root", "");
 $message = "";
 
-
+/* Se NON è stato passato un ID → mostra lista ordini */
 if (!isset($_GET["id"])) {
 
     $ordini = $db->getAllOrdini();
@@ -48,10 +50,12 @@ if (!isset($_GET["id"])) {
             <ul class="nav-links">
                 <li><a class="active" href="../../index.php">Home</a></li>
                 <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
+
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a href="manage.php">Gestione Ordini</a></li>
                     <li><a href="../amministrazione/admin.php">Admin</a></li>
                 <?php endif; ?>
+
                 <?php if(isset($_SESSION["user_id"])): ?>
                     <li><a class="login-btn" style="background-color: #dc3545;" href="../auth/logout.php">Logout</a></li>
                 <?php else: ?>
@@ -63,8 +67,6 @@ if (!isset($_GET["id"])) {
     </nav>
 
     <h2>Lista Ordini</h2>
-
-    
 
     <table>
         <tr>
@@ -97,18 +99,17 @@ if (!isset($_GET["id"])) {
     exit;
 }
 
-
-
+/* Se siamo qui → è stato passato un ID */
 $id = intval($_GET["id"]);
 
-/* update */
+/* UPDATE ordine */
 if (isset($_POST["update"])) {
 
     $data = [
         "stato" => $_POST["stato"],
-        "metodo" => $_POST["metodo"],
-        "nota" => $_POST["nota"],
-        "data_ritiro" => $_POST["data_ritiro"]
+        "metodo" => $_POST["metodo"] === "" ? null : $_POST["metodo"], // evita problemi con STRICT
+        "nota" => $_POST["nota"] === "" ? null : $_POST["nota"],
+        "data_ritiro" => $_POST["data_ritiro"] === "" ? null : $_POST["data_ritiro"]
     ];
 
     if ($db->updateOrdine($id, $data)) {
@@ -118,7 +119,7 @@ if (isset($_POST["update"])) {
     }
 }
 
-/* delete */
+/* DELETE ordine */
 if (isset($_POST["delete"])) {
     if ($db->deleteOrdine($id)) {
         header("Location: manage.php");
@@ -128,7 +129,7 @@ if (isset($_POST["delete"])) {
     }
 }
 
-/* cambio stato */
+/* Cambio stato rapido */
 if (isset($_POST["change_status"])) {
     if ($db->changeStatus($id, $_POST["new_status"])) {
         $message = "Stato aggiornato!";
@@ -137,7 +138,7 @@ if (isset($_POST["change_status"])) {
     }
 }
 
-/* recupero ordine */
+/* Recupero ordine */
 $ordine = $db->getOrdineById($id);
 
 if (!$ordine) {
@@ -185,7 +186,7 @@ if (!$ordine) {
         <tr>
             <td><?= $p["nome"]; ?></td>
             <td>€ <?= $p["prezzo"]; ?></td>
-            <td><?= $p["quantità"]; ?></td>
+            <td><?= $p["quantita"]; ?></td> <!-- FIX: nome colonna corretto -->
         </tr>
         <?php endforeach; ?>
     </table>
@@ -214,7 +215,8 @@ if (!$ordine) {
 
         <label>Data ritiro:</label><br>
         <input type="datetime-local" name="data_ritiro"
-            value="<?= date('Y-m-d\TH:i', strtotime($ordine["data_ritiro"])); ?>">
+            value="<?= $ordine["data_ritiro"] ? date('Y-m-d\TH:i', strtotime($ordine["data_ritiro"])) : '' ?>">
+        <!-- FIX: evita 1970-01-01 se NULL -->
         <br><br>
 
         <button type="submit" name="update">Salva Modifiche</button>

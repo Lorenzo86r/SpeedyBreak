@@ -16,11 +16,9 @@ CREATE TABLE IF NOT EXISTS `SB_categoria` (
       -- Utente
       CREATE TABLE IF NOT EXISTS `SB_utente` (
         `id_utente` INT NOT NULL AUTO_INCREMENT,
-          `nome` VARCHAR(100) NOT NULL,
-            `cognome` VARCHAR(100) NOT NULL,
+           `username` VARCHAR(100) UNIQUE,
               `email` VARCHAR(150) NOT NULL,
                 `password_hash` VARCHAR(255) NOT NULL,
-                  `telefono` VARCHAR(20) NULL DEFAULT NULL,
                     `ruolo` VARCHAR(50) NULL DEFAULT 'customer',
                       PRIMARY KEY (`id_utente`),
                         UNIQUE INDEX (`email` ASC) VISIBLE

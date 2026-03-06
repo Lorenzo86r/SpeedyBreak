@@ -62,7 +62,6 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
             }
             exit();
         } else {
-            // Log error in real app
             header("Location: signup.php?error=db");
             exit();
         }

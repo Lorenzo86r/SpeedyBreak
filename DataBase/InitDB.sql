@@ -1,7 +1,7 @@
 -- Disabilita FK durante l'inserimento
 SET FOREIGN_KEY_CHECKS = 0;
 
-USE `my_vignali`;
+USE `my_input789`;
 
 -- Categorie
 INSERT INTO `SB_categoria` (`id_categoria`, `descrizione`) VALUES
@@ -11,10 +11,10 @@ INSERT INTO `SB_categoria` (`id_categoria`, `descrizione`) VALUES
 (4, 'Dolci');
 
 -- Dati demo
-INSERT INTO `SB_utente` (`id_utente`, `nome`, `cognome`, `email`, `password_hash`, `telefono`, `ruolo`) VALUES
-(1, 'Mario', 'Rossi', 'mario.rossi@example.com', 'hash_segreto_123', '3331234567', 'customer'),
-(2, 'Luigi', 'Verdi', 'luigi.verdi@example.com', 'hash_segreto_456', '3339876543', 'customer'),
-(3, 'Admin', 'Sistema', 'admin@speedybreak.com', 'hash_admin_789', NULL, 'admin');
+INSERT INTO `SB_utente` (`id_utente`, `username`, `email`, `password_hash`, `ruolo`) VALUES
+(1, 'Mario', 'mario.rossi@example.com', 'hash_segreto_123','customer'),
+(2, 'Luigi','luigi.verdi@example.com', 'hash_segreto_456','customer'),
+(3, 'Admin', 'admin@speedybreak.com', 'hash_admin_789','admin');
 
 INSERT INTO `SB_prodotto` (`id_prodotto`, `nome`, `descrizione`, `prezzo`, `giacenza`, `id_categoria`) VALUES
 (1, 'Panino al Prosciutto', 'Panino classico con prosciutto cotto e formaggio', 4.50, 1, 1),

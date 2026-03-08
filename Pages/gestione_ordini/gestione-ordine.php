@@ -89,35 +89,43 @@ class Database
 
     // Recupera un ordine completo (ordine + utente + prodotti)
     function getOrdineById($id)
-    {
-        // Recupero ordine + utente
-        $sql = "SELECT o.*, u.nome, u.cognome, u.email
-                FROM SB_ordine o
-                JOIN SB_utente u ON o.id_utente = u.id_utente
-                WHERE o.id_ordine = :id";
+{
+    // Recupero ordine + utente
+    $sql = "SELECT 
+                o.*, 
+                u.username, 
+                u.email, 
+                u.ruolo
+            FROM SB_ordine o
+            JOIN SB_utente u ON o.id_utente = u.id_utente
+            WHERE o.id_ordine = :id";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([":id" => $id]);
-        $ordine = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([":id" => $id]);
+    $ordine = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$ordine) {
-            return null;
-        }
-
-        // Recupero prodotti dell’ordine
-        $sql2 = "SELECT p.nome, p.prezzo, d.quantita
-                 FROM SB_dettaglio_ordine d
-                 JOIN SB_prodotto p ON d.id_prodotto = p.id_prodotto
-                 WHERE d.id_ordine = :id";
-
-        $stmt2 = $this->conn->prepare($sql2);
-        $stmt2->execute([":id" => $id]);
-        $prodotti = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-
-        $ordine["prodotti"] = $prodotti;
-
-        return $ordine;
+    if (!$ordine) {
+        return null;
     }
+
+    // Recupero prodotti dell’ordine
+    $sql2 = "SELECT 
+                p.nome, 
+                p.prezzo, 
+                d.quantita
+             FROM SB_dettaglio_ordine d
+             JOIN SB_prodotto p ON d.id_prodotto = p.id_prodotto
+             WHERE d.id_ordine = :id";
+
+    $stmt2 = $this->conn->prepare($sql2);
+    $stmt2->execute([":id" => $id]);
+    $prodotti = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+    $ordine["prodotti"] = $prodotti;
+
+    return $ordine;
+}
+
 
     // Cambia lo stato di un ordine
     function changeStatus($id, $nuovoStato)

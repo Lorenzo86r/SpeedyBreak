@@ -109,7 +109,7 @@ if (isset($_POST["update"])) {
 
     $data = [
         "stato" => $_POST["stato"],
-        "metodo" => $_POST["metodo"] === "" ? null : $_POST["metodo"], // evita problemi con STRICT
+        "metodo" => $_POST["metodo"] === "" ? null : $_POST["metodo"],
         "nota" => $_POST["nota"] === "" ? null : $_POST["nota"],
         "data_ritiro" => $_POST["data_ritiro"] === "" ? null : $_POST["data_ritiro"]
     ];
@@ -171,8 +171,9 @@ if (!$ordine) {
 
 <div class="box">
     <h3>Cliente</h3>
-    <p><strong>Nome:</strong> <?= $ordine["nome"] . " " . $ordine["cognome"]; ?></p>
+    <p><strong>Username:</strong> <?= $ordine["username"]; ?></p>
     <p><strong>Email:</strong> <?= $ordine["email"]; ?></p>
+    <p><strong>Ruolo:</strong> <?= $ordine["ruolo"]; ?></p>
 </div>
 
 <div class="box">
@@ -188,7 +189,7 @@ if (!$ordine) {
         <tr>
             <td><?= $p["nome"]; ?></td>
             <td>€ <?= $p["prezzo"]; ?></td>
-            <td><?= $p["quantita"]; ?></td> <!-- FIX: nome colonna corretto -->
+            <td><?= $p["quantita"]; ?></td>
         </tr>
         <?php endforeach; ?>
     </table>
@@ -218,7 +219,6 @@ if (!$ordine) {
         <label>Data ritiro:</label><br>
         <input type="datetime-local" name="data_ritiro"
             value="<?= $ordine["data_ritiro"] ? date('Y-m-d\TH:i', strtotime($ordine["data_ritiro"])) : '' ?>">
-        <!-- FIX: evita 1970-01-01 se NULL  -->
         <br><br>
 
         <button type="submit" name="update">Salva Modifiche</button>
@@ -247,3 +247,4 @@ if (!$ordine) {
 
 </body>
 </html>
+

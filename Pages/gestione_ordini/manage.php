@@ -1,250 +1,243 @@
 <?php
 session_start();
 
-/* Solo admin o barista può accedere */
-if (!isset($_SESSION["ruolo"]) || ($_SESSION["ruolo"] !== 'admin' && $_SESSION["ruolo"] !== 'barista')) {
+/* ---------------------------------------------------------
+   ACCESSO CONSENTITO SOLO AD ADMIN E BARISTA
+--------------------------------------------------------- */
+if (!isset($_SESSION["ruolo"]) || 
+   ($_SESSION["ruolo"] !== 'admin' && $_SESSION["ruolo"] !== 'barista')) 
+{
     header("Location: ../../index.php");
     exit();
 }
 
 require_once "gestione-ordine.php";
 
-/* Connessione al database */
+/* ---------------------------------------------------------
+   CONNESSIONE AL DATABASE
+--------------------------------------------------------- */
 $db = new Database("localhost", "my_saqlain", "root", "");
-$message = "";
 
-/* Se NON è stato passato un ID → mostra lista ordini */
-if (!isset($_GET["id"])) {
+/* Otteniamo tutte le righe degli ordini attivi (una riga per prodotto) */
+$righe = $db->getAllOrdiniAttivi();
 
-    $ordini = $db->getAllOrdini();
-    ?>
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Lista Ordini</title>
-        <style>
-            body { font-family: Arial; margin: 40px; }
-            table { border-collapse: collapse; width: 100%; }
-            th, td { border: 1px solid #ddd; padding: 8px; }
-            th { background-color: #f2f2f2; }
-            a.button {
-                padding: 6px 10px;
-                background: #007bff;
-                color: white;
-                text-decoration: none;
-                border-radius: 4px;
-            }
-        </style>
-        <link rel="stylesheet" href="../../Assets/Styles/style.css">
-    </head>
-    <body>
+/* ---------------------------------------------------------
+   COSTRUZIONE STRUTTURA GERARCHICA:
+   utenti[id_utente] → [
+        username, email,
+        ordini[id_ordine] → [
+            data_ordine, data_ritiro, stato, 
+            prodotti[] → [nome, quantita]
+        ]
+   ]
+--------------------------------------------------------- */
 
-    <nav class="navbar">
-        <div class="nav-container">
-    
-            <div class="brand">
-                <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
-                <span>Speedy Break</span>
-            </div>
-    
-            <ul class="nav-links">
-                <li><a class="active" href="../../index.php">Home</a></li>
-                <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
+$utenti = [];
 
-                <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
-                    <li><a href="manage.php">Gestione Ordini</a></li>
-                <?php endif; ?>
-                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
-                    <li><a href="../amministrazione/admin.php">Admin</a></li>
-                <?php endif; ?>
+foreach ($righe as $r) {
 
-                <?php if(isset($_SESSION["user_id"])): ?>
-                    <li><a class="login-btn" style="background-color: #dc3545;" href="../auth/logout.php">Logout</a></li>
-                <?php else: ?>
-                    <li><a class="login-btn" href="../auth/login.php">Login</a></li>
-                <?php endif; ?>
-            </ul>
-    
-        </div>
-    </nav>
+    $uid = $r["id_utente"];   // ID utente
+    $oid = $r["id_ordine"];   // ID ordine
 
-    <h2>Lista Ordini</h2>
+    /* Se l'utente non è ancora stato inserito, lo creiamo */
+    if (!isset($utenti[$uid])) {
+        $utenti[$uid] = [
+            "username" => $r["username"],
+            "email"    => $r["email"],
+            "ordini"   => []
+        ];
+    }
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Data</th>
-            <th>Stato</th>
-            <th>Metodo</th>
-            <th>Azione</th>
-        </tr>
+    /* Se l'ordine non è ancora stato inserito per questo utente, lo creiamo */
+    if (!isset($utenti[$uid]["ordini"][$oid])) {
+        $utenti[$uid]["ordini"][$oid] = [
+            "id_ordine"   => $oid,
+            "data_ordine" => $r["data_ordine"],
+            "data_ritiro" => $r["data_ritiro"],
+            "stato"       => $r["stato"],
+            "prodotti"    => []
+        ];
+    }
 
-        <?php foreach ($ordini as $ordine): ?>
-            <tr>
-                <td><?= $ordine["id_ordine"] ?></td>
-                <td><?= $ordine["data_ordine"] ?></td>
-                <td><?= $ordine["stato"] ?></td>
-                <td><?= $ordine["metodo"] ?></td>
-                <td>
-                    <a class="button" href="manage.php?id=<?= $ordine["id_ordine"] ?>">
-                        Gestisci
-                    </a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-
-    </table>
-
-    </body>
-    </html>
-    <?php
-    exit;
-}
-
-/* Se siamo qui → è stato passato un ID */
-$id = intval($_GET["id"]);
-
-/* UPDATE ordine */
-if (isset($_POST["update"])) {
-
-    $data = [
-        "stato" => $_POST["stato"],
-        "metodo" => $_POST["metodo"] === "" ? null : $_POST["metodo"],
-        "nota" => $_POST["nota"] === "" ? null : $_POST["nota"],
-        "data_ritiro" => $_POST["data_ritiro"] === "" ? null : $_POST["data_ritiro"]
+    /* Aggiungiamo il prodotto all'ordine */
+    $utenti[$uid]["ordini"][$oid]["prodotti"][] = [
+        "nome"     => $r["nome"],
+        "quantita" => $r["quantita"]
     ];
-
-    if ($db->updateOrdine($id, $data)) {
-        $message = "Ordine aggiornato con successo!";
-    } else {
-        $message = "Errore durante l'aggiornamento.";
-    }
-}
-
-/* DELETE ordine */
-if (isset($_POST["delete"])) {
-    if ($db->deleteOrdine($id)) {
-        header("Location: manage.php");
-        exit;
-    } else {
-        $message = "Errore durante l'eliminazione.";
-    }
-}
-
-/* Cambio stato rapido */
-if (isset($_POST["change_status"])) {
-    if ($db->changeStatus($id, $_POST["new_status"])) {
-        $message = "Stato aggiornato!";
-    } else {
-        $message = "Errore nel cambio stato.";
-    }
-}
-
-/* Recupero ordine */
-$ordine = $db->getOrdineById($id);
-
-if (!$ordine) {
-    die("Ordine non trovato.");
 }
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Gestione Ordine</title>
+    <title>Gestione Ordini</title>
+    <link rel="stylesheet" href="../../Assets/Styles/style.css">
+
     <style>
-        body { font-family: Arial; margin: 40px; }
-        .box { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        button { padding: 8px 12px; margin: 5px 0; }
-        .msg { color: green; font-weight: bold; }
+        body {
+            font-family: Arial;
+            margin: 30px;
+            background: #fafafa;
+        }
+
+        /* CARD UTENTE */
+        .user-card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            margin-bottom: 35px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .user-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* BLOCCO ORDINE */
+        .order-block {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .order-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .order-info {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        /* PRODOTTI */
+        .product-item {
+            font-size: 16px;
+            margin-left: 15px;
+        }
+
+        /* STATO ORDINE */
+        .status {
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .stato-In\ preparazione { background: #ff9800; }
+        .stato-Pronto          { background: #28a745; }
+        .stato-In\ attesa      { background: #007bff; }
+
+        /* PULSANTE GESTIONE */
+        .button-manage {
+            padding: 10px 14px;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .button-manage:hover {
+            background: #0056b3;
+        }
     </style>
 </head>
+
 <body>
 
-<h2>Gestione Ordine #<?= $ordine["id_ordine"]; ?></h2>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
 
-<?php if ($message): ?>
-    <p class="msg"><?= $message; ?></p>
-<?php endif; ?>
+            <div class="brand">
+                <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
+                <span>Speedy Break</span>
+            </div>
 
-<div class="box">
-    <h3>Cliente</h3>
-    <p><strong>Username:</strong> <?= $ordine["username"]; ?></p>
-    <p><strong>Email:</strong> <?= $ordine["email"]; ?></p>
-    <p><strong>Ruolo:</strong> <?= $ordine["ruolo"]; ?></p>
-</div>
+            <ul class="nav-links">
+                <li><a class="active" href="../../index.php">Home</a></li>
+                <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
+                <li><a href="manage.php">Gestione Ordini</a></li>
+                <li><a href="storico_ordini.php">Storico</a></li>
+                <li><a class="login-btn" style="background-color: #dc3545;" href="../auth/logout.php">Logout</a></li>
+            </ul>
 
-<div class="box">
-    <h3>Prodotti Ordinati</h3>
-    <table>
-        <tr>
-            <th>Prodotto</th>
-            <th>Prezzo</th>
-            <th>Quantità</th>
-        </tr>
+        </div>
+    </nav>
 
-        <?php foreach ($ordine["prodotti"] as $p): ?>
-        <tr>
-            <td><?= $p["nome"]; ?></td>
-            <td>€ <?= $p["prezzo"]; ?></td>
-            <td><?= $p["quantita"]; ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
-</div>
+    <h2 style="margin-bottom:20px;">Ordini Attivi</h2>
 
-<div class="box">
-    <h3>Modifica Ordine</h3>
+    <!-- CARD PER OGNI UTENTE -->
+    <?php foreach ($utenti as $utente): ?>
 
-    <form method="POST">
+        <div class="user-card">
 
-        <label>Stato:</label><br>
-        <select name="stato">
-            <option <?= $ordine["stato"]=="In Preparazione"?"selected":""; ?>>In Preparazione</option>
-            <option <?= $ordine["stato"]=="Completato"?"selected":""; ?>>Completato</option>
-            <option <?= $ordine["stato"]=="Annullato"?"selected":""; ?>>Annullato</option>
-        </select>
-        <br><br>
+            <!-- INTESTAZIONE UTENTE -->
+            <div class="user-header">
+                <?= $utente["username"] ?>
+                <span style="font-size:14px; color:#777;">
+                    (<?= $utente["email"] ?>)
+                </span>
+            </div>
 
-        <label>Metodo di pagamento:</label><br>
-        <input type="text" name="metodo" value="<?= $ordine["metodo"]; ?>">
-        <br><br>
+            <!-- ORDINI DELL'UTENTE -->
+            <?php foreach ($utente["ordini"] as $ordine): ?>
 
-        <label>Nota:</label><br>
-        <textarea name="nota"><?= $ordine["nota"]; ?></textarea>
-        <br><br>
+                <div class="order-block">
 
-        <label>Data ritiro:</label><br>
-        <input type="datetime-local" name="data_ritiro"
-            value="<?= $ordine["data_ritiro"] ? date('Y-m-d\TH:i', strtotime($ordine["data_ritiro"])) : '' ?>">
-        <br><br>
+                    <!-- TITOLO ORDINE -->
+                    <div class="order-title">
+                        Ordine #<?= $ordine["id_ordine"] ?>
+                    </div>
 
-        <button type="submit" name="update">Salva Modifiche</button>
-        <button type="submit" name="delete" onclick="return confirm('Sei sicuro di eliminare?')">
-            Elimina Ordine
-        </button>
+                    <!-- STATO ORDINE -->
+                    <div class="status stato-<?= str_replace(' ', '\ ', $ordine["stato"]) ?>">
+                        <?= $ordine["stato"] ?>
+                    </div>
 
-    </form>
-</div>
+                    <!-- INFO ORDINE -->
+                    <div class="order-info">
+                        Ordinato il: <strong><?= $ordine["data_ordine"] ?></strong><br>
+                        Ritiro previsto: <strong><?= $ordine["data_ritiro"] ?></strong><br>                       
+                    </div>
 
-<div class="box">
-    <h3>Cambio Stato Rapido</h3>
+                    <!-- PRODOTTI -->
+                    <div>
+                        <strong>Prodotti:</strong><br>
 
-    <form method="POST">
-        <select name="new_status">
-            <option>In Preparazione</option>
-            <option>Completato</option>
-            <option>Annullato</option>
-        </select>
+                        <?php foreach ($ordine["prodotti"] as $p): ?>
+                            <div class="product-item">
+                                • <?= $p["nome"] ?> × <?= $p["quantita"] ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
 
-        <button type="submit" name="change_status">Aggiorna Stato</button>
-    </form>
-</div>
+                    <br>
 
-<p><a href="manage.php">← Torna alla lista ordini</a></p>
+                    <!-- PULSANTE GESTIONE -->
+                    <a class="button-manage" href="update.php?id=<?= $ordine["id_ordine"] ?>">
+                        Gestisci Ordine
+                    </a>
+
+                </div>
+
+            <?php endforeach; ?>
+
+        </div>
+
+    <?php endforeach; ?>
 
 </body>
 </html>
+
 

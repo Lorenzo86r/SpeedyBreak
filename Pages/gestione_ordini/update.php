@@ -1,7 +1,7 @@
 <?php
 
 require_once "gestione-ordine.php";
-$db = new Database("localhost", "my_arevalo", "arevalo", "");
+$db = new Database("localhost", "my_saqlain", "root", "");
 $message = "";
 
 /* Se siamo qui → è stato passato un ID */

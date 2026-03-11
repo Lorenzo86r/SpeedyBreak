@@ -36,6 +36,11 @@ $result = $conn->query($sql);
                 color: #2c3e50;
             }
         </style>
+
+        <script>
+            // passaggio stato login al js
+            const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
+        </script>
     </head>
     <body>
     <ul class="nav-links">

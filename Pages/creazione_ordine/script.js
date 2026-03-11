@@ -52,11 +52,17 @@ ${item.name} x${item.quantity} - €${(item.price*item.quantity).toFixed(2)}
 
 
 function sendOrder(){
+    // controllo accesso utente
+    if (!isLoggedIn) {
+        alert("Devi effettuare il login per ordinare!");
+        window.location.href = "../auth/login.php"; // reindirizza al login
+        return;
+    }
 
+    // carrello vuoto
     if(cart.length === 0){
         alert("Carrello vuoto");
         return;
-
     }
 
     fetch("ordine.php",{

@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+// controllo se l'utente ha una sessione attiva
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(403); // Accesso negato
+    echo "Errore: Devi essere loggato per ordinare.";
+    exit;
+}
 
 $host="localhost";
 $user="root";

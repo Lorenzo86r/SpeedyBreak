@@ -1,15 +1,22 @@
 let cart = [];
 
-function addToCart(name, price){
-    const item = cart.find(p => p.name === name);
-    if(item && item.quantity < 5) {
-        item.quantity++;
+function addToCart(name, price) {
+    const item = cart.find(function (p) {
+        return p.name === name;
+    });
+
+    if (item) {
+        if (item.quantity < 5) item.quantity++;
+        else {
+            alert("Puoi aggiungere al massimo 5 pezzi per articolo");
+            return;
+        }
     }
     else {
         cart.push({
-            name:name,
-            price:price,
-            quantity:1
+            name: name,
+            price: price,
+            quantity: 1
         });
     }
 

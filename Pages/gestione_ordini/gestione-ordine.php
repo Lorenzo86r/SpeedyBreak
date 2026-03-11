@@ -1,13 +1,9 @@
-
 <?php
 
 class Database
 {
     private $conn;
-    private $connected = false;
-    private $msg = "";
 
-    // Costruttore: connessione al DB
     function __construct($servername, $dbname, $username, $password)
     {
         try {
@@ -17,13 +13,11 @@ class Database
                 $password
             );
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->connected = true;
         } catch (PDOException $e) {
-            $this->msg = $e->getMessage();
+            die("Errore DB: " . $e->getMessage());
         }
     }
 
-    // Metodo interno per query SELECT
     private function get_Result_Set($sql, $params = [], $fetch = PDO::FETCH_ASSOC)
     {
         $stmt = $this->conn->prepare($sql);
@@ -31,11 +25,79 @@ class Database
         return $stmt->fetchAll($fetch);
     }
 
-    // ------------------------------
-    // FUNZIONI RICHIESTE
-    // ------------------------------
+    function getAllOrdiniAttivi()
+    {
+        $sql = "SELECT 
+    				a.id_utente,
+    				c.id_ordine,
+    				a.username,
+    				a.email,
+    				b.nome,
+    				c.quantita,
+    				d.data_ordine,
+    				d.data_ritiro
+                    
+				FROM SB_utente AS a
+				JOIN SB_ordine AS d ON a.id_utente = d.id_utente
+				JOIN SB_dettaglio_ordine AS c ON c.id_ordine = d.id_ordine
+				JOIN SB_prodotto AS b ON c.id_prodotto = b.id_prodotto
+				JOIN SB_categoria AS e ON b.id_categoria = e.id_categoria
+				WHERE d.stato != 'Completato'
+				ORDER BY d.data_ordine DESC, a.id_utente";
+                
+        return $this->get_Result_Set($sql);
+    }
 
-    // Aggiorna un ordine
+    function getStoricoOrdini()
+    {
+        $sql = "SELECT 
+    				a.id_utente,
+    				c.id_ordine,
+    				a.username,
+    				a.email,
+    				b.nome,
+    				c.quantita,
+    				d.data_ordine,
+    				d.data_ritiro,
+                    d.metodo,
+                    d.nota
+                    
+				FROM SB_utente AS a
+				JOIN SB_ordine AS d ON a.id_utente = d.id_utente
+				JOIN SB_dettaglio_ordine AS c ON c.id_ordine = d.id_ordine
+				JOIN SB_prodotto AS b ON c.id_prodotto = b.id_prodotto
+				JOIN SB_categoria AS e ON b.id_categoria = e.id_categoria
+				WHERE d.stato = 'Completato'
+				ORDER BY d.data_ordine DESC, a.id_utente";
+                
+        return $this->get_Result_Set($sql);
+    }
+
+    function getOrdineById($id)
+    {
+        $sql = "SELECT o.*, u.username, u.email, u.ruolo
+                FROM SB_ordine o
+                JOIN SB_utente u ON o.id_utente = u.id_utente
+                WHERE o.id_ordine = :id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([":id" => $id]);
+        $ordine = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$ordine) return null;
+
+        $sql2 = "SELECT p.nome, p.prezzo, d.quantita
+                 FROM SB_dettaglio_ordine d
+                 JOIN SB_prodotto p ON d.id_prodotto = p.id_prodotto
+                 WHERE d.id_ordine = :id";
+
+        $stmt2 = $this->conn->prepare($sql2);
+        $stmt2->execute([":id" => $id]);
+        $ordine["prodotti"] = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+        return $ordine;
+    }
+
     function updateOrdine($id, $data)
     {
         $sql = "UPDATE SB_ordine 
@@ -46,7 +108,6 @@ class Database
                 WHERE id_ordine = :id";
 
         $stmt = $this->conn->prepare($sql);
-
         return $stmt->execute([
             ":stato" => $data["stato"],
             ":metodo" => $data["metodo"],
@@ -56,21 +117,16 @@ class Database
         ]);
     }
 
-    // Elimina un ordine (prima dettagli, poi ordine)
     function deleteOrdine($id)
     {
         try {
             $this->conn->beginTransaction();
 
-            // Elimina dettagli
-            $sql1 = "DELETE FROM SB_dettaglio_ordine WHERE id_ordine = :id";
-            $stmt1 = $this->conn->prepare($sql1);
-            $stmt1->execute([":id" => $id]);
+            $this->conn->prepare("DELETE FROM SB_dettaglio_ordine WHERE id_ordine = :id")
+                       ->execute([":id" => $id]);
 
-            // Elimina ordine
-            $sql2 = "DELETE FROM SB_ordine WHERE id_ordine = :id";
-            $stmt2 = $this->conn->prepare($sql2);
-            $stmt2->execute([":id" => $id]);
+            $this->conn->prepare("DELETE FROM SB_ordine WHERE id_ordine = :id")
+                       ->execute([":id" => $id]);
 
             $this->conn->commit();
             return true;
@@ -81,63 +137,11 @@ class Database
         }
     }
 
-    function getAllOrdini()
-    {
-        $sql = "SELECT * FROM SB_ordine ORDER BY data_ordine DESC";
-        return $this->get_Result_Set($sql);
-    }
-
-    // Recupera un ordine completo (ordine + utente + prodotti)
-    function getOrdineById($id)
-{
-    // Recupero ordine + utente
-    $sql = "SELECT 
-                o.*, 
-                u.username, 
-                u.email, 
-                u.ruolo
-            FROM SB_ordine o
-            JOIN SB_utente u ON o.id_utente = u.id_utente
-            WHERE o.id_ordine = :id";
-
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([":id" => $id]);
-    $ordine = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$ordine) {
-        return null;
-    }
-
-    // Recupero prodotti dell’ordine
-    $sql2 = "SELECT 
-                p.nome, 
-                p.prezzo, 
-                d.quantita
-             FROM SB_dettaglio_ordine d
-             JOIN SB_prodotto p ON d.id_prodotto = p.id_prodotto
-             WHERE d.id_ordine = :id";
-
-    $stmt2 = $this->conn->prepare($sql2);
-    $stmt2->execute([":id" => $id]);
-    $prodotti = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-
-    $ordine["prodotti"] = $prodotti;
-
-    return $ordine;
-}
-
-
-    // Cambia lo stato di un ordine
     function changeStatus($id, $nuovoStato)
     {
         $sql = "UPDATE SB_ordine SET stato = :stato WHERE id_ordine = :id";
-
         $stmt = $this->conn->prepare($sql);
-
-        return $stmt->execute([
-            ":stato" => $nuovoStato,
-            ":id" => $id
-        ]);
+        return $stmt->execute([":stato" => $nuovoStato, ":id" => $id]);
     }
 }
 

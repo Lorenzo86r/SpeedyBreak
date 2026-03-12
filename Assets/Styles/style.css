@@ -590,3 +590,109 @@ table.table tbody tr {
 table.table tbody tr:hover {
     background-color: var(--color-surface-hover);
 }
+
+/* ==========================================================================
+   CART UI COMPONENTS
+   ========================================================================== */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-border);
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.cart-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cart-item-name {
+    font-weight: 500;
+    color: var(--color-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.cart-item-price {
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+}
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: var(--space-4);
+}
+
+.qty-control {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-surface-hover);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.qty-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background-color var(--transition-fast);
+}
+
+.qty-btn:hover:not(:disabled) {
+    background-color: var(--color-border);
+}
+
+.qty-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.qty-value {
+    width: 24px;
+    text-align: center;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    pointer-events: none;
+}
+
+.cart-item-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-text-light);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.cart-item-remove:hover {
+    background-color: #fee2e2;
+    color: var(--color-error);
+}
+
+.empty-cart-msg {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--space-8) 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+}

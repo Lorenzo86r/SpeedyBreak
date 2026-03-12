@@ -27,6 +27,7 @@ if (isset($_POST["update"])) {
 
 /* DELETE ordine */
 if (isset($_POST["delete"])) {
+
     if ($db->deleteOrdine($id)) {
         header("Location: manage.php");
         exit;
@@ -37,6 +38,7 @@ if (isset($_POST["delete"])) {
 
 /* Cambio stato rapido */
 if (isset($_POST["change_status"])) {
+
     if ($db->changeStatus($id, $_POST["new_status"])) {
         $message = "Stato aggiornato!";
     } else {
@@ -56,6 +58,7 @@ if (!$ordine) {
 <!DOCTYPE html>
 <html lang="it">
 <head>
+
     <meta charset="UTF-8">
     <title>Gestione Ordine - SpeedyBreak</title>
     <link rel="stylesheet" href="../../Assets/Styles/style.css">

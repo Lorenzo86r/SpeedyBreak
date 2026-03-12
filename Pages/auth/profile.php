@@ -14,18 +14,18 @@
   <body>
     <!-- Nav -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="brand">
+        <div class="nav-container container">
+            <a href="../../index.php" class="brand">
                 <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
                 <span>Speedy Break</span>
-            </div>
+            </a>
             <ul class="nav-links">
-                <li><a href="../../index.php">Home</a></li>
+                <li><a class="nav-item" href="../../index.php">Home</a></li>
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
-                    <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                    <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
                 <?php endif; ?>
                 <li>
-                    <a class="active login-icon" href="profile.php" title="Area Personale">
+                    <a class="nav-icon-btn active" href="profile.php" title="Area Personale">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
@@ -40,7 +40,7 @@
       <div class="auth-container">
         <div class="auth-card animate-fade-in">
           <?php if(isset($_SESSION["user_id"])): ?>
-              <header class="auth-header" style="background: linear-gradient(135deg, var(--color-primary), #2563eb); border-radius: var(--radius-lg); padding: var(--space-8) var(--space-6); text-align: center; color: white; margin-bottom: var(--space-6); position: relative; overflow: hidden; box-shadow: var(--shadow-md);">
+              <header class="auth-header" style="background: linear-gradient(135deg, var(--color-primary), #f59e0b); border-radius: var(--radius-lg); padding: var(--space-8) var(--space-6); text-align: center; color: white; margin-bottom: var(--space-6); position: relative; overflow: hidden; box-shadow: var(--shadow-md);">
                   <!-- Decorative circle for pattern -->
                   <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
                   <div style="position: absolute; bottom: -50px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>

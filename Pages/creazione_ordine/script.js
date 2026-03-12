@@ -81,13 +81,10 @@ function sendOrder(){
             alert("Ordine inviato!");
             cart = [];
             updateCart();
-
         })
 
         .catch(err=>{
             alert("Errore invio ordine");
             console.error(err);
-
         });
-
 }

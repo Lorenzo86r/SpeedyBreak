@@ -20,7 +20,6 @@
     
             <ul class="nav-links">
                 <li><a class="nav-item active" href="index.php">Home</a></li>
-                <li><a class="nav-item" href="https://saqlain.altervista.org/SpeedyBreak/">Pagina Saqlain</a></li>
                 <li><a class="nav-item" href="Pages/creazione_ordine/index_order.php">Ordina</a></li>
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                     <li><a class="nav-item" href="Pages/gestione_ordini/manage.php">Gestione Ordini</a></li>

@@ -24,11 +24,17 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
     // All valid organizational emails get the 'customer' role
     $ruolo = 'customer';
 
+    // Extract nome and cognome from email (name.surname@domain)
+    $local_part = substr($email, 0, strpos($email, '@'));
+    $parts = explode('.', $local_part);
+    $nome = ucfirst(strtolower($parts[0] ?? ''));
+    $cognome = ucfirst(strtolower($parts[1] ?? ''));
+
     // 1. Hash the password
     $hash = password_hash($newPassword, PASSWORD_DEFAULT);
 
     // 2. Prepare the SQL statement
-    $sql = "INSERT INTO SB_utente (username, email, password_hash, ruolo) VALUES (:username, :email, :pword, :ruolo)";
+    $sql = "INSERT INTO SB_utente (username, email, password_hash, ruolo, nome, cognome) VALUES (:username, :email, :pword, :ruolo, :nome, :cognome)";
     
     try {
         $stmt = $pdo->prepare($sql);
@@ -37,7 +43,9 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
             'username' => $username,
             'email' => $email,
             'pword' => $hash,
-            'ruolo' => $ruolo
+            'ruolo' => $ruolo,
+            'nome' => $nome,
+            'cognome' => $cognome
         ]);
         
         // Auto-login after successful registration
@@ -45,6 +53,8 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
         $_SESSION["username"] = $username;
         $_SESSION["email"] = $email;
         $_SESSION["ruolo"] = $ruolo;
+        $_SESSION["nome"] = $nome;
+        $_SESSION["cognome"] = $cognome;
         
         // Redirect to homepage
         header("Location: ../../index.php");

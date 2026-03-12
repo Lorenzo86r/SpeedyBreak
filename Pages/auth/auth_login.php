@@ -6,7 +6,7 @@ if(isset($_POST["email"]) && isset($_POST["password"])){
     $login = trim($_POST["email"]);
     $password = $_POST["password"];
 
-    $sql = "SELECT id_utente, username, email, password_hash, ruolo FROM SB_utente WHERE email = :email OR username = :username";
+    $sql = "SELECT id_utente, username, email, password_hash, ruolo, nome, cognome FROM SB_utente WHERE email = :email OR username = :username";
     try {
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['email' => $login, 'username' => $login]);
@@ -18,6 +18,8 @@ if(isset($_POST["email"]) && isset($_POST["password"])){
             $_SESSION["username"] = $user['username'];
             $_SESSION["email"] = $user['email'];
             $_SESSION["ruolo"] = $user['ruolo'];
+            $_SESSION["nome"] = $user['nome'] ?? '';
+            $_SESSION["cognome"] = $user['cognome'] ?? '';
             
             header("Location: ../../index.php");
             exit();

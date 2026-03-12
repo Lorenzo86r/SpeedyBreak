@@ -20,18 +20,18 @@ if (!isset($_SESSION["user_id"])) {
   <body>
     <!-- Nav -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="brand">
+        <div class="nav-container container">
+            <a href="../../index.php" class="brand">
                 <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
                 <span>Speedy Break</span>
-            </div>
+            </a>
             <ul class="nav-links">
-                <li><a href="../../index.php">Home</a></li>
+                <li><a class="nav-item" href="../../index.php">Home</a></li>
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
-                    <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                    <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
                 <?php endif; ?>
                 <li>
-                    <a class="active login-icon" href="profile.php" title="Area Personale">
+                    <a class="nav-icon-btn active" href="profile.php" title="Area Personale">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>

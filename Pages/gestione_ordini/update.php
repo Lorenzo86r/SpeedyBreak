@@ -71,21 +71,36 @@ if (!$ordine) {
             <ul class="nav-links">
                 <li><a class="nav-item" href="../../index.php">Home</a></li>
                 <li><a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a></li>
-                <li><a class="nav-item active" href="manage.php">Gestione Ordini</a></li>
-                <li><a class="nav-item" href="storico_ordini.php">Storico</a></li>
+                <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
+                    <li><a class="nav-item active" href="manage.php">Gestione Ordini</a></li>
+                    <li><a class="nav-item" href="storico_ordini.php">Storico</a></li>
+                <?php endif; ?>
+                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+                    <li><a class="nav-item" href="../amministrazione/admin.php">Admin</a></li>
+                <?php endif; ?>
                 <li>
-                    <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                    </a>
+                    <?php if(isset($_SESSION["user_id"])): ?>
+                        <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </a>
+                    <?php else: ?>
+                        <a class="nav-icon-btn" href="../auth/login.php" title="Login">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                        </a>
+                    <?php endif; ?>
                 </li>
             </ul>
         </div>
     </nav>
 
-    <main class="main-content container-md">
+    <main class="main-content container-md" style="margin: 0 auto;">
         <div class="flex justify-between items-center mb-6">
             <h2 style="font-size: var(--font-size-2xl);">Gestione Ordine #<?= htmlspecialchars($ordine["id_ordine"]) ?></h2>
             <a href="manage.php" class="btn btn-secondary">← Torna alla lista ordini</a>

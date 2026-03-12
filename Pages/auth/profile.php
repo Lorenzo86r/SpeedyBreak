@@ -14,18 +14,18 @@
   <body>
     <!-- Nav -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="brand">
+        <div class="nav-container container">
+            <a href="../../index.php" class="brand">
                 <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
                 <span>Speedy Break</span>
-            </div>
+            </a>
             <ul class="nav-links">
-                <li><a href="../../index.php">Home</a></li>
+                <li><a class="nav-item" href="../../index.php">Home</a></li>
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
-                    <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                    <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
                 <?php endif; ?>
                 <li>
-                    <a class="active login-icon" href="profile.php" title="Area Personale">
+                    <a class="nav-icon-btn active" href="profile.php" title="Area Personale">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
@@ -39,15 +39,25 @@
     <div class="main-content flex justify-center items-center">
       <div class="auth-container">
         <div class="auth-card animate-fade-in">
-          <header class="auth-header">
-              <h1>Area Personale</h1>
-          </header>
-          
           <?php if(isset($_SESSION["user_id"])): ?>
-              <div class="text-center mb-6">
-                  <h2 style="font-size: var(--font-size-2xl); color: var(--color-secondary); margin-bottom: var(--space-2);">Bentornato, <?php echo htmlspecialchars($_SESSION['username'] ?? 'Utente'); ?>!</h2>
-                  <p style="color: var(--color-text-muted);">Gestisci il tuo profilo e l'accesso al tuo account.</p>
-              </div>
+              <header class="auth-header" style="background: linear-gradient(135deg, var(--color-primary), #f59e0b); border-radius: var(--radius-lg); padding: var(--space-8) var(--space-6); text-align: center; color: white; margin-bottom: var(--space-6); position: relative; overflow: hidden; box-shadow: var(--shadow-md);">
+                  <!-- Decorative circle for pattern -->
+                  <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                  <div style="position: absolute; bottom: -50px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                  
+                  <?php 
+                     $username = $_SESSION['username'] ?? 'Utente';
+                     $initial = strtoupper(substr($username, 0, 1)); 
+                  ?>
+                  
+                  <div style="position: relative; z-index: 1;">
+                      <div style="width: 80px; height: 80px; background: white; color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto var(--space-4) auto; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+                          <?php echo $initial; ?>
+                      </div>
+                      <h2 style="color: white; font-size: var(--font-size-2xl); margin-bottom: var(--space-1); letter-spacing: -0.01em;">Bentornato, <?php echo htmlspecialchars($username); ?>!</h2>
+                      <p style="opacity: 0.85; margin: 0; font-size: var(--font-size-sm);">Gestisci il tuo profilo e le impostazioni.</p>
+                  </div>
+              </header>
               
               <?php if(isset($_GET['msg']) && $_GET['msg'] == 'pwd_success'): ?>
                   <div class="alert alert-success mb-6 justify-center">
@@ -74,10 +84,14 @@
                   </a>
               </div>
           <?php else: ?>
-              <div class="text-center mb-6">
-                  <h2 style="font-size: var(--font-size-2xl); color: var(--color-secondary); margin-bottom: var(--space-2);">Benvenuto in SpeedyBreak</h2>
-                  <p style="color: var(--color-text-muted);">Accedi o registrati per gestire i tuoi ordini e il tuo account.</p>
-              </div>
+              <header class="auth-header" style="text-align: center; margin-bottom: var(--space-6);">
+                  <div style="width: 64px; height: 64px; background: var(--color-primary-light); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-4) auto;">
+                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  </div>
+                  <h2 style="font-size: var(--font-size-2xl); color: var(--color-secondary); margin-bottom: var(--space-2); letter-spacing: -0.01em;">Area Personale</h2>
+                  <p style="color: var(--color-text-muted);">Accedi o registrati per gestire i tuoi ordini.</p>
+              </header>
+
               <div class="flex flex-col gap-4 mt-6">
                   <a href="login.php" class="btn btn-primary w-full p-4 justify-start">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

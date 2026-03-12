@@ -164,10 +164,17 @@ function colStato($stato) {
                             <span class="order-id">Ordine #<?= str_pad($ordine['id_ordine'], 5, '0', STR_PAD_LEFT) ?></span>
                             <span class="order-date"><?= date('d M Y, H:i', strtotime($ordine['data_ordine'])) ?></span>
                         </div>
-                        <div class="order-status">
+                        <div class="order-status" style="display: flex; align-items: center; gap: 12px;">
                             <span class="badge" style="background: <?= bgStato($ordine['stato']) ?>; color: <?= colStato($ordine['stato']) ?>">
                                 <?= htmlspecialchars($ordine['stato']) ?>
                             </span>
+                            
+                            <?php if (strtolower($ordine['stato']) === 'in attesa'): ?>
+                                <button onclick="cancelMyOrder(<?= $ordine['id_ordine'] ?>)" class="btn btn-sm" style="background: #fee2e2; color: var(--color-error); border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 10px; font-size: 12px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                    Cancella
+                                </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
@@ -211,5 +218,34 @@ function colStato($stato) {
         <p>Progetto Speedy Break - 5CIN &copy; 2026</p>
     </footer>
 
+    <script>
+    function cancelMyOrder(orderId) {
+        if (!confirm('Sei sicuro di voler annullare questo ordine?')) {
+            return;
+        }
+        
+        // Show loading state (optional) or just send
+        fetch('delete_my_ordine.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id_ordine: orderId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Ordine cancellato con successo.');
+                window.location.reload();
+            } else {
+                alert('Errore: ' + (data.message || 'impossibile cancellare l\'ordine.'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Errore di connessione durante la cancellazione.');
+        });
+    }
+    </script>
 </body>
 </html>

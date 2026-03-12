@@ -104,37 +104,102 @@ document.addEventListener('DOMContentLoaded', updateCart);
 
 
 
-function sendOrder(){
+function openConfirmModal(){
     // carrello vuoto
     if(cart.length === 0){
         alert("Carrello vuoto");
         return;
     }
+    
+    // Check if user is logged in
+    if (typeof isLoggedIn !== 'undefined' && !isLoggedIn) {
+        alert("Effettua il login prima di procedere con l'ordine.");
+        window.location.href = '../auth/login.php';
+        return;
+    }
+
+    const modal = document.getElementById('confirm-modal');
+    const modalList = document.getElementById('modal-cart-list');
+    const modalTotal = document.getElementById('modal-total');
+    const modalMethod = document.getElementById('modal-method');
+    const modalNote = document.getElementById('modal-note');
+    
+    // Populate list
+    modalList.innerHTML = '';
+    let total = 0;
+    cart.forEach(item => {
+        const li = document.createElement('li');
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.padding = '4px 0';
+        li.style.borderBottom = '1px dashed var(--color-border)';
+        
+        li.innerHTML = `
+            <span><span style="color: var(--color-primary); font-weight: 600; margin-right: 6px;">${item.quantity}x</span> ${item.name}</span>
+            <span style="font-weight: 500;">€${(item.price * item.quantity).toFixed(2)}</span>
+        `;
+        modalList.appendChild(li);
+        total += item.price * item.quantity;
+    });
+    
+    modalTotal.textContent = '€' + total.toFixed(2);
+    
+    // Get values from form
+    const methodEl = document.querySelector('input[name="payment-method"]:checked');
+    const noteEl = document.getElementById('order-note');
+    
+    modalMethod.textContent = methodEl ? methodEl.value : '-';
+    modalNote.textContent = noteEl && noteEl.value.trim() !== '' ? noteEl.value : 'Nessuna nota';
+    
+    // Show modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeConfirmModal() {
+    const modal = document.getElementById('confirm-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function submitConfirmedOrder() {
+    const submitBtn = document.getElementById('confirm-submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span style="display:inline-block; animation: spin 1s linear infinite;">⏳</span> Invio in corso...';
+
+    // Get note and method
+    const methodEl = document.querySelector('input[name="payment-method"]:checked');
+    const noteEl = document.getElementById('order-note');
+    
+    const payload = {
+        cart: cart,
+        metodo: methodEl ? methodEl.value : 'Contanti',
+        nota: noteEl ? noteEl.value : ''
+    };
 
     fetch("ordine.php",{
         method:"POST",
         headers:{
             "Content-Type":"application/json"
         },
-
-        body:JSON.stringify(cart)
-
+        body:JSON.stringify(payload)
     })
-
-        .then(res=>res.json())
-
-        .then(data=>{
-            if (data.status === "success") {
-                cart = [];
-                updateCart();
-                window.location.href = `conferma_ordine.php?id_ordine=${data.id_ordine}`;
-            } else {
-                alert("Errore dal server: " + (data.message || "Sconosciuto"));
-            }
-        })
-
-        .catch(err=>{
-            alert("Errore invio ordine");
-            console.error(err);
-        });
+    .then(res=>res.json())
+    .then(data=>{
+        if (data.status === "success") {
+            cart = [];
+            updateCart();
+            window.location.href = `conferma_ordine.php?id_ordine=${data.id_ordine}`;
+        } else {
+            alert("Errore dal server: " + (data.message || "Sconosciuto"));
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Conferma';
+        }
+    })
+    .catch(err=>{
+        alert("Errore invio ordine");
+        console.error(err);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Conferma';
+    });
 }

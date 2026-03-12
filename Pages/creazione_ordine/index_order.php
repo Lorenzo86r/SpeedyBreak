@@ -152,12 +152,58 @@ $result = $conn->query($sql);
                     <h3 style="font-size: var(--font-size-lg); color: var(--color-text-muted);">Totale</h3>
                     <div id="total" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--color-secondary);">€0.00</div>
                 </div>
-                <button class="btn btn-primary w-full btn-lg" onclick="sendOrder()">Invia Ordine</button>
+                <button class="btn btn-primary w-full btn-lg" onclick="openConfirmModal()">Procedi all'Ordine</button>
             </section>
             
 
-        </div>
     </main>
+
+    <!-- Modal Conferma Ordine -->
+    <div id="confirm-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div class="card animate-fade-in" style="width: 90%; max-width: 500px; padding: var(--space-6); position: relative; max-height: 90vh; overflow-y: auto;">
+            <button onclick="closeConfirmModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; cursor: pointer; color: var(--color-text-muted);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            
+            <h2 style="font-size: var(--font-size-2xl); margin-bottom: var(--space-4); color: var(--color-secondary); display: flex; align-items: center; gap: 8px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Conferma il tuo Ordine
+            </h2>
+            
+            <p style="color: var(--color-text-muted); margin-bottom: var(--space-4);">Controlla i dettagli prima di inviare l'ordine in produzione.</p>
+            
+            <div style="background: var(--color-background); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4); border: 1px solid var(--color-border);">
+                <h3 style="font-size: var(--font-size-sm); text-transform: uppercase; color: var(--color-text-muted); letter-spacing: 0.05em; margin-bottom: var(--space-2);">Riepilogo</h3>
+                <ul id="modal-cart-list" style="list-style: none; padding: 0; margin: 0; font-size: var(--font-size-sm);">
+                    <!-- Populated by JS -->
+                </ul>
+                <div class="divider" style="margin: var(--space-3) 0;"></div>
+                <div class="flex justify-between items-center font-bold">
+                    <span>Totale:</span>
+                    <span id="modal-total" style="color: var(--color-primary); font-size: var(--font-size-lg);">€0.00</span>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-6); font-size: var(--font-size-sm);">
+                <div style="background: var(--color-background); padding: var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+                    <div style="color: var(--color-text-muted); margin-bottom: 2px;">Metodo</div>
+                    <div id="modal-method" style="font-weight: 600;">-</div>
+                </div>
+                <div style="background: var(--color-background); padding: var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+                    <div style="color: var(--color-text-muted); margin-bottom: 2px;">Note</div>
+                    <div id="modal-note" style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button class="btn btn-secondary flex-1" onclick="closeConfirmModal()">Annulla</button>
+                <button class="btn btn-primary flex-1" id="confirm-submit-btn" onclick="submitConfirmedOrder()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    Conferma
+                </button>
+            </div>
+        </div>
+    </div>
 
     <footer class="global-footer mt-auto">
         <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>

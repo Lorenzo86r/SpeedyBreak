@@ -27,7 +27,9 @@
     $nota = isset($data['nota']) ? $data['nota'] : "";
     $data_ritiro = date("Y-m-d H:i:s", strtotime("+20 minutes"));
 
-    $items = isset($data['items']) ? $data['items'] : $data;
+    // In the old version, $data was the array of items. 
+    // In the new version, $data contains 'cart', 'metodo', 'nota'.
+    $items = isset($data['cart']) ? $data['cart'] : (isset($data['items']) ? $data['items'] : (is_array($data) && !isset($data['cart']) && !isset($data['metodo']) ? $data : []));
     
     if (empty($items)) {
         http_response_code(400);

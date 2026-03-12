@@ -228,6 +228,7 @@ if ($res_count) {
             <ul class="nav-links">
                 <li><a class="nav-item" href="../../index.php">Home</a></li>
                 <li><a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a></li>
+                <li><a class="nav-item" href="../ordini/my_ordini.php">I Miei Ordini</a></li>
                 
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                     <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
@@ -236,6 +237,7 @@ if ($res_count) {
                 
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a class="nav-item active" href="admin.php">Admin</a></li>
+                    <li><a class="nav-item" href="statistiche.php">Statistiche</a></li>
                 <?php endif; ?>
                 
                 <li>

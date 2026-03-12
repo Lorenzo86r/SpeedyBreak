@@ -84,12 +84,14 @@ foreach ($righe as $r) {
             <ul class="nav-links">
                 <li><a class="nav-item" href="../../index.php">Home</a></li>
                 <li><a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a></li>
+                <li><a class="nav-item" href="../ordini/my_ordini.php">I Miei Ordini</a></li>
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                     <li><a class="nav-item" href="manage.php">Gestione Ordini</a></li>
                     <li><a class="nav-item active" href="storico_ordini.php">Storico</a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a class="nav-item" href="../amministrazione/admin.php">Admin</a></li>
+                    <li><a class="nav-item" href="../amministrazione/statistiche.php">Statistiche</a></li>
                 <?php endif; ?>
                 <li>
                     <?php if(isset($_SESSION["user_id"])): ?>

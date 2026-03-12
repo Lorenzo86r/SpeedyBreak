@@ -22,12 +22,14 @@
                 <?php if(isset($_SESSION["user_id"])): ?>
                     <li><a class="nav-item active" href="index.php">Home</a></li>
                     <li><a class="nav-item" href="Pages/creazione_ordine/index_order.php">Ordina</a></li>
+                    <li><a class="nav-item" href="Pages/ordini/my_ordini.php">I Miei Ordini</a></li>
                     <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                         <li><a class="nav-item" href="Pages/gestione_ordini/manage.php">Gestione Ordini</a></li>
                         <li><a class="nav-item" href="Pages/gestione_ordini/storico_ordini.php">Storico</a></li>
                     <?php endif; ?>
                     <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                         <li><a class="nav-item" href="Pages/amministrazione/admin.php">Admin</a></li>
+                        <li><a class="nav-item" href="Pages/amministrazione/statistiche.php">Statistiche</a></li>
                     <?php endif; ?>
                 <?php endif; ?>
                 <li>
@@ -91,7 +93,7 @@
             </style>
             
             <script>
-                const words = ["Senza Attese.", "Senza Coda.", "Con Gusto.", "Per Te."];
+                const words = ["Senza Attese.", "Senza Coda.", "Con Gusto.", "Per Te.", "Con BUTT"];
                 let i = 0;
                 let charIndex = words[0].length;
                 let isDeleting = true;

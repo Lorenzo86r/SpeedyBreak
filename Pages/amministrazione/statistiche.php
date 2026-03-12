@@ -105,9 +105,19 @@ $stmt_top_prod->close();
                 <span>Speedy Break <span style="font-size: 12px; color: var(--color-primary); background: rgba(249, 115, 22, 0.1); padding: 2px 8px; border-radius: 99px; margin-left: 8px;">ADMIN</span></span>
             </a>
             <ul class="nav-links">
-                <li><a class="nav-item" href="admin.php">Gestione Menu</a></li>
-                <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
-                <li><a class="nav-item active" href="statistiche.php">Statistiche</a></li>
+                <li><a class="nav-item" href="../../index.php">Home</a></li>
+                <li><a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a></li>
+                <li><a class="nav-item" href="../ordini/my_ordini.php">I Miei Ordini</a></li>
+                
+                <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
+                    <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                    <li><a class="nav-item" href="../gestione_ordini/storico_ordini.php">Storico</a></li>
+                <?php endif; ?>
+                
+                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+                    <li><a class="nav-item" href="admin.php">Admin</a></li>
+                    <li><a class="nav-item active" href="statistiche.php">Statistiche</a></li>
+                <?php endif; ?>
                 <li>
                     <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

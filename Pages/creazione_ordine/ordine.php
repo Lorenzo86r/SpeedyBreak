@@ -23,36 +23,57 @@
     $data = json_decode(file_get_contents("php://input"),true);
 
     $id_utente = $_SESSION['user_id'];
-$metodo = isset($data['metodo']) ? $conn->real_escape_string($data['metodo']) : "Contanti";
-$nota = isset($data['nota']) ? $conn->real_escape_string($data['nota']) : "";
-$data_ritiro = date("Y-m-d H:i:s", strtotime("+20 minutes"));
+    $metodo = isset($data['metodo']) ? $data['metodo'] : "Contanti";
+    $nota = isset($data['nota']) ? $data['nota'] : "";
+    $data_ritiro = date("Y-m-d H:i:s", strtotime("+20 minutes"));
 
-$items = isset($data['items']) ? $data['items'] : $data;
-
-$conn->query("
-    INSERT INTO SB_ordine (stato,metodo,id_utente,nota,data_ritiro)
-    VALUES ('In attesa','$metodo',$id_utente,'$nota','$data_ritiro')
-    ");
-
-    $id_ordine = $conn->insert_id;
-
-
-foreach ($items as $item) {
-
-    $nome = $conn->real_escape_string($item['name']);
-        $quantita = $item['quantity'];
-
-        $res = $conn->query("SELECT id_prodotto FROM SB_prodotto WHERE nome='$nome'");
-        $row = $res->fetch_assoc();
-
-        $id_prodotto = $row['id_prodotto'];
-
-        $conn->query("
-        INSERT INTO SB_dettaglio_ordine (id_ordine,id_prodotto,quantita)
-        VALUES ($id_ordine,$id_prodotto,$quantita)
-        ");
+    $items = isset($data['items']) ? $data['items'] : $data;
+    
+    if (empty($items)) {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "Carrello vuoto"]);
+        exit;
     }
 
-    echo "Ordine salvato";
+    $conn->begin_transaction();
 
+    try {
+        $stmt = $conn->prepare("INSERT INTO SB_ordine (stato, metodo, id_utente, nota, data_ritiro) VALUES ('In attesa', ?, ?, ?, ?)");
+        $stmt->bind_param("siss", $metodo, $id_utente, $nota, $data_ritiro);
+        if (!$stmt->execute()) {
+            throw new Exception("Errore inserimento ordine");
+        }
+        $id_ordine = $conn->insert_id;
+        $stmt->close();
+
+        $stmt_prod = $conn->prepare("SELECT id_prodotto FROM SB_prodotto WHERE nome = ?");
+        $stmt_dettaglio = $conn->prepare("INSERT INTO SB_dettaglio_ordine (id_ordine, id_prodotto, quantita) VALUES (?, ?, ?)");
+
+        foreach ($items as $item) {
+            $nome = $item['name'];
+            $quantita = (int)$item['quantity'];
+
+            $stmt_prod->bind_param("s", $nome);
+            $stmt_prod->execute();
+            $res = $stmt_prod->get_result();
+            if ($res->num_rows === 0) {
+                throw new Exception("Prodotto non trovato: $nome");
+            }
+            $row = $res->fetch_assoc();
+            $id_prodotto = $row['id_prodotto'];
+
+            $stmt_dettaglio->bind_param("iii", $id_ordine, $id_prodotto, $quantita);
+            if (!$stmt_dettaglio->execute()) {
+                throw new Exception("Errore inserimento dettaglio");
+            }
+        }
+
+        $conn->commit();
+        echo json_encode(["status" => "success", "id_ordine" => $id_ordine]);
+
+    } catch (Exception $e) {
+        $conn->rollback();
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+    }
 ?>

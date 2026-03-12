@@ -72,7 +72,7 @@
                         50% { opacity: 0.3; box-shadow: none; }
                     }
                 </style>
-                Il servizio bar digitale per la tua scuola
+                Il servizio bar digitale per le Aldini Valeriani
             </div>
             <h1 class="animate-fade-in" style="font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 24px; animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards; height: 2.8em;">
                 La Pausa Perfetta,<br>

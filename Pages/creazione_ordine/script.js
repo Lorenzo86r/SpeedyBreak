@@ -121,12 +121,16 @@ function sendOrder(){
 
     })
 
-        .then(res=>res.text())
+        .then(res=>res.json())
 
         .then(data=>{
-            alert("Ordine inviato!");
-            cart = [];
-            updateCart();
+            if (data.status === "success") {
+                cart = [];
+                updateCart();
+                window.location.href = `conferma_ordine.php?id_ordine=${data.id_ordine}`;
+            } else {
+                alert("Errore dal server: " + (data.message || "Sconosciuto"));
+            }
         })
 
         .catch(err=>{

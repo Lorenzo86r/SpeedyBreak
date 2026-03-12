@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$db   = 'my_arevalo';
+$db   = 'my_saqlain';
 $user = 'root';      
 $pass = '';
 $charset = 'utf8mb4';

@@ -90,8 +90,8 @@ foreach ($righe as $r) {
                 <?php endif; ?>
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a class="nav-item" href="../amministrazione/admin.php">Admin</a></li>
-                    <li><a class="nav-item" href="../amministrazione/statistiche.php">Statistiche</a></li>
                 <?php endif; ?>
+                <li><a class="nav-item" href="../amministrazione/statistiche.php">Statistiche</a></li>
                 <li>
                     <?php if(isset($_SESSION["user_id"])): ?>
                         <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">

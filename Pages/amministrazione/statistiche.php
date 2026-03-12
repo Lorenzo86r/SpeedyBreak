@@ -1,10 +1,12 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['ruolo'] !== 'admin') {
+if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit;
 }
+
+$is_admin = ($_SESSION['ruolo'] ?? '') === 'admin';
 
 $host="localhost";
 $user="root";
@@ -16,18 +18,21 @@ if ($conn->connect_error) {
     die("Errore connessione");
 }
 
-// 1. Incassi della giornata corrente (prendiamo ordini non cancellati di oggi)
-$stmt_incassi = $conn->prepare("
-    SELECT SUM(p.prezzo * d.quantita) as totale_oggi 
-    FROM SB_ordine o
-    JOIN SB_dettaglio_ordine d ON o.id_ordine = d.id_ordine
-    JOIN SB_prodotto p ON d.id_prodotto = p.id_prodotto
-    WHERE DATE(o.data_ordine) = CURDATE() AND o.stato != 'Cancellato'
-");
-$stmt_incassi->execute();
-$res_incassi = $stmt_incassi->get_result();
-$totale_oggi = $res_incassi->fetch_assoc()['totale_oggi'] ?? 0;
-$stmt_incassi->close();
+// 1. Incassi della giornata corrente (solo admin)
+$totale_oggi = 0;
+if ($is_admin) {
+    $stmt_incassi = $conn->prepare("
+        SELECT SUM(p.prezzo * d.quantita) as totale_oggi 
+        FROM SB_ordine o
+        JOIN SB_dettaglio_ordine d ON o.id_ordine = d.id_ordine
+        JOIN SB_prodotto p ON d.id_prodotto = p.id_prodotto
+        WHERE DATE(o.data_ordine) = CURDATE() AND o.stato != 'Cancellato'
+    ");
+    $stmt_incassi->execute();
+    $res_incassi = $stmt_incassi->get_result();
+    $totale_oggi = $res_incassi->fetch_assoc()['totale_oggi'] ?? 0;
+    $stmt_incassi->close();
+}
 
 // 2. Classifica di chi ha fatto più ordini in assoluto
 $stmt_top_utenti = $conn->prepare("
@@ -102,7 +107,7 @@ $stmt_top_prod->close();
         <div class="nav-container container">
             <a href="../../index.php" class="brand">
                 <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
-                <span>Speedy Break <span style="font-size: 12px; color: var(--color-primary); background: rgba(249, 115, 22, 0.1); padding: 2px 8px; border-radius: 99px; margin-left: 8px;">ADMIN</span></span>
+                <span>Speedy Break</span>
             </a>
             <ul class="nav-links">
                 <li><a class="nav-item" href="../../index.php">Home</a></li>
@@ -115,8 +120,8 @@ $stmt_top_prod->close();
                 
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a class="nav-item" href="admin.php">Admin</a></li>
-                    <li><a class="nav-item active" href="statistiche.php">Statistiche</a></li>
                 <?php endif; ?>
+                <li><a class="nav-item active" href="statistiche.php">Statistiche</a></li>
                 <li>
                     <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -137,11 +142,13 @@ $stmt_top_prod->close();
     <main class="main-content">
         <div class="dashboard-container">
             
+            <?php if ($is_admin): ?>
             <div class="kpi-card animate-fade-in">
                 <div class="kpi-label">Incassi di Oggi</div>
                 <div class="kpi-value">€<?= number_format($totale_oggi, 2) ?></div>
                 <div style="color: var(--color-text-muted); font-size: 14px;">Basato sugli ordini non cancellati di data odierna.</div>
             </div>
+            <?php endif; ?>
 
             <div class="grid-2">
                 <div class="stats-card animate-fade-in" style="animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards;">

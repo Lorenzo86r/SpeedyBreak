@@ -231,8 +231,8 @@ foreach ($ordini as $o) {
                 <?php endif; ?>
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a class="nav-item" href="../amministrazione/admin.php">Admin</a></li>
-                    <li><a class="nav-item" href="../amministrazione/statistiche.php">Statistiche</a></li>
                 <?php endif; ?>
+                <li><a class="nav-item" href="../amministrazione/statistiche.php">Statistiche</a></li>
                 <li>
                     <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

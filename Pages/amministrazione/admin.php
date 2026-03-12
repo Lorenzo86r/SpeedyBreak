@@ -238,8 +238,8 @@ if ($res_count) {
                 
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a class="nav-item active" href="admin.php">Admin</a></li>
-                    <li><a class="nav-item" href="statistiche.php">Statistiche</a></li>
                 <?php endif; ?>
+                <li><a class="nav-item" href="statistiche.php">Statistiche</a></li>
                 
                 <li>
                     <?php if(isset($_SESSION["user_id"])): ?>

@@ -100,7 +100,7 @@ if (!$ordine) {
         </div>
     </nav>
 
-    <main class="main-content container-md">
+    <main class="main-content container-md" style="margin: 0 auto;">
         <div class="flex justify-between items-center mb-6">
             <h2 style="font-size: var(--font-size-2xl);">Gestione Ordine #<?= htmlspecialchars($ordine["id_ordine"]) ?></h2>
             <a href="manage.php" class="btn btn-secondary">← Torna alla lista ordini</a>

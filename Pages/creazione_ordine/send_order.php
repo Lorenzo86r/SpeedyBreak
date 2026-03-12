@@ -9,7 +9,7 @@
 
     $data = json_decode(file_get_contents("php://input"), true);
 
-    $id_utente = 1;
+    $id_utente = $_SESSION['user_id'];;
 
     $data_ritiro = date("Y-m-d H:i:s", strtotime("+20 minutes"));
 

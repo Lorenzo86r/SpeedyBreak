@@ -85,7 +85,7 @@ function updateCart(){
 }
 
 function increaseQuantity(index) {
-    if (cart[index].quantity < 5) {
+    if (cart[index].quantity < 30) {
         cart[index].quantity++;
         updateCart();
     }

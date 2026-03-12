@@ -8,7 +8,7 @@ if (!isset($_SESSION["ruolo"]) || $_SESSION["ruolo"] !== 'admin') {
 $host = "localhost";
 $user = "root";
 $pass = "";
-$db = "my_saqlain";
+$db = "my_saqlain"; //DB saqlain
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) die("Connessione fallita: " . $conn->connect_error);

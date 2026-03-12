@@ -11,9 +11,20 @@ if ($conn->connect_error) {
     die("Connessione fallita: " . $conn->connect_error);
 }
 
+// --- RECUPERO CATEGORIE ---
+$cat_sql = "SELECT id_categoria, descrizione FROM SB_categoria ORDER BY descrizione ASC";
+$cat_result = $conn->query($cat_sql);
+$categorie = [];
+while ($c = $cat_result->fetch_assoc()) {
+    $categorie[] = $c;
+}
+
 // --- RECUPERO PRODOTTI DAL DB ---
-// Prendiamo solo i prodotti che hanno almeno un pezzo in giacenza
-$sql = "SELECT id_prodotto, nome, descrizione, prezzo FROM SB_prodotto WHERE giacenza > 0 ORDER BY nome ASC";
+$sql = "SELECT p.id_prodotto, p.nome, p.descrizione, p.prezzo, c.descrizione AS categoria
+        FROM SB_prodotto p
+        JOIN SB_categoria c ON p.id_categoria = c.id_categoria
+        WHERE p.giacenza > 0
+        ORDER BY p.nome ASC";
 $result = $conn->query($sql);
 ?>
 
@@ -81,18 +92,40 @@ $result = $conn->query($sql);
         <div class="container flex gap-6" style="align-items: flex-start; flex-wrap: wrap;">
             
             <section class="menu flex-1" style="min-width: 60%">
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex justify-between items-center mb-4">
                    <h2 style="font-size: var(--font-size-2xl);">Menu</h2>
                    <span class="badge badge-warning">Max 30 per prodotto</span>
                 </div>
-                
-                
+
+                <!-- SEARCH BAR -->
+                <div style="position: relative; margin-bottom: 16px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted); pointer-events: none;">
+                        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Cerca prodotto..." class="form-control"
+                           style="padding-left: 42px; border-radius: 99px; background: var(--color-surface); border: 1px solid var(--color-border); font-size: 15px; height: 44px;">
+                </div>
+
+                <!-- CATEGORY FILTERS -->
+                <div id="category-filters" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+                    <button class="filter-pill active" data-category="all" onclick="filterCategory('all', this)">Tutti</button>
+                    <?php foreach ($categorie as $cat): ?>
+                        <button class="filter-pill" data-category="<?= htmlspecialchars($cat['descrizione']) ?>" onclick="filterCategory('<?= htmlspecialchars($cat['descrizione']) ?>', this)">
+                            <?= htmlspecialchars($cat['descrizione']) ?>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+
+                <p id="no-results" style="display: none; text-align: center; color: var(--color-text-muted); padding: 40px 0; font-size: 15px;">Nessun prodotto trovato per la tua ricerca.</p>
                 
                 <div class="menu-grid">
                 <?php if ($result && $result->num_rows > 0): ?>
                     <?php while($row = $result->fetch_assoc()): ?>
-                        <div class="card product-card animate-fade-in">
-                            <h3 style="font-size: var(--font-size-lg);"><?= htmlspecialchars($row['nome']) ?></h3>
+                        <div class="card product-card animate-fade-in" data-name="<?= strtolower(htmlspecialchars($row['nome'])) ?>" data-category="<?= htmlspecialchars($row['categoria']) ?>">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <h3 style="font-size: var(--font-size-lg);"><?= htmlspecialchars($row['nome']) ?></h3>
+                                <span class="badge" style="font-size: 11px; background: rgba(59,130,246,0.1); color: #1d4ed8; white-space: nowrap;"><?= htmlspecialchars($row['categoria']) ?></span>
+                            </div>
                             <p class="desc" style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: var(--space-2);"><?= htmlspecialchars($row['descrizione']) ?></p>
                             <p class="price">€<?= number_format($row['prezzo'], 2, ',', '.') ?></p>
                             <div class="actions">
@@ -214,22 +247,75 @@ $result = $conn->query($sql);
             font-weight: 600;
             color: var(--color-primary);
         }
-
         label:has(input[type="radio"]:checked) {
             border-color: var(--color-primary);
             background-color: rgba(255, 107, 0, 0.05);
         }
-
         label:hover {
             border-color: var(--color-primary);
             background-color: rgba(255, 107, 0, 0.02);
         }
-
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
+        /* Filter Pills */
+        .filter-pill {
+            padding: 6px 16px;
+            border-radius: 99px;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-pill:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+        .filter-pill.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
     </style>
+
+    <script>
+        let activeCategory = 'all';
+
+        function filterCategory(cat, btn) {
+            activeCategory = cat;
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            applyFilters();
+        }
+
+        document.getElementById('search-input').addEventListener('input', applyFilters);
+
+        function applyFilters() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.product-card');
+            let visible = 0;
+
+            cards.forEach(card => {
+                const name = card.dataset.name;
+                const category = card.dataset.category;
+                const matchSearch = !query || name.includes(query);
+                const matchCategory = activeCategory === 'all' || category === activeCategory;
+
+                if (matchSearch && matchCategory) {
+                    card.style.display = '';
+                    visible++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+        }
+    </script>
 </body>
 </html>
 <?php $conn->close(); ?>

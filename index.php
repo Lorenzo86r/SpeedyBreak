@@ -39,11 +39,12 @@
                             </svg>
                         </a>
                     <?php else: ?>
-                        <a class="nav-icon-btn" href="Pages/auth/login.php" title="Accedi">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <a href="Pages/auth/login.php" title="Accedi o Registrati" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(249, 115, 22, 0.1); color: var(--color-primary); border-radius: 99px; font-weight: 600; font-size: 14px; text-decoration: none; transition: background 0.2s;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
+                            <span>Accedi / Registrati</span>
                         </a>
                     <?php endif; ?>
                 </li>

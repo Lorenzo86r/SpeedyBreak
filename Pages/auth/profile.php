@@ -81,14 +81,13 @@ if (isset($_SESSION["user_id"])) {
         </div>
     </nav>
     
-    <div class="main-content flex justify-center items-center" style="padding-top: var(--space-8); padding-bottom: var(--space-8);">
-      <div class="auth-container" style="max-width: 600px;">
-        <div class="auth-card animate-fade-in" style="padding: var(--space-8);">
+    <main class="main-content container" style="padding-top: var(--space-8); padding-bottom: var(--space-12);">
+      <div class="animate-fade-in" style="max-width: 800px; margin: 0 auto;">
           <?php if(isset($_SESSION["user_id"])): ?>
-              <header class="auth-header" style="background: linear-gradient(135deg, var(--color-primary), #f59e0b); border-radius: var(--radius-lg); padding: var(--space-8) var(--space-6); text-align: center; color: white; margin-bottom: var(--space-6); position: relative; overflow: hidden; box-shadow: var(--shadow-md);">
+              <header style="background: linear-gradient(135deg, var(--color-primary), #f59e0b); border-radius: var(--radius-xl); padding: var(--space-12) var(--space-8); text-align: center; color: white; margin-bottom: var(--space-8); position: relative; overflow: hidden; box-shadow: var(--shadow-lg);">
                   <!-- Decorative circle for pattern -->
-                  <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                  <div style="position: absolute; bottom: -50px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                  <div style="position: absolute; top: -100px; right: -50px; width: 300px; height: 300px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                  <div style="position: absolute; bottom: -50px; left: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
                   
                   <?php 
                      $username = $_SESSION['username'] ?? 'Utente';
@@ -97,90 +96,99 @@ if (isset($_SESSION["user_id"])) {
                   ?>
                   
                   <div style="position: relative; z-index: 1;">
-                      <div style="width: 80px; height: 80px; background: white; color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto var(--space-4) auto; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+                      <div style="width: 100px; height: 100px; background: white; color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; margin: 0 auto var(--space-4) auto; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
                           <?php echo $initial; ?>
                       </div>
-                      <h2 style="color: white; font-size: var(--font-size-2xl); margin-bottom: var(--space-1); letter-spacing: -0.01em;">Bentornato, <?php echo htmlspecialchars($username); ?>!</h2>
-                      <p style="opacity: 0.9; margin: 0; font-size: var(--font-size-sm); text-transform: capitalize; font-weight: 500;">Ruolo: <?php echo htmlspecialchars($ruolo); ?></p>
+                      <h2 style="color: white; font-size: 32px; margin-bottom: var(--space-2); letter-spacing: -0.02em; font-weight: 700;">Bentornato, <?php echo htmlspecialchars($username); ?>!</h2>
+                      <p style="opacity: 0.9; margin: 0; font-size: var(--font-size-md); text-transform: capitalize; font-weight: 500;">Ruolo: <?php echo htmlspecialchars($ruolo); ?></p>
                   </div>
               </header>
               
               <?php if(isset($_GET['msg']) && $_GET['msg'] == 'pwd_success'): ?>
-                  <div class="alert alert-success mb-6 justify-center">
+                  <div class="alert alert-success mb-6 justify-center" style="border-radius: var(--radius-md);">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                     Password aggiornata con successo!
                   </div>
               <?php endif; ?>
 
               <!-- Statistiche -->
-              <div class="flex gap-4 mb-8" style="flex-wrap: wrap;">
-                  <div class="card flex-1 flex flex-col items-center justify-center p-6 text-center" style="background-color: var(--color-surface); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);">
-                      <div style="width: 48px; height: 48px; background: rgba(249, 115, 22, 0.1); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-3);">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <h3 style="font-size: var(--font-size-xl); color: var(--color-secondary); margin-bottom: var(--space-4); font-weight: 600;">Le tue Statistiche</h3>
+              <div class="flex gap-6 mb-8" style="flex-wrap: wrap;">
+                  <div class="card flex-1 flex flex-col items-center justify-center p-8 text-center" style="background-color: white; border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); border-radius: var(--radius-lg);">
+                      <div style="width: 64px; height: 64px; background: rgba(249, 115, 22, 0.1); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4);">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                       </div>
-                      <h3 style="font-size: var(--font-size-2xl); color: var(--color-secondary); margin-bottom: 4px;"><?= $totale_ordini ?></h3>
-                      <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); font-weight: 500;">Ordini Totali</p>
+                      <h3 style="font-size: 36px; color: var(--color-secondary); margin-bottom: 8px; font-weight: 700;"><?= $totale_ordini ?></h3>
+                      <p style="color: var(--color-text-muted); font-size: var(--font-size-md); font-weight: 500;">Ordini Totali</p>
                   </div>
-                  <div class="card flex-1 flex flex-col items-center justify-center p-6 text-center" style="background-color: var(--color-surface); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);">
-                      <div style="width: 48px; height: 48px; background: rgba(34, 197, 94, 0.1); color: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-3);">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                  <div class="card flex-1 flex flex-col items-center justify-center p-8 text-center" style="background-color: white; border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); border-radius: var(--radius-lg);">
+                      <div style="width: 64px; height: 64px; background: rgba(34, 197, 94, 0.1); color: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4);">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                       </div>
-                      <h3 style="font-size: var(--font-size-2xl); color: var(--color-secondary); margin-bottom: 4px;">€<?= number_format($spesa_totale, 2, ',', '.') ?></h3>
-                      <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); font-weight: 500;">Spesa Totale</p>
+                      <h3 style="font-size: 36px; color: var(--color-secondary); margin-bottom: 8px; font-weight: 700;">€<?= number_format($spesa_totale, 2, ',', '.') ?></h3>
+                      <p style="color: var(--color-text-muted); font-size: var(--font-size-md); font-weight: 500;">Spesa Totale</p>
                   </div>
               </div>
               
-              <div class="flex flex-col gap-4">
-                  <h3 style="font-size: var(--font-size-md); color: var(--color-secondary); margin-bottom: var(--space-2); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-2);">Impostazioni Account</h3>
-                  <a href="update_password.php" class="btn btn-primary w-full p-4 justify-start">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-3);">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                      </svg>
-                      <span>Aggiorna Password</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </a>
-                  <a href="logout.php" class="btn btn-danger w-full p-4 justify-start" style="border: 1px solid #fecaca;">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-3);">
-                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                          <polyline points="16 17 21 12 16 7"></polyline>
-                          <line x1="21" y1="12" x2="9" y2="12"></line>
-                      </svg>
-                      <span>Logout</span>
-                  </a>
+              <h3 style="font-size: var(--font-size-xl); color: var(--color-secondary); margin-bottom: var(--space-4); font-weight: 600;">Impostazioni Account</h3>
+              <div class="card p-2" style="background-color: white; border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); border-radius: var(--radius-lg);">
+                  <div class="flex flex-col">
+                      <a href="update_password.php" class="btn btn-secondary w-full p-6 justify-start cursor-pointer hover:bg-gray-50 flex items-center" style="border: none; background: transparent; border-bottom: 1px solid var(--color-border); border-radius: 0; font-size: var(--font-size-md); box-shadow: none;">
+                          <div style="width: 40px; height: 40px; background: rgba(249, 115, 22, 0.1); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: var(--space-4);">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                              </svg>
+                          </div>
+                          <span style="color: var(--color-secondary); font-weight: 500;">Aggiorna Password</span>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto; color: var(--color-text-light);"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      </a>
+                      <a href="logout.php" class="btn btn-secondary w-full p-6 justify-start cursor-pointer hover:bg-red-50 flex items-center" style="border: none; background: transparent; border-radius: 0; font-size: var(--font-size-md); box-shadow: none; color: var(--color-error);">
+                          <div style="width: 40px; height: 40px; background: #fef2f2; color: var(--color-error); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: var(--space-4);">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                  <polyline points="16 17 21 12 16 7"></polyline>
+                                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                              </svg>
+                          </div>
+                          <span style="font-weight: 500;">Logout</span>
+                      </a>
+                  </div>
               </div>
           <?php else: ?>
-              <header class="auth-header" style="text-align: center; margin-bottom: var(--space-6);">
-                  <div style="width: 64px; height: 64px; background: var(--color-primary-light); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-4) auto;">
-                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                  </div>
-                  <h2 style="font-size: var(--font-size-2xl); color: var(--color-secondary); margin-bottom: var(--space-2); letter-spacing: -0.01em;">Area Personale</h2>
-                  <p style="color: var(--color-text-muted);">Accedi o registrati per gestire i tuoi ordini e visualizzare le tue statistiche.</p>
-              </header>
+              <!-- Unauthenticated State -->
+              <div class="auth-card" style="padding: var(--space-12) var(--space-8); text-align: center; border-radius: var(--radius-xl);">
+                  <header style="margin-bottom: var(--space-8);">
+                      <div style="width: 80px; height: 80px; background: var(--color-primary-light); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6) auto;">
+                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                      </div>
+                      <h2 style="font-size: 32px; color: var(--color-secondary); margin-bottom: var(--space-3); letter-spacing: -0.02em; font-weight: 700;">Area Personale</h2>
+                      <p style="color: var(--color-text-muted); font-size: var(--font-size-lg);">Accedi o registrati per gestire i tuoi ordini e visualizzare le tue statistiche.</p>
+                  </header>
 
-              <div class="flex flex-col gap-4 mt-6">
-                  <a href="login.php" class="btn btn-primary w-full p-4 justify-start">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-3);">
-                          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                          <polyline points="10 17 15 12 10 7"></polyline>
-                          <line x1="15" y1="12" x2="3" y2="12"></line>
-                       </svg>
-                      <span>Login</span>
-                  </a>
-                  <a href="signup.php" class="btn btn-secondary w-full p-4 justify-start">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-3);">
-                          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="8.5" cy="7" r="4"></circle>
-                          <line x1="20" y1="8" x2="20" y2="14"></line>
-                          <line x1="23" y1="11" x2="17" y2="11"></line>
-                      </svg>
-                      <span>Registrati</span>
-                  </a>
+                  <div class="flex gap-4 justify-center" style="max-width: 500px; margin: 0 auto; flex-wrap: wrap;">
+                      <a href="login.php" class="btn btn-primary flex-1 p-4 justify-center" style="font-size: var(--font-size-md);">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-2);">
+                              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                              <polyline points="10 17 15 12 10 7"></polyline>
+                              <line x1="15" y1="12" x2="3" y2="12"></line>
+                           </svg>
+                          <span>Login</span>
+                      </a>
+                      <a href="signup.php" class="btn btn-secondary flex-1 p-4 justify-center" style="font-size: var(--font-size-md);">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-2);">
+                              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="8.5" cy="7" r="4"></circle>
+                              <line x1="20" y1="8" x2="20" y2="14"></line>
+                              <line x1="23" y1="11" x2="17" y2="11"></line>
+                          </svg>
+                          <span>Registrati</span>
+                      </a>
+                  </div>
               </div>
           <?php endif; ?>
-        </div>
       </div>
-    </div>
+    </main>
     
     <footer class="global-footer mt-auto">
         <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>

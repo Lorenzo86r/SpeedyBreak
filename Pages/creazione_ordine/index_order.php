@@ -52,11 +52,14 @@ $result = $conn->query($sql);
         <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
             <li><a href="../amministrazione/admin.php">Admin</a></li>
         <?php endif; ?>
-        <?php if(isset($_SESSION["user_id"])): ?>
-            <li><a class="login-btn" style="background-color: #dc3545;" href="../auth/logout.php">Logout</a></li>
-        <?php else: ?>
-            <li><a class="login-btn" href="../auth/login.php">Login</a></li>
-        <?php endif; ?>
+        <li>
+            <a class="login-icon" href="../auth/profile.php" title="Area Personale">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </a>
+        </li>
     </ul>
 
     <header>

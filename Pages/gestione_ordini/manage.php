@@ -16,7 +16,7 @@ require_once "gestione-ordine.php";
 /* ---------------------------------------------------------
    CONNESSIONE AL DATABASE
 --------------------------------------------------------- */
-$db = new Database("localhost", "my_arevalo", "root", "");
+$db = new Database("localhost", "my_saqlain", "root", "");
 
 /* Otteniamo tutte le righe degli ordini attivi (una riga per prodotto) */
 $righe = $db->getAllOrdiniAttivi();

@@ -25,7 +25,7 @@
               </div>
               <div class="form-group">
                   <label for="femail" class="form-label">Email Istituzionale</label>
-                  <input type="email" id="femail" name="email" class="form-control" placeholder="es. mario.rossi@aldini.istruzioneer.it" required pattern=".+@(aldini\.istruzioneer\.it|avbo\.it)$" title="Inserisci un'email istituzionale terminante con @aldini.istruzioneer.it o @avbo.it">
+                  <input type="email" id="femail" name="email" class="form-control" placeholder="es. mario.rossi@aldini.istruzioneer.it" required>
                   <p class="form-help">Solo email istituzionali @aldini.istruzioneer.it o @avbo.it</p>
               </div>
               <div class="form-group">

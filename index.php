@@ -19,14 +19,16 @@
             </a>
     
             <ul class="nav-links">
-                <li><a class="nav-item active" href="index.php">Home</a></li>
-                <li><a class="nav-item" href="Pages/creazione_ordine/index_order.php">Ordina</a></li>
-                <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
-                    <li><a class="nav-item" href="Pages/gestione_ordini/manage.php">Gestione Ordini</a></li>
-                    <li><a class="nav-item" href="Pages/gestione_ordini/storico_ordini.php">Storico</a></li>
-                <?php endif; ?>
-                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
-                    <li><a class="nav-item" href="Pages/amministrazione/admin.php">Admin</a></li>
+                <?php if(isset($_SESSION["user_id"])): ?>
+                    <li><a class="nav-item active" href="index.php">Home</a></li>
+                    <li><a class="nav-item" href="Pages/creazione_ordine/index_order.php">Ordina</a></li>
+                    <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
+                        <li><a class="nav-item" href="Pages/gestione_ordini/manage.php">Gestione Ordini</a></li>
+                        <li><a class="nav-item" href="Pages/gestione_ordini/storico_ordini.php">Storico</a></li>
+                    <?php endif; ?>
+                    <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+                        <li><a class="nav-item" href="Pages/amministrazione/admin.php">Admin</a></li>
+                    <?php endif; ?>
                 <?php endif; ?>
                 <li>
                     <?php if(isset($_SESSION["user_id"])): ?>
@@ -59,13 +61,37 @@
         
         <div style="position: relative; z-index: 1; text-align: center; max-width: 800px; margin: 0 auto;">
             <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: white; border-radius: 99px; box-shadow: var(--shadow-sm); margin-bottom: 24px; font-weight: 500; color: var(--color-primary); font-size: var(--font-size-sm); border: 1px solid var(--color-border);" class="animate-fade-in">
-                <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                <span class="blinking-led"></span>
+                <style>
+                    .blinking-led {
+                        display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;
+                        animation: blink 1.5s infinite ease-in-out;
+                    }
+                    @keyframes blink {
+                        0%, 100% { opacity: 1; box-shadow: 0 0 8px #10b981; }
+                        50% { opacity: 0.3; box-shadow: none; }
+                    }
+                </style>
                 Il servizio bar digitale per la tua scuola
             </div>
             <h1 class="animate-fade-in" style="font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 24px; animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards;">
                 La Pausa Perfetta,<br>
-                <span style="color: var(--color-primary); background: linear-gradient(90deg, var(--color-primary), #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Senza Attese.</span> ☕
+                <span id="dynamic-text" style="color: var(--color-primary); background: linear-gradient(90deg, var(--color-primary), #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: opacity 0.5s ease-in-out;">Senza Attese.</span> ☕
             </h1>
+            
+            <script>
+                const words = ["Senza Attese.", "Senza Coda.", "Con Gusto.", "Per Te."];
+                let i = 0;
+                const el = document.getElementById("dynamic-text");
+                setInterval(() => {
+                    el.style.opacity = 0;
+                    setTimeout(() => {
+                        i = (i + 1) % words.length;
+                        el.textContent = words[i];
+                        el.style.opacity = 1;
+                    }, 500);
+                }, 3000);
+            </script>
             <p class="animate-fade-in" style="font-size: var(--font-size-xl); margin: 0 auto; color: var(--color-text-muted); line-height: 1.6; animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards;">
                 Il modo più veloce ed efficiente per ordinare le tue colazioni e spuntini direttamente al bar della scuola.
             </p>

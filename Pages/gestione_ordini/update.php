@@ -125,9 +125,6 @@ if (!$ordine) {
 
 <main class="main-content container-md">
 
-    <!-- TUTTO CENTRATO -->
-    <div class="center-container">
-
     <?php if ($message): ?>
         <div class="alert <?= strpos(strtolower($message), 'errore') !== false ? 'alert-error' : 'alert-success' ?>">
             <?= htmlspecialchars($message) ?>

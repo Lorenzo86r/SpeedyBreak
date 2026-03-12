@@ -6,9 +6,9 @@ function addToCart(name, price) {
     });
 
     if (item) {
-        if (item.quantity < 5) item.quantity++;
+        if (item.quantity < 30) item.quantity++;
         else {
-            alert("Puoi aggiungere al massimo 5 pezzi per articolo");
+            alert("Puoi aggiungere al massimo 30 pezzi per articolo");
             return;
         }
     }
@@ -105,13 +105,6 @@ document.addEventListener('DOMContentLoaded', updateCart);
 
 
 function sendOrder(){
-    // controllo accesso utente
-    if (!isLoggedIn) {
-        alert("Devi effettuare il login per ordinare!");
-        window.location.href = "../auth/login.php"; // reindirizza al login
-        return;
-    }
-
     // carrello vuoto
     if(cart.length === 0){
         alert("Carrello vuoto");

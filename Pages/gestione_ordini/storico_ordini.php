@@ -5,7 +5,7 @@ require_once "gestione-ordine.php";
 /* ---------------------------------------------------------
    CONNESSIONE AL DATABASE
 --------------------------------------------------------- */
-$db = new Database("localhost", "my_saqlain", "root", "");
+$db = new Database("localhost", "my_arevalo", "root", "");
 
 /* Otteniamo tutte le righe dello storico (una riga per prodotto) */
 $righe = $db->getStoricoOrdini();

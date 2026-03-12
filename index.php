@@ -74,23 +74,56 @@
                 </style>
                 Il servizio bar digitale per la tua scuola
             </div>
-            <h1 class="animate-fade-in" style="font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 24px; animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards;">
+            <h1 class="animate-fade-in" style="font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 24px; animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards; height: 2.8em;">
                 La Pausa Perfetta,<br>
-                <span id="dynamic-text" style="color: var(--color-primary); background: linear-gradient(90deg, var(--color-primary), #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: opacity 0.5s ease-in-out;">Senza Attese.</span> ☕
+                <span id="dynamic-text" style="color: var(--color-primary); background: linear-gradient(90deg, var(--color-primary), #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Senza Attese.</span><span class="typing-cursor" style="color: var(--color-primary); margin-left: 2px;">|</span>
             </h1>
+            
+            <style>
+                .typing-cursor {
+                    font-weight: 300;
+                    animation: blink-cursor 1s step-end infinite;
+                }
+                @keyframes blink-cursor {
+                    from, to { opacity: 1; }
+                    50% { opacity: 0; }
+                }
+            </style>
             
             <script>
                 const words = ["Senza Attese.", "Senza Coda.", "Con Gusto.", "Per Te."];
                 let i = 0;
+                let charIndex = words[0].length;
+                let isDeleting = true;
                 const el = document.getElementById("dynamic-text");
-                setInterval(() => {
-                    el.style.opacity = 0;
-                    setTimeout(() => {
+                
+                function typeEffect() {
+                    const currentWord = words[i];
+                    
+                    if (isDeleting) {
+                        el.textContent = currentWord.substring(0, charIndex - 1);
+                        charIndex--;
+                    } else {
+                        el.textContent = currentWord.substring(0, charIndex + 1);
+                        charIndex++;
+                    }
+                    
+                    let typeSpeed = isDeleting ? 40 : 100;
+                    
+                    if (!isDeleting && charIndex === currentWord.length) {
+                        typeSpeed = 2500; // Pause at end of word
+                        isDeleting = true;
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
                         i = (i + 1) % words.length;
-                        el.textContent = words[i];
-                        el.style.opacity = 1;
-                    }, 500);
-                }, 3000);
+                        typeSpeed = 400; // Pause before typing new word
+                    }
+                    
+                    setTimeout(typeEffect, typeSpeed);
+                }
+                
+                // Start by deleting the first word after a brief delay
+                setTimeout(typeEffect, 2000);
             </script>
             <p class="animate-fade-in" style="font-size: var(--font-size-xl); margin: 0 auto; color: var(--color-text-muted); line-height: 1.6; animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards;">
                 Il modo più veloce ed efficiente per ordinare le tue colazioni e spuntini direttamente al bar della scuola.

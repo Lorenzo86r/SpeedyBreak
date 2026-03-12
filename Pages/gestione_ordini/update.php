@@ -127,11 +127,6 @@ if (!$ordine) {
 
     <!-- TUTTO CENTRATO -->
     <div class="center-container">
-        
-        <div class="flex justify-between items-center mb-2" style="width: 100%;">
-            <h2 style="font-size: var(--font-size-2xl);">Ordine #<?= htmlspecialchars($ordine["id_ordine"]) ?></h2>
-            <a href="manage.php" class="btn btn-secondary btn-sm">← Torna Indietro</a>
-        </div>
 
     <?php if ($message): ?>
         <div class="alert <?= strpos(strtolower($message), 'errore') !== false ? 'alert-error' : 'alert-success' ?>">

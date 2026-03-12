@@ -25,7 +25,6 @@
                     <li><a class="nav-item" href="Pages/ordini/my_ordini.php">I Miei Ordini</a></li>
                     <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                         <li><a class="nav-item" href="Pages/gestione_ordini/manage.php">Gestione Ordini</a></li>
-                        <li><a class="nav-item" href="Pages/gestione_ordini/storico_ordini.php">Storico</a></li>
                     <?php endif; ?>
                     <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                         <li><a class="nav-item" href="Pages/amministrazione/admin.php">Admin</a></li>

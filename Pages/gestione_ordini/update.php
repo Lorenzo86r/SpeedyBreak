@@ -66,11 +66,17 @@ if (!$ordine) {
     <style>
         /* Centratura completa dei contenuti */
         .center-container {
-            max-width: 700px;
+            max-width: 600px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
+            padding-bottom: 2rem;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
@@ -88,7 +94,6 @@ if (!$ordine) {
             <li><a class="nav-item" href="../ordini/my_ordini.php">I Miei Ordini</a></li>
             <?php if (isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                 <li><a class="nav-item active" href="manage.php">Gestione Ordini</a></li>
-                <li><a class="nav-item" href="storico_ordini.php">Storico</a></li>
             <?php endif; ?>
             <?php if (isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                 <li><a class="nav-item" href="../amministrazione/admin.php">Admin</a></li>
@@ -120,10 +125,13 @@ if (!$ordine) {
 
 <main class="main-content container-md">
 
-    <div class="flex justify-between items-center mb-6">
-        <h2 style="font-size: var(--font-size-2xl);">Gestione Ordine #<?= htmlspecialchars($ordine["id_ordine"]) ?></h2>
-        <a href="manage.php" class="btn btn-secondary">← Torna alla lista ordini</a>
-    </div>
+    <!-- TUTTO CENTRATO -->
+    <div class="center-container">
+        
+        <div class="flex justify-between items-center mb-2" style="width: 100%;">
+            <h2 style="font-size: var(--font-size-2xl);">Ordine #<?= htmlspecialchars($ordine["id_ordine"]) ?></h2>
+            <a href="manage.php" class="btn btn-secondary btn-sm">← Torna Indietro</a>
+        </div>
 
     <?php if ($message): ?>
         <div class="alert <?= strpos(strtolower($message), 'errore') !== false ? 'alert-error' : 'alert-success' ?>">

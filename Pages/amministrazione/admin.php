@@ -34,7 +34,7 @@ if (isset($_GET['delete_id']) && isset($_GET['id_col'])) {
     if ($conn->query("DELETE FROM $tabella WHERE $id_col = $id_val")) {
         $message = "<div class='alert alert-success'>Eliminato con successo!</div>";
     } else {
-        $message = "<div class='alert alert-danger'>Errore: " . $conn->error . "</div>";
+        $message = "<div class='alert alert-error'>Errore: " . $conn->error . "</div>";
     }
 }
 
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($sql && $conn->query($sql)) {
         $message = "<div class='alert alert-success'>Operazione riuscita!</div>";
     } elseif ($sql) {
-        $message = "<div class='alert alert-danger'>Errore: " . $conn->error . "</div>";
+        $message = "<div class='alert alert-error'>Errore: " . $conn->error . "</div>";
     }
 }
 
@@ -120,11 +120,101 @@ if ($res_count) {
     <meta charset="UTF-8">
     <title>SpeedyBreak Admin</title>
     <link rel="stylesheet" href="../../Assets/Styles/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+            align-items: stretch;
+        }
+        .admin-sidebar {
+            width: 250px;
+            background: var(--color-surface);
+            border-right: 1px solid var(--color-border);
+            padding: var(--space-6) var(--space-4);
+        }
+        .admin-main {
+            flex: 1;
+            padding: var(--space-6);
+            background: var(--color-bg);
+            overflow-x: auto;
+        }
+        .sidebar-link {
+            display: block;
+            padding: 10px 16px;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2);
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .sidebar-link:hover {
+            background: var(--color-border);
+            color: var(--color-text);
+        }
+        .sidebar-link.active {
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background: var(--color-surface);
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-20px);
+            transition: transform 0.2s ease;
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+        
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--font-size-sm);
+        }
+        .table th {
+            text-align: left;
+            padding: var(--space-3);
+            border-bottom: 2px solid var(--color-border);
+            color: var(--color-text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .table td {
+            padding: var(--space-3);
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+        .table tr:hover {
+            background: var(--color-bg);
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
     <nav class="navbar">
         <div class="nav-container container">
@@ -136,83 +226,91 @@ if ($res_count) {
                 <li><a class="nav-item" href="../../index.php">Home</a></li>
                 <li><a class="nav-item" href="https://saqlain.altervista.org/SpeedyBreak/">Pagina Saqlain</a></li>
                 <li><a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a></li>
+                
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                     <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                    <li><a class="nav-item" href="../gestione_ordini/storico_ordini.php">Storico</a></li>
                 <?php endif; ?>
+                
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
                     <li><a class="nav-item active" href="admin.php">Admin</a></li>
                 <?php endif; ?>
-                <?php if(isset($_SESSION["user_id"])): ?>
-                    <li>
-                        <a class="nav-icon-btn" href="../auth/logout.php" title="Logout" style="color: var(--color-danger);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                <polyline points="16 17 21 12 16 7"></polyline>
-                                <line x1="21" y1="12" x2="9" y2="12"></line>
-                            </svg>
-                        </a>
-                    </li>
-                <?php else: ?>
-                    <li>
-                        <a class="nav-icon-btn" href="../auth/login.php" title="Login">
+                
+                <li>
+                    <?php if(isset($_SESSION["user_id"])): ?>
+                        <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                         </a>
-                    </li>
-                <?php endif; ?>
+                    <?php else: ?>
+                        <a class="nav-icon-btn" href="../auth/login.php" title="Login">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                        </a>
+                    <?php endif; ?>
+                </li>
             </ul>
         </div>
     </nav>
 
-    <div class="container-fluid" style="margin-top: 20px;">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 bg-dark min-vh-100 p-3 text-white">
-                <h3 class="h5 mb-4 text-primary">SpeedyBreak</h3>
-                <div class="nav flex-column nav-pills">
-                    <a href="?tabella=SB_categoria" class="nav-link text-white <?= $tabella == 'SB_categoria' ? 'active' : '' ?>">Categorie</a>
-                    <a href="?tabella=SB_prodotto"  class="nav-link text-white <?= $tabella == 'SB_prodotto'  ? 'active' : '' ?>">Prodotti</a>
-                    <a href="?tabella=SB_utente"    class="nav-link text-white <?= $tabella == 'SB_utente'    ? 'active' : '' ?>">Utenti</a>
-                </div>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--space-6); color: var(--color-secondary);">Dashboard</h3>
+            <div class="flex flex-col">
+                <a href="?tabella=SB_categoria" class="sidebar-link <?= $tabella == 'SB_categoria' ? 'active' : '' ?>">Categorie</a>
+                <a href="?tabella=SB_prodotto"  class="sidebar-link <?= $tabella == 'SB_prodotto'  ? 'active' : '' ?>">Prodotti</a>
+                <a href="?tabella=SB_utente"    class="sidebar-link <?= $tabella == 'SB_utente'    ? 'active' : '' ?>">Utenti</a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="admin-main">
+            <div class="mb-4">
+                <?= $message ?>
+            </div>
+            
+            <div class="flex justify-between items-center mb-6">
+                <h2 style="font-size: var(--font-size-2xl);">Tabella: <?= str_replace('SB_', '', $tabella) ?></h2>
+                <button class="btn btn-primary" onclick="apriModalAggiungi()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Aggiungi
+                </button>
             </div>
 
-            <!-- Main content -->
-            <main class="col-md-10 p-4">
-                <?= $message ?>
-                <div class="d-flex justify-content-between mb-3">
-                    <h2>Tabella: <?= str_replace('SB_', '', $tabella) ?></h2>
-                    <button class="btn btn-primary" onclick="apriModalAggiungi()">+ Aggiungi</button>
-                </div>
-
-                <div class="card shadow">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-secondary">
-                            <tr>
-                                <?php
-                                foreach ($campi as $f) {
-                                    if (in_array($f->name, ['id_categoria', 'id_utente', 'id_prodotto'])) continue;
-                                    echo "<th>" . ucfirst($f->name) . "</th>";
-                                }
-                                ?>
-                                <th>Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($row = $query_tabella->fetch_assoc()):
-                                $pk = $campi[0]->name;
-                                $json_data = htmlspecialchars(json_encode($row));
+            <div class="card" style="padding: 0; overflow: hidden; overflow-x: auto;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <?php
+                            foreach ($campi as $f) {
+                                if (in_array($f->name, ['id_categoria', 'id_utente', 'id_prodotto'])) continue;
+                                echo "<th>" . htmlspecialchars(ucfirst($f->name)) . "</th>";
+                            }
                             ?>
-                                <tr>
-                                    <?php foreach ($campi as $f):
-                                        if (in_array($f->name, ['id_categoria', 'id_utente', 'id_prodotto'])) continue;
-                                    ?>
-                                        <td><?= htmlspecialchars($row[$f->name] ?? '') ?></td>
-                                    <?php endforeach; ?>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning" onclick='apriModalModifica(<?= $json_data ?>)'>
-                                            <i class="bi bi-pencil"></i>
+                            <th style="width: 120px; text-align: center;">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = $query_tabella->fetch_assoc()):
+                            $pk = $campi[0]->name;
+                            $json_data = htmlspecialchars(json_encode($row));
+                        ?>
+                            <tr>
+                                <?php foreach ($campi as $f):
+                                    if (in_array($f->name, ['id_categoria', 'id_utente', 'id_prodotto'])) continue;
+                                ?>
+                                    <td><?= htmlspecialchars($row[$f->name] ?? '') ?></td>
+                                <?php endforeach; ?>
+                                <td style="text-align: center;">
+                                    <div class="flex justify-center gap-2">
+                                        <button class="btn btn-secondary" style="padding: 6px;" onclick='apriModalModifica(<?= $json_data ?>)' title="Modifica">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                                         </button>
                                         <?php
                                             $extra = '';
@@ -223,96 +321,106 @@ if ($res_count) {
                                             }
                                         ?>
                                         <a href="?tabella=<?= $tabella ?>&delete_id=<?= $row[$pk] ?>&id_col=<?= $pk ?>"
-                                            class="btn btn-sm btn-danger btn-elimina"
+                                            class="btn btn-danger btn-elimina"
+                                            style="padding: 6px;"
                                             <?= $extra ?>
-                                            data-tabella="<?= $tabella ?>">
-                                            <i class="bi bi-trash"></i>
+                                            data-tabella="<?= $tabella ?>" title="Elimina">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                         </a>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </main>
-        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
 
     <!-- MODAL CRUD -->
-    <div class="modal fade" id="crudModal" tabindex="-1">
-        <div class="modal-dialog">
-            <form method="POST" class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Gestisci Record</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="crudModal" class="modal-overlay">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="flex justify-between items-center mb-6">
+                    <h5 id="modalTitle" style="font-size: var(--font-size-xl); font-weight: 700;">Gestisci Record</h5>
+                    <button type="button" class="btn btn-secondary" style="padding: 4px 8px; border-radius: 50%;" onclick="chiudiModal()">✕</button>
                 </div>
-                <div class="modal-body" id="modalBody">
+                
+                <div id="modalBody" class="flex flex-col gap-4">
                     <input type="hidden" name="azione" id="formAzione">
                     <input type="hidden" name="id"     id="formId">
 
                     <?php if ($tabella == 'SB_categoria'): ?>
-
-                        <label class="form-label">Descrizione Categoria</label>
-                        <input type="text" name="descrizione" id="input_descrizione" class="form-control" required>
+                        <div class="form-group">
+                            <label class="form-label">Descrizione Categoria</label>
+                            <input type="text" name="descrizione" id="input_descrizione" class="form-control" required>
+                        </div>
 
                     <?php elseif ($tabella == 'SB_prodotto'): ?>
-
-                        <label class="form-label">Nome Prodotto</label>
-                        <input type="text" name="nome" id="input_nome" class="form-control mb-2" required>
-
-                        <label class="form-label">Descrizione Prodotto</label>
-                        <textarea name="descrizione" id="input_descrizione" class="form-control mb-2" rows="2"></textarea>
-
-                        <label class="form-label">Prezzo (€)</label>
-                        <input type="number" step="0.01" name="prezzo" id="input_prezzo" class="form-control mb-2" required>
-
-                        <label class="form-label">Categoria</label>
-                        <select name="id_categoria" id="input_id_categoria" class="form-select mb-2" required>
-                            <option value="">-- Seleziona --</option>
-                            <?php foreach ($options_cat as $c): ?>
-                                <option value="<?= $c['id_categoria'] ?>"><?= htmlspecialchars($c['descrizione']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-
-                        <label class="form-label">Quantità Disponibile</label>
-                        <input type="number" name="giacenza" id="input_giacenza" class="form-control" required>
+                        <div class="form-group">
+                            <label class="form-label">Nome Prodotto</label>
+                            <input type="text" name="nome" id="input_nome" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Descrizione Prodotto</label>
+                            <textarea name="descrizione" id="input_descrizione" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Prezzo (€)</label>
+                            <input type="number" step="0.01" name="prezzo" id="input_prezzo" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Categoria</label>
+                            <select name="id_categoria" id="input_id_categoria" class="form-control" required>
+                                <option value="">-- Seleziona --</option>
+                                <?php foreach ($options_cat as $c): ?>
+                                    <option value="<?= $c['id_categoria'] ?>"><?= htmlspecialchars($c['descrizione']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quantità Disponibile</label>
+                            <input type="number" name="giacenza" id="input_giacenza" class="form-control" required>
+                        </div>
 
                     <?php elseif ($tabella == 'SB_utente'): ?>
-
-                        <label class="form-label">Username</label>
-                        <input type="text" name="username" id="input_username" class="form-control mb-2" required>
-
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" id="input_email" class="form-control mb-2" required>
-
-                        <label class="form-label">Ruolo</label>
-                        <select name="ruolo" id="input_ruolo" class="form-select mb-2" required>
-                            <option value="customer">Customer</option>
-                            <option value="barista">Barista</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="username" id="input_username" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" id="input_email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ruolo</label>
+                            <select name="ruolo" id="input_ruolo" class="form-control" required>
+                                <option value="customer">Customer</option>
+                                <option value="barista">Barista</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
 
                     <?php endif; ?>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                
+                <div class="flex justify-end gap-2 mt-6 pt-4" style="border-top: 1px solid var(--color-border);">
+                    <button type="button" class="btn btn-secondary" onclick="chiudiModal()">Annulla</button>
                     <button type="submit" class="btn btn-primary">Salva</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const modalElement = document.getElementById('crudModal');
-        const modal = new bootstrap.Modal(modalElement);
 
         function apriModalAggiungi() {
             modalElement.querySelector('form').reset();
             document.getElementById('modalTitle').innerText = "Aggiungi Nuovo";
             document.getElementById('formAzione').value = "add";
             document.getElementById('formId').value = "";
-            modal.show();
+            modalElement.classList.add('show');
         }
 
         function apriModalModifica(data) {
@@ -332,8 +440,19 @@ if ($res_count) {
                     el.value = data[key];
                 }
             }
-            modal.show();
+            modalElement.classList.add('show');
         }
+
+        function chiudiModal() {
+            modalElement.classList.remove('show');
+        }
+
+        // Chiudi il modal cliccando fuori
+        modalElement.addEventListener('click', function(e) {
+            if (e.target === this) {
+                chiudiModal();
+            }
+        });
 
         // Alert eliminazione con conteggio prodotti per le categorie
         document.querySelectorAll('.btn-elimina').forEach(function(btn) {

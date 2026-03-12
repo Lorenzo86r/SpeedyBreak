@@ -83,13 +83,6 @@
     </header>
 
     <div class="container mt-12 mb-12">
-        <section class="text-center mb-12">
-            <h2 style="font-size: var(--font-size-3xl); margin-bottom: var(--space-4); letter-spacing: -0.01em;">Perché usare SpeedyBreak?</h2>
-            <p style="font-size: var(--font-size-lg); color: var(--color-text-muted); max-width: 600px; margin: 0 auto;">
-                Semplifichiamo la gestione degli ordini per offrirti un servizio migliore ogni giorno.
-            </p>
-        </section>
-
         <section class="flex justify-center gap-6 mt-8" style="flex-wrap: wrap;">
             <div class="card flex flex-col items-center text-center animate-fade-in" style="flex: 1; min-width: 250px; animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards; padding: var(--space-8) var(--space-6); transition: transform 0.3s ease, box-shadow 0.3s ease;">
                 <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.2)); color: var(--color-primary); padding: 20px; border-radius: 24px; margin-bottom: 24px;">

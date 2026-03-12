@@ -12,20 +12,17 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
     $email = trim($_POST["email"]);
     $newPassword = $_POST["password"];
 
-    // Validate email domain
-    if (!preg_match('/.+@(aldini\.istruzioneer\.it|avbo\.it|admin\.it|bar\.it)$/', $email)) {
-        header("Location: signup.php?error=invalid_email");
+    // Validate email domain — only organizational emails allowed
+    $allowed_domains = ['aldini.istruzioneer.it', 'avbo.it'];
+    $email_domain = substr(strrchr($email, '@'), 1);
+
+    if (!in_array(strtolower($email_domain), $allowed_domains)) {
+        header("Location: signup.php?error=not_org");
         exit();
     }
 
-    // Determine initial role based on email domain
-    if (preg_match('/.+@admin\.it$/', $email)) {
-        $ruolo = 'admin';
-    } elseif (preg_match('/.+@bar\.it$/', $email)) {
-        $ruolo = 'barista';
-    } else {
-        $ruolo = 'customer';
-    }
+    // All valid organizational emails get the 'customer' role
+    $ruolo = 'customer';
 
     // 1. Hash the password
     $hash = password_hash($newPassword, PASSWORD_DEFAULT);

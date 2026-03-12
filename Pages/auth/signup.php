@@ -25,8 +25,8 @@
               </div>
               <div class="form-group">
                   <label for="femail" class="form-label">Email Istituzionale</label>
-                  <input type="email" id="femail" name="email" class="form-control" placeholder="es. mario.rossi@aldini.istruzioneer.it" required pattern=".+@(aldini\.istruzioneer\.it|avbo\.it|admin\.it|bar\.it)$" title="Inserisci un'email valida terminante con @aldini.istruzioneer.it, @avbo.it, @admin.it o @bar.it">
-                  <p class="form-help">Valida solo per i domini scolastici o di amministrazione.</p>
+                  <input type="email" id="femail" name="email" class="form-control" placeholder="es. mario.rossi@aldini.istruzioneer.it" required pattern=".+@(aldini\.istruzioneer\.it|avbo\.it)$" title="Inserisci un'email istituzionale terminante con @aldini.istruzioneer.it o @avbo.it">
+                  <p class="form-help">Solo email istituzionali @aldini.istruzioneer.it o @avbo.it</p>
               </div>
               <div class="form-group">
                   <label for="fpassword" class="form-label">Password</label>
@@ -51,7 +51,9 @@
                   <?php elseif($_GET['error'] == 'db'): ?>
                       Errore del database.
                   <?php elseif($_GET['error'] == 'invalid_email'): ?>
-                      Dominio email non valido. Utilizzare @aldini.istruzioneer.it, @avbo.it, @admin.it o @bar.it.
+                      Dominio email non valido. Utilizzare @aldini.istruzioneer.it o @avbo.it.
+                  <?php elseif($_GET['error'] == 'not_org'): ?>
+                      ⚠️ Il tuo account non fa parte dell'organizzazione. Per richiedere l'accesso, contatta <a href="mailto:saqlain.khalid@aldini.istruzioneer.it" style="color: var(--color-primary); font-weight: 600;">saqlain.khalid@aldini.istruzioneer.it</a>.
                   <?php endif; ?>
                   </span>
               </div>

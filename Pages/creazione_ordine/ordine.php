@@ -1,3 +1,4 @@
+
 <?php
     session_start();
 
@@ -22,11 +23,13 @@
     $data = json_decode(file_get_contents("php://input"),true);
 
     $id_utente = $_SESSION['user_id'];
-    $metodo = "Contanti";
-    $nota = "";
-    $data_ritiro = date("Y-m-d H:i:s",strtotime("+20 minutes"));
+$metodo = isset($data['metodo']) ? $conn->real_escape_string($data['metodo']) : "Contanti";
+$nota = isset($data['nota']) ? $conn->real_escape_string($data['nota']) : "";
+$data_ritiro = date("Y-m-d H:i:s", strtotime("+20 minutes"));
 
-    $conn->query("
+$items = isset($data['items']) ? $data['items'] : $data;
+
+$conn->query("
     INSERT INTO SB_ordine (stato,metodo,id_utente,nota,data_ritiro)
     VALUES ('In attesa','$metodo',$id_utente,'$nota','$data_ritiro')
     ");
@@ -34,9 +37,9 @@
     $id_ordine = $conn->insert_id;
 
 
-    foreach($data as $item){
+foreach ($items as $item) {
 
-        $nome = $conn->real_escape_string($item['name']);
+    $nome = $conn->real_escape_string($item['name']);
         $quantita = $item['quantity'];
 
         $res = $conn->query("SELECT id_prodotto FROM SB_prodotto WHERE nome='$nome'");

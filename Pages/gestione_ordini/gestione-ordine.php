@@ -35,15 +35,18 @@ class Database
     				b.nome,
     				c.quantita,
     				d.data_ordine,
-    				d.data_ritiro
+    				d.data_ritiro,
+                    d.stato,
+                    d.metodo,
+                    d.nota
                     
 				FROM SB_utente AS a
 				JOIN SB_ordine AS d ON a.id_utente = d.id_utente
 				JOIN SB_dettaglio_ordine AS c ON c.id_ordine = d.id_ordine
 				JOIN SB_prodotto AS b ON c.id_prodotto = b.id_prodotto
 				JOIN SB_categoria AS e ON b.id_categoria = e.id_categoria
-				WHERE d.stato != 'Completato'
-				ORDER BY d.data_ordine DESC, a.id_utente";
+				WHERE d.stato != 'Completato' AND d.stato != 'Cancellato'
+				ORDER BY d.data_ordine ASC, c.id_ordine";
                 
         return $this->get_Result_Set($sql);
     }

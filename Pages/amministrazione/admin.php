@@ -73,7 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email    = $conn->real_escape_string($_POST['email']);
         $ruolo    = $conn->real_escape_string($_POST['ruolo']);
         if ($azione == 'add') {
-            $sql = "INSERT INTO SB_utente (username, email, ruolo, password_hash) VALUES ('$username', '$email', '$ruolo', 'hash_default')";
+            $password_plain = $_POST['password'] ?? '';
+            $password_hash  = password_hash($password_plain, PASSWORD_DEFAULT);
+            $password_hash_escaped = $conn->real_escape_string($password_hash);
+            $sql = "INSERT INTO SB_utente (username, email, ruolo, password_hash) VALUES ('$username', '$email', '$ruolo', '$password_hash_escaped')";
         } else {
             $sql = "UPDATE SB_utente SET username='$username', email='$email', ruolo='$ruolo' WHERE id_utente=" . intval($_POST['id']);
         }
@@ -399,6 +402,11 @@ if ($res_count) {
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
+                        <!-- Campo password: visibile solo in fase di aggiunta, nascosto in modifica -->
+                        <div class="form-group" id="passwordField">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" id="input_password" class="form-control">
+                        </div>
 
                     <?php endif; ?>
                 </div>
@@ -419,6 +427,14 @@ if ($res_count) {
             document.getElementById('modalTitle').innerText = "Aggiungi Nuovo";
             document.getElementById('formAzione').value = "add";
             document.getElementById('formId').value = "";
+
+            // Mostra il campo password (solo per utenti) e lo rende obbligatorio
+            const passwordField = document.getElementById('passwordField');
+            if (passwordField) {
+                passwordField.style.display = '';
+                document.getElementById('input_password').required = true;
+            }
+
             modalElement.classList.add('show');
         }
 
@@ -439,6 +455,14 @@ if ($res_count) {
                     el.value = data[key];
                 }
             }
+
+            // Nasconde il campo password in fase di modifica
+            const passwordField = document.getElementById('passwordField');
+            if (passwordField) {
+                passwordField.style.display = 'none';
+                document.getElementById('input_password').required = false;
+            }
+
             modalElement.classList.add('show');
         }
 

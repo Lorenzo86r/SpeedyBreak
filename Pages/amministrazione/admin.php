@@ -127,25 +127,40 @@ if ($res_count) {
 <body class="bg-light">
 
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="brand">
+        <div class="nav-container container">
+            <a href="../../index.php" class="brand">
                 <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
                 <span>Speedy Break</span>
-            </div>
+            </a>
             <ul class="nav-links">
-                <li><a href="../../index.php">Home</a></li>
-                <li><a href="https://saqlain.altervista.org/SpeedyBreak/">Pagina Saqlain</a></li>
-                <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
+                <li><a class="nav-item" href="../../index.php">Home</a></li>
+                <li><a class="nav-item" href="https://saqlain.altervista.org/SpeedyBreak/">Pagina Saqlain</a></li>
+                <li><a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a></li>
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
-                    <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                    <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
-                    <li><a class="active" href="admin.php">Admin</a></li>
+                    <li><a class="nav-item active" href="admin.php">Admin</a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user_id"])): ?>
-                    <li><a class="login-btn" style="background-color: #dc3545;" href="../auth/logout.php">Logout</a></li>
+                    <li>
+                        <a class="nav-icon-btn" href="../auth/logout.php" title="Logout" style="color: var(--color-danger);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                        </a>
+                    </li>
                 <?php else: ?>
-                    <li><a class="login-btn" href="../auth/login.php">Login</a></li>
+                    <li>
+                        <a class="nav-icon-btn" href="../auth/login.php" title="Login">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </a>
+                    </li>
                 <?php endif; ?>
             </ul>
         </div>

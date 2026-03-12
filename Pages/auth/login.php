@@ -11,35 +11,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div class="container">
-     <header>
-            <h1>Login</h1>
-     </header>
-     <main>
-         <form action="auth_login.php" method="POST" class="login-form">
-            <div class="form-group">
-                <label for="femail">Username o Email:</label><br>
-                <input type="text" id="femail" name="email" required><br>
-            </div>
-            <div class="form-group">
-                <label for="fpassword">Password:</label><br>
-                <input type="password" id="fpassword" name="password" required>
-            </div>
-            <input type="submit" value="Login" class="btn">
-        </form> 
-        <?php if(isset($_GET['error'])): ?>
-            <p style="color: red; text-align: center;">Email o password non validi.</p>
-        <?php endif; ?>
-        <?php if(isset($_GET['signup']) && $_GET['signup'] == 'success'): ?>
-             <p style="color: green; text-align: center;">Registrazione avvenuta con successo! Ora puoi accedere.</p>
-        <?php endif; ?>
-        <p style="text-align: center; margin-top: 20px;">
-            Non hai un account? <a href="signup.php">Registrati qui</a>
-        </p>
-     </main>
-     <footer>
-            <p>&copy; 2026 SpeedyBreak</p>
-     </footer>
+    <div class="main-content flex items-center justify-center">
+      <div class="auth-container">
+        <div class="auth-card animate-fade-in">
+           <header class="auth-header">
+                  <h1>Bentornato</h1>
+                  <p>Accedi al tuo account SpeedyBreak</p>
+           </header>
+           <form action="auth_login.php" method="POST">
+              <div class="form-group">
+                  <label for="femail" class="form-label">Username o Email</label>
+                  <input type="text" id="femail" name="email" class="form-control" placeholder="Inserisci username o email" required>
+              </div>
+              <div class="form-group">
+                  <label for="fpassword" class="form-label">Password</label>
+                  <input type="password" id="fpassword" name="password" class="form-control" placeholder="Inserisci la password" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-full mt-4">Login</button>
+          </form> 
+          <?php if(isset($_GET['error'])): ?>
+              <div class="alert alert-error mt-4">
+                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                 Email o password non validi.
+              </div>
+          <?php endif; ?>
+          <?php if(isset($_GET['signup']) && $_GET['signup'] == 'success'): ?>
+               <div class="alert alert-success mt-4">
+                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                 Registrazione completata! Ora puoi accedere.
+               </div>
+          <?php endif; ?>
+          <div class="auth-footer">
+              <p>Non hai un account? <a href="signup.php">Registrati qui</a></p>
+          </div>
+        </div>
+        <footer class="mt-8 text-center" style="color: var(--color-text-muted); font-size: var(--font-size-sm);">
+            <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>
+        </footer>
+      </div>
     </div>
   </body>
 </html>

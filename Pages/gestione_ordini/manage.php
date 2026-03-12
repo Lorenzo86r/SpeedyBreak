@@ -73,104 +73,25 @@ foreach ($righe as $r) {
 <head>
     <title>Gestione Ordini</title>
     <link rel="stylesheet" href="../../Assets/Styles/style.css">
-
-    <style>
-        body {
-            font-family: Arial;
-            margin: 30px;
-            background: #fafafa;
-        }
-
-        /* CARD UTENTE */
-        .user-card {
-            background: white;
-            padding: 25px;
-            border-radius: 14px;
-            margin-bottom: 35px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-
-        .user-header {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        /* BLOCCO ORDINE */
-        .order-block {
-            background: #f7f7f7;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .order-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .order-info {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 10px;
-        }
-
-        /* PRODOTTI */
-        .product-item {
-            font-size: 16px;
-            margin-left: 15px;
-        }
-
-        /* STATO ORDINE */
-        .status {
-            padding: 6px 10px;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
-        .stato-In\ preparazione { background: #ff9800; }
-        .stato-Pronto          { background: #28a745; }
-        .stato-In\ attesa      { background: #007bff; }
-
-        /* PULSANTE GESTIONE */
-        .button-manage {
-            padding: 10px 14px;
-            background: #007bff;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .button-manage:hover {
-            background: #0056b3;
-        }
-    </style>
 </head>
 
 <body>
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <div class="nav-container">
-
-            <div class="brand">
+        <div class="nav-container container">
+            <a href="../../index.php" class="brand">
                 <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
                 <span>Speedy Break</span>
-            </div>
+            </a>
 
             <ul class="nav-links">
-                <li><a class="active" href="../../index.php">Home</a></li>
-                <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
-                <li><a href="manage.php">Gestione Ordini</a></li>
-                <li><a href="storico_ordini.php">Storico</a></li>
+                <li><a class="nav-item" href="../../index.php">Home</a></li>
+                <li><a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a></li>
+                <li><a class="nav-item active" href="manage.php">Gestione Ordini</a></li>
+                <li><a class="nav-item" href="storico_ordini.php">Storico</a></li>
                 <li>
-                    <a class="login-icon" href="../auth/profile.php" title="Area Personale">
+                    <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
@@ -178,73 +99,81 @@ foreach ($righe as $r) {
                     </a>
                 </li>
             </ul>
-
         </div>
     </nav>
 
-    <h2 style="margin-bottom:20px;">Ordini Attivi</h2>
-
-    <!-- CARD PER OGNI UTENTE -->
-    <?php foreach ($utenti as $utente): ?>
-
-        <div class="user-card">
-
-            <!-- INTESTAZIONE UTENTE -->
-            <div class="user-header">
-                <?= $utente["username"] ?>
-                <span style="font-size:14px; color:#777;">
-                    (<?= $utente["email"] ?>)
-                </span>
-            </div>
-
-            <!-- ORDINI DELL'UTENTE -->
-            <?php foreach ($utente["ordini"] as $ordine): ?>
-
-                <div class="order-block">
-
-                    <!-- TITOLO ORDINE -->
-                    <div class="order-title">
-                        Ordine #<?= $ordine["id_ordine"] ?>
-                    </div>
-
-                    <!-- STATO ORDINE -->
-                    <div class="status stato-<?= str_replace(' ', '\ ', $ordine["stato"]) ?>">
-                        <?= $ordine["stato"] ?>
-                    </div>
-
-                    <!-- INFO ORDINE -->
-                    <div class="order-info">
-                        Ordinato il: <strong><?= $ordine["data_ordine"] ?></strong><br>
-                        Ritiro previsto: <strong><?= $ordine["data_ritiro"] ?></strong><br>                       
-                    </div>
-
-                    <!-- PRODOTTI -->
-                    <div>
-                        <strong>Prodotti:</strong><br>
-
-                        <?php foreach ($ordine["prodotti"] as $p): ?>
-                            <div class="product-item">
-                                • <?= $p["nome"] ?> × <?= $p["quantita"] ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <br>
-
-                    <!-- PULSANTE GESTIONE -->
-                    <a class="button-manage" href="update.php?id=<?= $ordine["id_ordine"] ?>">
-                        Gestisci Ordine
-                    </a>
-
-                </div>
-
-            <?php endforeach; ?>
-
+    <main class="main-content container">
+        <div class="flex justify-between items-center mb-6">
+            <h2 style="font-size: var(--font-size-3xl);">Ordini Attivi</h2>
         </div>
 
-    <?php endforeach; ?>
+        <!-- CARD PER OGNI UTENTE -->
+        <?php foreach ($utenti as $utente): ?>
+            <div class="card mb-6 animate-fade-in">
+                <!-- INTESTAZIONE UTENTE -->
+                <div class="mb-4 flex items-center gap-2">
+                    <div style="background: var(--color-primary-light); color: var(--color-primary); padding: 8px; border-radius: 50%;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div>
+                        <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--color-secondary);">
+                            <?= htmlspecialchars($utente["username"]) ?>
+                        </div>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-text-muted);">
+                            <?= htmlspecialchars($utente["email"]) ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <!-- ORDINI DELL'UTENTE -->
+                    <?php foreach ($utente["ordini"] as $ordine): ?>
+                        <div style="background-color: var(--color-bg); border-radius: var(--radius-md); padding: var(--space-4); border: 1px solid var(--color-border);">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <div style="font-size: var(--font-size-lg); font-weight: 600; color: var(--color-secondary); margin-bottom: var(--space-2);">
+                                        Ordine #<?= htmlspecialchars($ordine["id_ordine"]) ?>
+                                    </div>
+                                    <div style="font-size: var(--font-size-sm); color: var(--color-text-muted);">
+                                        Ordinato il: <strong style="color: var(--color-text);"><?= htmlspecialchars($ordine["data_ordine"]) ?></strong><br>
+                                        Ritiro previsto: <strong style="color: var(--color-text);"><?= htmlspecialchars($ordine["data_ritiro"]) ?></strong>                       
+                                    </div>
+                                </div>
+                                <div class="badge <?php 
+                                    if(trim($ordine['stato']) == 'Pronto') echo 'badge-success'; 
+                                    else if(trim($ordine['stato']) == 'In preparazione') echo 'badge-warning';
+                                    else echo 'badge-primary'; 
+                                ?>">
+                                    <?= htmlspecialchars($ordine["stato"]) ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <strong style="font-size: var(--font-size-sm); color: var(--color-text);">Prodotti:</strong>
+                                <ul style="margin-top: var(--space-1); margin-left: var(--space-4); list-style-type: disc; color: var(--color-text-muted); font-size: var(--font-size-sm);">
+                                    <?php foreach ($ordine["prodotti"] as $p): ?>
+                                        <li><?= htmlspecialchars($p["nome"]) ?> &times; <?= htmlspecialchars($p["quantita"]) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+
+                            <a class="btn btn-primary btn-sm" href="update.php?id=<?= htmlspecialchars($ordine["id_ordine"]) ?>">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                Gestisci Ordine
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </main>
+    
+    <footer class="global-footer mt-auto">
+        <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>
+    </footer>
 
 </body>
+</html>dy>
 </html>
 
 

@@ -41,39 +41,51 @@ if (!isset($_SESSION["user_id"])) {
             </ul>
         </div>
     </nav>
-    <div class="container">
-     <header>
-            <h1>Aggiorna Password</h1>
-     </header>
-     <main>
-         <form action="auth_update_password.php" method="POST" class="login-form">
-            <div class="form-group">
-                <label for="old_password">Vecchia Password:</label><br>
-                <input type="password" id="old_password" name="old_password" required><br>
-            </div>
-            <div class="form-group">
-                <label for="new_password">Nuova Password:</label><br>
-                <input type="password" id="new_password" name="new_password" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">Conferma Nuova Password:</label><br>
-                <input type="password" id="confirm_password" name="confirm_password" required>
-            </div>
-            <input type="submit" value="Aggiorna Password" class="btn btn-primary" style="color: #222;">
-        </form> 
-        <?php if(isset($_GET['error'])): ?>
-            <?php if($_GET['error'] == 'wrong_old'): ?>
-                <p style="color: red; text-align: center; margin-top: 15px;">La vecchia password è errata.</p>
-            <?php elseif($_GET['error'] == 'mismatch'): ?>
-                <p style="color: red; text-align: center; margin-top: 15px;">Le nuove password non corrispondono.</p>
-            <?php else: ?>
-                <p style="color: red; text-align: center; margin-top: 15px;">Si è verificato un errore rirprova.</p>
-            <?php endif; ?>
-        <?php endif; ?>
-        <p style="text-align: center; margin-top: 20px;">
-            <a href="profile.php">Torna all'Area Personale</a>
-        </p>
-     </main>
+    <div class="main-content flex justify-center items-center">
+      <div class="auth-container">
+        <div class="auth-card animate-fade-in">
+           <header class="auth-header">
+                  <h1>Aggiorna Password</h1>
+                  <p>Modifica la tua password di accesso</p>
+           </header>
+           <form action="auth_update_password.php" method="POST">
+              <div class="form-group">
+                  <label for="old_password" class="form-label">Vecchia Password</label>
+                  <input type="password" id="old_password" name="old_password" class="form-control" placeholder="Inserisci la vecchia password" required>
+              </div>
+              <div class="form-group">
+                  <label for="new_password" class="form-label">Nuova Password</label>
+                  <input type="password" id="new_password" name="new_password" class="form-control" placeholder="Inserisci la nuova password" required>
+              </div>
+              <div class="form-group">
+                  <label for="confirm_password" class="form-label">Conferma Nuova Password</label>
+                  <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Ripeti la nuova password" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-full mt-4">Aggiorna Password</button>
+          </form> 
+          <?php if(isset($_GET['error'])): ?>
+              <div class="alert alert-error mt-4">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>
+                  <?php if($_GET['error'] == 'wrong_old'): ?>
+                      La vecchia password è errata.
+                  <?php elseif($_GET['error'] == 'mismatch'): ?>
+                      Le nuove password non corrispondono.
+                  <?php else: ?>
+                      Si è verificato un errore, riprova.
+                  <?php endif; ?>
+                  </span>
+              </div>
+          <?php endif; ?>
+          <div class="auth-footer mt-6">
+              <a href="profile.php" class="btn btn-secondary w-full">Torna all'Area Personale</a>
+          </div>
+        </div>
+      </div>
     </div>
+    
+    <footer class="global-footer mt-auto">
+        <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>
+    </footer>
   </body>
 </html>

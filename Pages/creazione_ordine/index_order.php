@@ -23,83 +23,97 @@ $result = $conn->query($sql);
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>SpeedyBreak - Ordini</title>
-        <link rel="stylesheet" href="style.css">
-        <style>
-            /* Un piccolo tocco di stile extra per la descrizione */
-            .product p.desc {
-                font-size: 0.9em;
-                color: #666;
-                font-style: italic;
-            }
-            .price {
-                font-weight: bold;
-                color: #2c3e50;
-            }
-        </style>
-
-        <script>
-            // passaggio stato login al js
-            const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
-        </script>
-    </head>
-    <body>
-    <ul class="nav-links">
-        <li><a class="active" href="../../index.php">Home</a></li>
-        <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
-        <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
-            <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
-        <?php endif; ?>
-        <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
-            <li><a href="../amministrazione/admin.php">Admin</a></li>
-        <?php endif; ?>
-        <li>
-            <a class="login-icon" href="../auth/profile.php" title="Area Personale">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
+    <link rel="stylesheet" href="../../Assets/Styles/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        // passaggio stato login al js
+        const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container container">
+            <a href="../../index.php" class="brand">
+                <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
+                <span>Speedy Break</span>
             </a>
-        </li>
-    </ul>
+            <ul class="nav-links">
+                <li><a class="nav-item" href="../../index.php">Home</a></li>
+                <li><a class="nav-item active" href="../creazione_ordine/index_order.php">Ordina</a></li>
+                <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
+                    <li><a class="nav-item" href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
+                <?php endif; ?>
+                <?php if(isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+                    <li><a class="nav-item" href="../amministrazione/admin.php">Admin</a></li>
+                <?php endif; ?>
+                <li>
+                    <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-    <header>
-        <h1>🍔 Ordina! • SpeedyBreak</h1>
-    </header>
+    <main class="main-content">
+        <div class="container hero text-center" style="background: transparent; border: none; padding-top: var(--space-4); padding-bottom: var(--space-8);">
+            <h1>🍔 Ordina! • SpeedyBreak</h1>
+            <p>Seleziona i prodotti che desideri e invia l'ordine al bar.</p>
+        </div>
 
-    <div class="container">
+        <div class="container flex gap-6" style="align-items: flex-start; flex-wrap: wrap;">
+            
+            <section class="menu flex-1" style="min-width: 60%">
+                <div class="flex justify-between items-center mb-6">
+                   <h2 style="font-size: var(--font-size-2xl);">Menu</h2>
+                   <span class="badge badge-warning">Max 5 per prodotto</span>
+                </div>
+                
+                <div class="menu-grid">
+                <?php if ($result && $result->num_rows > 0): ?>
+                    <?php while($row = $result->fetch_assoc()): ?>
+                        <div class="card product-card animate-fade-in">
+                            <h3 style="font-size: var(--font-size-lg);"><?= htmlspecialchars($row['nome']) ?></h3>
+                            <p class="desc" style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: var(--space-2);"><?= htmlspecialchars($row['descrizione']) ?></p>
+                            <p class="price">€<?= number_format($row['prezzo'], 2, ',', '.') ?></p>
+                            <div class="actions">
+                                <button class="btn btn-primary w-full" onclick="addToCart('<?= addslashes($row['nome']) ?>', <?= $row['prezzo'] ?>)">
+                                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                   Aggiungi
+                                </button>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p style="color: var(--color-text-muted);">Nessun prodotto disponibile al momento.</p>
+                <?php endif; ?>
+                </div>
+            </section>
 
-        <section class="menu">
-            <h2>Menu</h2>
-            <h3>Max 5 elementi per prodotto</h3><br>
+            <section class="cart cart-sidebar card" style="flex: 0 0 320px;">
+                <h2 style="font-size: var(--font-size-xl); margin-bottom: var(--space-4); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-2);">🛒 Carrello</h2>
+                <ul id="cart-list" style="margin-bottom: var(--space-4); min-height: 50px;"></ul>
+                <div class="divider"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 style="font-size: var(--font-size-lg); color: var(--color-text-muted);">Totale</h3>
+                    <div id="total" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--color-secondary);">€0.00</div>
+                </div>
+                <button class="btn btn-primary w-full btn-lg" onclick="sendOrder()">Invia Ordine</button>
+            </section>
 
-            <?php if ($result && $result->num_rows > 0): ?>
-                <?php while($row = $result->fetch_assoc()): ?>
-                    <div class="product">
-                        <h3><?= htmlspecialchars($row['nome']) ?></h3>
-                        <p class="desc"><?= htmlspecialchars($row['descrizione']) ?></p>
-                        <p class="price">€<?= number_format($row['prezzo'], 2, ',', '.') ?></p>
-                        <button onclick="addToCart('<?= addslashes($row['nome']) ?>', <?= $row['prezzo'] ?>)">
-                            Aggiungi
-                        </button>
-                    </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p>Nessun prodotto disponibile al momento.</p>
-            <?php endif; ?>
+        </div>
+    </main>
 
-        </section>
-
-        <section class="cart">
-            <h2>🛒 Carrello</h2>
-            <ul id="cart-list"></ul>
-            <hr>
-            <h3 id="total">Totale: €0.00</h3>
-            <button class="order-btn" onclick="sendOrder()">Invia Ordine</button>
-        </section>
-
-    </div>
+    <footer class="global-footer mt-auto">
+        <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>
+    </footer>
 
     <script src="script.js"></script>
-    </body>
-    </html>
+</body>
+</html>
 <?php $conn->close(); ?>

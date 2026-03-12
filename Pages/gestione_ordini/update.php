@@ -64,19 +64,18 @@ if (!$ordine) {
     <link rel="stylesheet" href="../../Assets/Styles/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Centratura completa dei contenuti */
+        .main-content.container-md {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 24px 20px 40px;
+        }
         .center-container {
-            max-width: 600px;
+            max-width: 800px;
+            width: 100%;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            padding-bottom: 2rem;
-        }
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
     </style>
 </head>

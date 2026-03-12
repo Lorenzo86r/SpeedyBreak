@@ -27,6 +27,7 @@ if (isset($_POST["update"])) {
 
 /* DELETE ordine */
 if (isset($_POST["delete"])) {
+
     if ($db->deleteOrdine($id)) {
         header("Location: manage.php");
         exit;
@@ -37,6 +38,7 @@ if (isset($_POST["delete"])) {
 
 /* Cambio stato rapido */
 if (isset($_POST["change_status"])) {
+
     if ($db->changeStatus($id, $_POST["new_status"])) {
         $message = "Stato aggiornato!";
     } else {
@@ -50,93 +52,121 @@ $ordine = $db->getOrdineById($id);
 if (!$ordine) {
     die("Ordine non trovato.");
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
 
 <head>
+
     <meta charset="UTF-8">
     <title>Gestione Ordine - SpeedyBreak</title>
 
-    <link rel="stylesheet" href="../../Assets/Styles/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/Assets/Styles/style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
 </head>
 
 <body>
 
-    <nav class="navbar">
-        <div class="nav-container container">
+<nav class="navbar">
 
-            <a href="../../index.php" class="brand">
-                <img src="../../Assets/Images/logo.png" alt="Logo Speedy Break">
-                <span>Speedy Break</span>
-            </a>
+    <div class="nav-container container">
 
-            <ul class="nav-links">
+        <a href="/index.php" class="brand">
+            <img src="/Assets/Images/logo.png" alt="Logo Speedy Break">
+            <span>Speedy Break</span>
+        </a>
+
+        <ul class="nav-links">
+
+            <li>
+                <a class="nav-item" href="/index.php">Home</a>
+            </li>
+
+            <li>
+                <a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a>
+            </li>
+
+            <?php if (isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
 
                 <li>
-                    <a class="nav-item" href="../../index.php">Home</a>
+                    <a class="nav-item active" href="manage.php">Gestione Ordini</a>
                 </li>
 
                 <li>
-                    <a class="nav-item" href="../creazione_ordine/index_order.php">Ordina</a>
+                    <a class="nav-item" href="storico_ordini.php">Storico</a>
                 </li>
 
-                <?php if (isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
-                    <li>
-                        <a class="nav-item active" href="manage.php">Gestione Ordini</a>
-                    </li>
-                    <li>
-                        <a class="nav-item" href="storico_ordini.php">Storico</a>
-                    </li>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
+
+                <li>
+                    <a class="nav-item" href="../amministrazione/admin.php">Admin</a>
+                </li>
+
+            <?php endif; ?>
+
+            <li>
+
+                <?php if (isset($_SESSION["user_id"])): ?>
+
+                    <a class="nav-icon-btn"
+                       href="../auth/profile.php"
+                       title="Area Personale">
+
+                        <svg width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2">
+
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+
+                        </svg>
+
+                    </a>
+
+                <?php else: ?>
+
+                    <a class="nav-icon-btn"
+                       href="../auth/login.php"
+                       title="Login">
+
+                        <svg width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2">
+
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+
+                        </svg>
+
+                    </a>
+
                 <?php endif; ?>
 
-                <?php if (isset($_SESSION["ruolo"]) && $_SESSION["ruolo"] === 'admin'): ?>
-                    <li>
-                        <a class="nav-item" href="../amministrazione/admin.php">Admin</a>
-                    </li>
-                <?php endif; ?>
+            </li>
 
-                <li>
+        </ul>
 
-                    <?php if (isset($_SESSION["user_id"])): ?>
+    </div>
 
-                        <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="2">
+</nav>
 
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
+<main class="main-content">
 
-                            </svg>
-                        </a>
-
-                    <?php else: ?>
-
-                        <a class="nav-icon-btn" href="../auth/login.php" title="Login">
-
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="2">
-
-                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                                <polyline points="10 17 15 12 10 7"></polyline>
-                                <line x1="15" y1="12" x2="3" y2="12"></line>
-
-                            </svg>
-
-                        </a>
-
-                    <?php endif; ?>
-
-                </li>
-
-            </ul>
-
-        </div>
-    </nav>
-
-    <main class="main-content container-md">
+    <div class="container-md" style="max-width:700px; margin:auto;">
 
         <div class="flex justify-between items-center mb-6">
 
@@ -158,35 +188,41 @@ if (!$ordine) {
 
         <?php endif; ?>
 
-        <!-- CONTENUTO CENTRATO -->
-        <div style="max-width:700px; margin:0 auto;" class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6">
 
             <!-- CLIENTE -->
+
             <div class="card animate-fade-in">
 
-                <h3 style="font-size: var(--font-size-xl);
-                           margin-bottom: var(--space-4);
-                           border-bottom: 1px solid var(--color-border);
-                           padding-bottom: var(--space-2);">
-
+                <h3 style="
+                    font-size: var(--font-size-xl);
+                    margin-bottom: var(--space-4);
+                    border-bottom: 1px solid var(--color-border);
+                    padding-bottom: var(--space-2);
+                ">
                     Cliente
-
                 </h3>
 
                 <div style="color: var(--color-text-muted);">
 
                     <p class="mb-2">
-                        <strong style="color: var(--color-text);">Username:</strong>
+                        <strong style="color: var(--color-text);">
+                            Username:
+                        </strong>
                         <?= htmlspecialchars($ordine["username"]) ?>
                     </p>
 
                     <p class="mb-2">
-                        <strong style="color: var(--color-text);">Email:</strong>
+                        <strong style="color: var(--color-text);">
+                            Email:
+                        </strong>
                         <?= htmlspecialchars($ordine["email"]) ?>
                     </p>
 
                     <p>
-                        <strong style="color: var(--color-text);">Ruolo:</strong>
+                        <strong style="color: var(--color-text);">
+                            Ruolo:
+                        </strong>
                         <?= htmlspecialchars($ordine["ruolo"]) ?>
                     </p>
 
@@ -195,15 +231,16 @@ if (!$ordine) {
             </div>
 
             <!-- PRODOTTI -->
+
             <div class="card animate-fade-in">
 
-                <h3 style="font-size: var(--font-size-xl);
-                           margin-bottom: var(--space-4);
-                           border-bottom: 1px solid var(--color-border);
-                           padding-bottom: var(--space-2);">
-
+                <h3 style="
+                    font-size: var(--font-size-xl);
+                    margin-bottom: var(--space-4);
+                    border-bottom: 1px solid var(--color-border);
+                    padding-bottom: var(--space-2);
+                ">
                     Prodotti Ordinati
-
                 </h3>
 
                 <div class="table-container">
@@ -211,11 +248,13 @@ if (!$ordine) {
                     <table class="table">
 
                         <thead>
+
                             <tr>
                                 <th>Prodotto</th>
                                 <th>Prezzo</th>
                                 <th style="text-align:right;">Qt.</th>
                             </tr>
+
                         </thead>
 
                         <tbody>
@@ -224,9 +263,13 @@ if (!$ordine) {
 
                                 <tr>
 
-                                    <td><?= htmlspecialchars($p["nome"]) ?></td>
+                                    <td>
+                                        <?= htmlspecialchars($p["nome"]) ?>
+                                    </td>
 
-                                    <td>€ <?= htmlspecialchars($p["prezzo"]) ?></td>
+                                    <td>
+                                        € <?= htmlspecialchars($p["prezzo"]) ?>
+                                    </td>
 
                                     <td style="text-align:right;">
                                         <?= htmlspecialchars($p["quantita"]) ?>
@@ -245,42 +288,45 @@ if (!$ordine) {
             </div>
 
             <!-- MODIFICA ORDINE -->
+
             <div class="card animate-fade-in">
 
-                <h3 style="font-size: var(--font-size-xl);
-                           margin-bottom: var(--space-4);
-                           border-bottom: 1px solid var(--color-border);
-                           padding-bottom: var(--space-2);">
-
+                <h3 style="
+                    font-size: var(--font-size-xl);
+                    margin-bottom: var(--space-4);
+                    border-bottom: 1px solid var(--color-border);
+                    padding-bottom: var(--space-2);
+                ">
                     Modifica Dettagli Ordine
-
                 </h3>
 
-                <form method="POST">
+                <form method="POST" style="width:100%;">
 
                     <div class="form-group">
 
-                        <label class="form-label">Stato:</label>
+                        <label class="form-label">
+                            Stato:
+                        </label>
 
-                        <select name="stato" class="form-control">
+                        <select name="stato" class="form-control w-full">
 
-                            <option <?= $ordine["stato"] == "In Attesa" ? "selected" : "" ?>>
+                            <option value="In Attesa" <?= $ordine["stato"] == "In Attesa" ? "selected" : "" ?>>
                                 In Attesa
                             </option>
 
-                            <option <?= $ordine["stato"] == "In Preparazione" ? "selected" : "" ?>>
+                            <option value="In Preparazione" <?= $ordine["stato"] == "In Preparazione" ? "selected" : "" ?>>
                                 In Preparazione
                             </option>
 
-                            <option <?= $ordine["stato"] == "Pronto" ? "selected" : "" ?>>
+                            <option value="Pronto" <?= $ordine["stato"] == "Pronto" ? "selected" : "" ?>>
                                 Pronto
                             </option>
 
-                            <option <?= $ordine["stato"] == "Completato" ? "selected" : "" ?>>
+                            <option value="Completato" <?= $ordine["stato"] == "Completato" ? "selected" : "" ?>>
                                 Completato
                             </option>
 
-                            <option <?= $ordine["stato"] == "Annullato" ? "selected" : "" ?>>
+                            <option value="Annullato" <?= $ordine["stato"] == "Annullato" ? "selected" : "" ?>>
                                 Annullato
                             </option>
 
@@ -290,9 +336,11 @@ if (!$ordine) {
 
                     <div class="form-group">
 
-                        <label class="form-label">Metodo di pagamento:</label>
+                        <label class="form-label">
+                            Metodo di pagamento:
+                        </label>
 
-                        <select name="metodo" class="form-control">
+                        <select name="metodo" class="form-control w-full">
 
                             <option value="">---</option>
 
@@ -310,37 +358,49 @@ if (!$ordine) {
 
                     <div class="form-group">
 
-                        <label class="form-label">Nota:</label>
+                        <label class="form-label">
+                            Nota:
+                        </label>
 
-                        <textarea name="nota"
-                                  class="form-control"
-                                  rows="3"><?= htmlspecialchars($ordine["nota"]) ?></textarea>
+                        <textarea
+                            name="nota"
+                            class="form-control w-full"
+                            rows="3"><?= htmlspecialchars($ordine["nota"]) ?></textarea>
 
                     </div>
 
                     <div class="form-group">
 
-                        <label class="form-label">Data ritiro:</label>
+                        <label class="form-label">
+                            Data ritiro:
+                        </label>
 
-                        <input type="datetime-local"
-                               name="data_ritiro"
-                               class="form-control"
-                               value="<?= $ordine["data_ritiro"]
-                                   ? date('Y-m-d\TH:i', strtotime($ordine["data_ritiro"]))
-                                   : '' ?>">
+                        <input
+                            type="datetime-local"
+                            name="data_ritiro"
+                            class="form-control w-full"
+                            value="<?= $ordine["data_ritiro"]
+                                ? date('Y-m-d\TH:i', strtotime($ordine["data_ritiro"]))
+                                : '' ?>">
 
                     </div>
 
                     <div class="flex flex-col gap-2 mt-4">
 
-                        <button type="submit" name="update" class="btn btn-primary w-full">
+                        <button
+                            type="submit"
+                            name="update"
+                            class="btn btn-primary w-full">
+
                             Salva Modifiche
+
                         </button>
 
-                        <button type="submit"
-                                name="delete"
-                                class="btn btn-danger w-full"
-                                onclick="return confirm('Sei sicuro di eliminare definitivamente l\'ordine? L\'azione è irreversibile.')">
+                        <button
+                            type="submit"
+                            name="delete"
+                            class="btn btn-danger w-full"
+                            onclick="return confirm('Sei sicuro di eliminare definitivamente l\'ordine? L\'azione è irreversibile.')">
 
                             Elimina Ordine
 
@@ -354,11 +414,14 @@ if (!$ordine) {
 
         </div>
 
-    </main>
+    </div>
 
-    <footer class="global-footer mt-auto">
-        <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>
-    </footer>
+</main>
+
+<footer class="global-footer mt-auto">
+    <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>
+</footer>
 
 </body>
+
 </html>

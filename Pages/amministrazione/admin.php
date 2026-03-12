@@ -8,7 +8,7 @@ if (!isset($_SESSION["ruolo"]) || $_SESSION["ruolo"] !== 'admin') {
 $host = "localhost";
 $user = "root";
 $pass = "";
-$db = "my_saqlain";
+$db = "my_input789";
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) die("Connessione fallita: " . $conn->connect_error);
@@ -45,9 +45,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($tabella == 'SB_categoria') {
         $desc = $conn->real_escape_string($_POST['descrizione']);
-        $sql = ($azione == 'add')
-            ? "INSERT INTO SB_categoria (descrizione) VALUES ('$desc')"
-            : "UPDATE SB_categoria SET descrizione='$desc' WHERE id_categoria=" . intval($_POST['id']);
+
+        if ($azione == 'add') {
+            $check = $conn->query("SELECT id_categoria FROM SB_categoria WHERE descrizione = '$desc' LIMIT 1");
+            if ($check && $check->num_rows > 0) {
+                $message = "<div class='alert alert-warning'>La categoria \"" . htmlspecialchars($_POST['descrizione']) . "\" esiste già!</div>";
+                $sql = null;
+            } else {
+                $sql = "INSERT INTO SB_categoria (descrizione) VALUES ('$desc')";
+            }
+        } else {
+            $sql = "UPDATE SB_categoria SET descrizione='$desc' WHERE id_categoria=" . intval($_POST['id']);
+        }
 
     } elseif ($tabella == 'SB_prodotto') {
         $nome      = $conn->real_escape_string($_POST['nome']);
@@ -125,6 +134,7 @@ if ($res_count) {
             </div>
             <ul class="nav-links">
                 <li><a href="../../index.php">Home</a></li>
+                <li><a href="https://saqlain.altervista.org/SpeedyBreak/">Pagina Saqlain</a></li>
                 <li><a href="../creazione_ordine/index_order.php">Ordina</a></li>
                 <?php if(isset($_SESSION["ruolo"]) && ($_SESSION["ruolo"] === 'admin' || $_SESSION["ruolo"] === 'barista')): ?>
                     <li><a href="../gestione_ordini/manage.php">Gestione Ordini</a></li>
@@ -189,23 +199,20 @@ if ($res_count) {
                                         <button class="btn btn-sm btn-warning" onclick='apriModalModifica(<?= $json_data ?>)'>
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <?php if (true): ?>
-                                            <?php
-                                                // Parametro extra per l'alert categoria
-                                                $extra = '';
-                                                if ($tabella === 'SB_categoria') {
-                                                    $id_cat = $row[$pk];
-                                                    $num_prod = $prodotti_per_categoria[$id_cat] ?? 0;
-                                                    $extra = "data-num-prodotti=\"$num_prod\"";
-                                                }
-                                            ?>
-                                            <a href="?tabella=<?= $tabella ?>&delete_id=<?= $row[$pk] ?>&id_col=<?= $pk ?>"
-                                                class="btn btn-sm btn-danger btn-elimina"
-                                                <?= $extra ?>
-                                                data-tabella="<?= $tabella ?>">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
-                                        <?php endif; ?>
+                                        <?php
+                                            $extra = '';
+                                            if ($tabella === 'SB_categoria') {
+                                                $id_cat = $row[$pk];
+                                                $num_prod = $prodotti_per_categoria[$id_cat] ?? 0;
+                                                $extra = "data-num-prodotti=\"$num_prod\"";
+                                            }
+                                        ?>
+                                        <a href="?tabella=<?= $tabella ?>&delete_id=<?= $row[$pk] ?>&id_col=<?= $pk ?>"
+                                            class="btn btn-sm btn-danger btn-elimina"
+                                            <?= $extra ?>
+                                            data-tabella="<?= $tabella ?>">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>

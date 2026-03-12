@@ -82,8 +82,10 @@ $result = $conn->query($sql);
             <section class="menu flex-1" style="min-width: 60%">
                 <div class="flex justify-between items-center mb-6">
                    <h2 style="font-size: var(--font-size-2xl);">Menu</h2>
-                   <span class="badge badge-warning">Max 5 per prodotto</span>
+                   <span class="badge badge-warning">Max 30 per prodotto</span>
                 </div>
+                
+                
                 
                 <div class="menu-grid">
                 <?php if ($result && $result->num_rows > 0): ?>
@@ -93,8 +95,9 @@ $result = $conn->query($sql);
                             <p class="desc" style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: var(--space-2);"><?= htmlspecialchars($row['descrizione']) ?></p>
                             <p class="price">€<?= number_format($row['prezzo'], 2, ',', '.') ?></p>
                             <div class="actions">
-                                <button class="btn btn-primary w-full" onclick="addToCart('<?= addslashes($row['nome']) ?>', <?= $row['prezzo'] ?>)">
-                                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                <button class="btn btn-primary w-full"
+                                        onclick="addToCart('<?= addslashes($row['nome']) ?>', <?= $row['prezzo'] ?>)" <?= !isset($_SESSION['user_id']) ? 'disabled title="Effettua il login per ordinare"' : '' ?>>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                    Aggiungi
                                 </button>
                             </div>
@@ -105,17 +108,51 @@ $result = $conn->query($sql);
                 <?php endif; ?>
                 </div>
             </section>
-
+            
+            
             <section class="cart cart-sidebar card" style="flex: 0 0 320px;">
                 <h2 style="font-size: var(--font-size-xl); margin-bottom: var(--space-4); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-2);">🛒 Carrello</h2>
                 <ul id="cart-list" style="margin-bottom: var(--space-4); min-height: 50px;"></ul>
                 <div class="divider"></div>
+
+                <div style="margin-bottom: var(--space-4);">
+                    <h3 style="font-size: var(--font-size-lg); color: var(--color-text-muted); margin-bottom: var(--space-3);">
+                        💳 Metodo di Pagamento</h3>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                        <label style="display: flex; align-items: center; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
+                            <input type="radio" name="payment-method" value="Contanti" checked
+                                   style="margin-right: var(--space-2);">
+                            <span>Contanti</span>
+                        </label>
+                        <label style="display: flex; align-items: center; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
+                            <input type="radio" name="payment-method" value="Carta"
+                                   style="margin-right: var(--space-2);">
+                            <span>Carta di Credito/Debito</span>
+                        </label>
+                        <label style="display: flex; align-items: center; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
+                            <input type="radio" name="payment-method" value="Bancomat"
+                                   style="margin-right: var(--space-2);">
+                            <span>Bancomat</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="divider"></div>
+
+                <div style="margin-bottom: var(--space-4);">
+                    <h3 style="font-size: var(--font-size-lg); color: var(--color-text-muted); margin-bottom: var(--space-3);">
+                        📝 Note (opzionale)</h3>
+                    <textarea id="order-note" rows="3" placeholder="Aggiungi eventuali note o richieste speciali..."
+                              style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-family: inherit; font-size: var(--font-size-sm); resize: vertical;"></textarea>
+                </div>
+                <div class="divider"></div>
+
                 <div class="flex justify-between items-center mb-4">
                     <h3 style="font-size: var(--font-size-lg); color: var(--color-text-muted);">Totale</h3>
                     <div id="total" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--color-secondary);">€0.00</div>
                 </div>
                 <button class="btn btn-primary w-full btn-lg" onclick="sendOrder()">Invia Ordine</button>
             </section>
+            
 
         </div>
     </main>
@@ -125,6 +162,27 @@ $result = $conn->query($sql);
     </footer>
 
     <script src="script.js"></script>
+    <style>
+        input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        label:has(input[type="radio"]:checked) {
+            border-color: var(--color-primary);
+            background-color: rgba(255, 107, 0, 0.05);
+        }
+
+        label:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(255, 107, 0, 0.02);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </body>
 </html>
 <?php $conn->close(); ?>

@@ -70,6 +70,39 @@
             }
         }
 
+        // If paying with Saldo, deduct balance
+        if ($metodo === 'Saldo') {
+            // Calculate order total
+            $stmt_total = $conn->prepare("
+                SELECT SUM(d.quantita * p.prezzo) as totale
+                FROM SB_dettaglio_ordine d
+                JOIN SB_prodotto p ON d.id_prodotto = p.id_prodotto
+                WHERE d.id_ordine = ?
+            ");
+            $stmt_total->bind_param("i", $id_ordine);
+            $stmt_total->execute();
+            $totale_ordine = (float)$stmt_total->get_result()->fetch_assoc()['totale'];
+            $stmt_total->close();
+
+            // Check balance
+            $stmt_bal = $conn->prepare("SELECT saldo FROM SB_utente WHERE id_utente = ? FOR UPDATE");
+            $stmt_bal->bind_param("i", $id_utente);
+            $stmt_bal->execute();
+            $saldo_corrente = (float)$stmt_bal->get_result()->fetch_assoc()['saldo'];
+            $stmt_bal->close();
+
+            if ($saldo_corrente < $totale_ordine) {
+                throw new Exception("Saldo insufficiente (€" . number_format($saldo_corrente, 2) . " disponibili, €" . number_format($totale_ordine, 2) . " richiesti)");
+            }
+
+            $stmt_deduct = $conn->prepare("UPDATE SB_utente SET saldo = saldo - ? WHERE id_utente = ?");
+            $stmt_deduct->bind_param("di", $totale_ordine, $id_utente);
+            if (!$stmt_deduct->execute()) {
+                throw new Exception("Errore nella deduzione del saldo");
+            }
+            $stmt_deduct->close();
+        }
+
         $conn->commit();
         echo json_encode(["status" => "success", "id_ordine" => $id_ordine]);
 

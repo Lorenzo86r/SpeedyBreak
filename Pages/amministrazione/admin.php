@@ -74,13 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $ruolo    = $conn->real_escape_string($_POST['ruolo']);
         $nome     = $conn->real_escape_string($_POST['nome'] ?? '');
         $cognome  = $conn->real_escape_string($_POST['cognome'] ?? '');
+        $saldo    = floatval($_POST['saldo'] ?? 0);
         if ($azione == 'add') {
             $password_plain = $_POST['password'] ?? '';
             $password_hash  = password_hash($password_plain, PASSWORD_DEFAULT);
             $password_hash_escaped = $conn->real_escape_string($password_hash);
-            $sql = "INSERT INTO SB_utente (username, email, ruolo, password_hash, nome, cognome) VALUES ('$username', '$email', '$ruolo', '$password_hash_escaped', '$nome', '$cognome')";
+            $sql = "INSERT INTO SB_utente (username, email, ruolo, password_hash, nome, cognome, saldo) VALUES ('$username', '$email', '$ruolo', '$password_hash_escaped', '$nome', '$cognome', $saldo)";
         } else {
-            $sql = "UPDATE SB_utente SET username='$username', email='$email', ruolo='$ruolo', nome='$nome', cognome='$cognome' WHERE id_utente=" . intval($_POST['id']);
+            $sql = "UPDATE SB_utente SET username='$username', email='$email', ruolo='$ruolo', nome='$nome', cognome='$cognome', saldo=$saldo WHERE id_utente=" . intval($_POST['id']);
         }
     }
 
@@ -98,7 +99,7 @@ if ($tabella == 'SB_prodotto') {
                   FROM SB_prodotto p
                   LEFT JOIN SB_categoria c ON p.id_categoria = c.id_categoria";
 } elseif ($tabella == 'SB_utente') {
-    $query_sql = "SELECT id_utente, nome, cognome, username, email, ruolo FROM SB_utente";
+    $query_sql = "SELECT id_utente, nome, cognome, username, email, ruolo, saldo FROM SB_utente";
 } else {
     $query_sql = "SELECT * FROM $tabella";
 }
@@ -417,6 +418,10 @@ if ($res_count) {
                         <div class="form-group" id="passwordField">
                             <label class="form-label">Password</label>
                             <input type="password" name="password" id="input_password" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Saldo (€)</label>
+                            <input type="number" step="0.01" min="0" name="saldo" id="input_saldo" class="form-control" value="0">
                         </div>
 
                     <?php endif; ?>

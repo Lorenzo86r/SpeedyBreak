@@ -41,6 +41,7 @@ $result = $conn->query($sql);
     <script>
         // passaggio stato login al js
         const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
+        const userSaldo = <?= isset($user_saldo) ? $user_saldo : 0 ?>;
     </script>
 </head>
 <body>
@@ -149,6 +150,17 @@ $result = $conn->query($sql);
                 <ul id="cart-list" style="margin-bottom: var(--space-4); min-height: 50px;"></ul>
                 <div class="divider"></div>
 
+                <?php
+                    // Fetch user saldo for payment option
+                    $user_saldo = 0;
+                    if (isset($_SESSION['user_id'])) {
+                        $uid = intval($_SESSION['user_id']);
+                        $res_saldo = $conn->query("SELECT saldo FROM SB_utente WHERE id_utente = $uid");
+                        if ($res_saldo && $row_s = $res_saldo->fetch_assoc()) {
+                            $user_saldo = (float)$row_s['saldo'];
+                        }
+                    }
+                ?>
                 <div style="margin-bottom: var(--space-4);">
                     <h3 style="font-size: var(--font-size-lg); color: var(--color-text-muted); margin-bottom: var(--space-3);">
                         💳 Metodo di Pagamento</h3>
@@ -156,17 +168,15 @@ $result = $conn->query($sql);
                         <label style="display: flex; align-items: center; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
                             <input type="radio" name="payment-method" value="Contanti" checked
                                    style="margin-right: var(--space-2);">
-                            <span>Contanti</span>
+                            <span>💵 Contanti</span>
                         </label>
-                        <label style="display: flex; align-items: center; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
-                            <input type="radio" name="payment-method" value="Carta"
-                                   style="margin-right: var(--space-2);">
-                            <span>Carta di Credito/Debito</span>
-                        </label>
-                        <label style="display: flex; align-items: center; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
-                            <input type="radio" name="payment-method" value="Bancomat"
-                                   style="margin-right: var(--space-2);">
-                            <span>Bancomat</span>
+                        <label id="saldo-label" style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); transition: all 0.2s; <?= $user_saldo <= 0 ? 'opacity: 0.45; cursor: not-allowed; background: #f9fafb;' : 'cursor: pointer;' ?>">
+                            <div style="display: flex; align-items: center;">
+                                <input type="radio" name="payment-method" value="Saldo"
+                                       style="margin-right: var(--space-2);" <?= $user_saldo <= 0 ? 'disabled' : '' ?>>
+                                <span>💰 Saldo</span>
+                            </div>
+                            <span style="font-size: 13px; font-weight: 600; color: <?= $user_saldo > 0 ? '#16a34a' : '#9ca3af' ?>;">€<?= number_format($user_saldo, 2, ',', '.') ?></span>
                         </label>
                     </div>
                 </div>

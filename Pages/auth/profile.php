@@ -16,12 +16,13 @@ if (isset($_SESSION["user_id"])) {
         $user_id = intval($_SESSION["user_id"]);
         
         // Fetch user details (nome, cognome, email)
-        $sql_user = "SELECT nome, cognome, email FROM SB_utente WHERE id_utente = $user_id";
+        $sql_user = "SELECT nome, cognome, email, saldo FROM SB_utente WHERE id_utente = $user_id";
         $res_user = $conn->query($sql_user);
         if ($res_user && $row_u = $res_user->fetch_assoc()) {
             $db_nome = $row_u['nome'] ?? '';
             $db_cognome = $row_u['cognome'] ?? '';
             $db_email = $row_u['email'] ?? '';
+            $db_saldo = (float)($row_u['saldo'] ?? 0);
             // Sync session
             $_SESSION['nome'] = $db_nome;
             $_SESSION['cognome'] = $db_cognome;
@@ -158,7 +159,7 @@ if (isset($_SESSION["user_id"])) {
               <?php endif; ?>
 
               <!-- Statistiche -->
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8);">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8);">
                   
                   <!-- Card Ordini -->
                   <div style="background: white; border-radius: var(--radius-xl); padding: var(--space-8); border: 1px solid var(--color-border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); display: flex; align-items: center; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s;" class="hover:shadow-md hover:-translate-y-1">
@@ -179,6 +180,17 @@ if (isset($_SESSION["user_id"])) {
                       </div>
                       <div style="width: 72px; height: 72px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.2)); color: #16a34a; border-radius: 20px; display: flex; align-items: center; justify-content: center; transform: rotate(5deg);">
                           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                      </div>
+                  </div>
+
+                  <!-- Card Saldo -->
+                  <div style="background: linear-gradient(135deg, #1e3a5f, #2563eb); border-radius: var(--radius-xl); padding: var(--space-8); border: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25); display: flex; align-items: center; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s;" class="hover:shadow-md hover:-translate-y-1">
+                      <div>
+                          <p style="color: rgba(255,255,255,0.7); font-size: var(--font-size-sm); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: var(--space-2);">Il Tuo Saldo</p>
+                          <h3 id="saldo-display" style="font-size: 2.5rem; color: white; font-weight: 800; line-height: 1;">€<?= number_format($db_saldo, 2, ',', '.') ?></h3>
+                      </div>
+                      <div style="width: 72px; height: 72px; background: rgba(255,255,255,0.15); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; transform: rotate(-5deg);">
+                          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4z"></path></svg>
                       </div>
                   </div>
 
@@ -214,6 +226,82 @@ if (isset($_SESSION["user_id"])) {
                           Nome e cognome derivati dall'email istituzionale e non modificabili.
                       </p>
                       <?php endif; ?>
+                  </div>
+              </div>
+
+              <!-- Ricarica Saldo -->
+              <div style="background: white; border-radius: var(--radius-xl); border: 1px solid var(--color-border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden; margin-bottom: var(--space-6);">
+                  <div style="padding: var(--space-6) var(--space-8); border-bottom: 1px solid var(--color-border);">
+                      <h3 style="font-size: var(--font-size-lg); color: var(--color-secondary); font-weight: 700; margin: 0;">💳 Ricarica Saldo</h3>
+                  </div>
+                  <div style="padding: var(--space-6) var(--space-8);">
+                      <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-4);">Seleziona un metodo di pagamento e l'importo da ricaricare.</p>
+                      
+                      <!-- Payment Method Icons -->
+                      <div style="display: flex; gap: 12px; margin-bottom: var(--space-5); flex-wrap: wrap;">
+                          <label style="flex: 1; min-width: 100px; cursor: pointer;">
+                              <input type="radio" name="recharge-method" value="gpay" checked style="display: none;">
+                              <div class="recharge-method-card" style="border: 2px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 12px; text-align: center; transition: all 0.2s; background: white;">
+                                  <svg width="32" height="32" viewBox="0 0 24 24" style="margin: 0 auto 6px;">
+                                      <rect width="24" height="24" rx="4" fill="#f3f4f6"/>
+                                      <text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#4285F4">G</text>
+                                  </svg>
+                                  <span style="font-size: 12px; font-weight: 600; color: var(--color-text-muted);">Google Pay</span>
+                              </div>
+                          </label>
+                          <label style="flex: 1; min-width: 100px; cursor: pointer;">
+                              <input type="radio" name="recharge-method" value="apple" style="display: none;">
+                              <div class="recharge-method-card" style="border: 2px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 12px; text-align: center; transition: all 0.2s; background: white;">
+                                  <svg width="32" height="32" viewBox="0 0 24 24" style="margin: 0 auto 6px;">
+                                      <rect width="24" height="24" rx="4" fill="#f3f4f6"/>
+                                      <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="700" fill="#000"></text>
+                                  </svg>
+                                  <span style="font-size: 12px; font-weight: 600; color: var(--color-text-muted);">Apple Pay</span>
+                              </div>
+                          </label>
+                          <label style="flex: 1; min-width: 100px; cursor: pointer;">
+                              <input type="radio" name="recharge-method" value="card" style="display: none;">
+                              <div class="recharge-method-card" style="border: 2px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 12px; text-align: center; transition: all 0.2s; background: white;">
+                                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" style="margin: 0 auto 6px;">
+                                      <rect x="1" y="4" width="22" height="16" rx="3"/>
+                                      <line x1="1" y1="10" x2="23" y2="10"/>
+                                  </svg>
+                                  <span style="font-size: 12px; font-weight: 600; color: var(--color-text-muted);">Carta</span>
+                              </div>
+                          </label>
+                      </div>
+
+                      <!-- Quick Amount Buttons -->
+                      <div style="display: flex; gap: 8px; margin-bottom: var(--space-4); flex-wrap: wrap;">
+                          <button type="button" onclick="setRechargeAmount(5)" class="btn btn-secondary" style="padding: 6px 16px; font-size: 14px;">€5</button>
+                          <button type="button" onclick="setRechargeAmount(10)" class="btn btn-secondary" style="padding: 6px 16px; font-size: 14px;">€10</button>
+                          <button type="button" onclick="setRechargeAmount(20)" class="btn btn-secondary" style="padding: 6px 16px; font-size: 14px;">€20</button>
+                          <button type="button" onclick="setRechargeAmount(50)" class="btn btn-secondary" style="padding: 6px 16px; font-size: 14px;">€50</button>
+                      </div>
+
+                      <div style="display: flex; gap: 10px; align-items: center;">
+                          <input type="number" id="recharge-amount" min="0.01" max="500" step="0.01" placeholder="Importo (€)" class="form-control" style="flex: 1; height: 44px; font-size: 16px;">
+                          <button type="button" onclick="rechargeSaldo()" class="btn btn-primary" style="padding: 10px 24px; white-space: nowrap; height: 44px;" id="recharge-btn">Ricarica</button>
+                      </div>
+                      <div id="recharge-msg" style="margin-top: 10px;"></div>
+                  </div>
+              </div>
+
+              <!-- Trasferisci Saldo -->
+              <div style="background: white; border-radius: var(--radius-xl); border: 1px solid var(--color-border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden; margin-bottom: var(--space-6);">
+                  <div style="padding: var(--space-6) var(--space-8); border-bottom: 1px solid var(--color-border);">
+                      <h3 style="font-size: var(--font-size-lg); color: var(--color-secondary); font-weight: 700; margin: 0;">🔄 Trasferisci Saldo</h3>
+                  </div>
+                  <div style="padding: var(--space-6) var(--space-8);">
+                      <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-4);">Invia saldo a un altro utente inserendo il suo username o email.</p>
+                      <div style="display: flex; flex-direction: column; gap: 10px;">
+                          <input type="text" id="transfer-recipient" placeholder="Username o email del destinatario" class="form-control" style="height: 44px; font-size: 15px;">
+                          <div style="display: flex; gap: 10px; align-items: center;">
+                              <input type="number" id="transfer-amount" min="0.01" step="0.01" placeholder="Importo (€)" class="form-control" style="flex: 1; height: 44px; font-size: 16px;">
+                              <button type="button" onclick="transferSaldo()" class="btn btn-primary" style="padding: 10px 24px; white-space: nowrap; height: 44px;" id="transfer-btn">Trasferisci</button>
+                          </div>
+                      </div>
+                      <div id="transfer-msg" style="margin-top: 10px;"></div>
                   </div>
               </div>
 
@@ -289,5 +377,108 @@ if (isset($_SESSION["user_id"])) {
     <footer class="global-footer mt-auto">
         <p>&copy; 2026 SpeedyBreak. Tutti i diritti riservati.</p>
     </footer>
+
+    <style>
+        /* Recharge method card selection styling */
+        input[name="recharge-method"]:checked + .recharge-method-card {
+            border-color: #2563eb;
+            background: rgba(37, 99, 235, 0.05);
+            box-shadow: 0 0 0 1px #2563eb;
+        }
+        .recharge-method-card:hover {
+            border-color: #93c5fd;
+            background: #f8fafc;
+        }
+    </style>
+
+    <script>
+    function setRechargeAmount(val) {
+        document.getElementById('recharge-amount').value = val;
+    }
+
+    function updateSaldoDisplay(saldo) {
+        const el = document.getElementById('saldo-display');
+        if (el) el.textContent = '€' + saldo.toFixed(2).replace('.', ',');
+    }
+
+    function showMsg(elementId, message, isSuccess) {
+        const el = document.getElementById(elementId);
+        el.innerHTML = `<div class="alert ${isSuccess ? 'alert-success' : 'alert-error'}" style="border-radius: var(--radius-md); font-size: 14px; padding: 10px 14px;">${message}</div>`;
+        setTimeout(() => { el.innerHTML = ''; }, 5000);
+    }
+
+    function rechargeSaldo() {
+        const amount = parseFloat(document.getElementById('recharge-amount').value);
+        if (!amount || amount <= 0) {
+            showMsg('recharge-msg', 'Inserisci un importo valido.', false);
+            return;
+        }
+        const btn = document.getElementById('recharge-btn');
+        btn.disabled = true;
+        btn.textContent = 'Caricamento...';
+
+        fetch('saldo_api.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'recharge', amount: amount })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                updateSaldoDisplay(data.saldo);
+                showMsg('recharge-msg', data.message, true);
+                document.getElementById('recharge-amount').value = '';
+            } else {
+                showMsg('recharge-msg', data.message, false);
+            }
+        })
+        .catch(() => showMsg('recharge-msg', 'Errore di rete.', false))
+        .finally(() => {
+            btn.disabled = false;
+            btn.textContent = 'Ricarica';
+        });
+    }
+
+    function transferSaldo() {
+        const recipient = document.getElementById('transfer-recipient').value.trim();
+        const amount = parseFloat(document.getElementById('transfer-amount').value);
+        if (!recipient) {
+            showMsg('transfer-msg', 'Inserisci il destinatario.', false);
+            return;
+        }
+        if (!amount || amount <= 0) {
+            showMsg('transfer-msg', 'Inserisci un importo valido.', false);
+            return;
+        }
+
+        if (!confirm(`Trasferire €${amount.toFixed(2)} a "${recipient}"?`)) return;
+
+        const btn = document.getElementById('transfer-btn');
+        btn.disabled = true;
+        btn.textContent = 'Invio...';
+
+        fetch('saldo_api.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'transfer', recipient: recipient, amount: amount })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                updateSaldoDisplay(data.saldo);
+                showMsg('transfer-msg', data.message, true);
+                document.getElementById('transfer-recipient').value = '';
+                document.getElementById('transfer-amount').value = '';
+            } else {
+                showMsg('transfer-msg', data.message, false);
+            }
+        })
+        .catch(() => showMsg('transfer-msg', 'Errore di rete.', false))
+        .finally(() => {
+            btn.disabled = false;
+            btn.textContent = 'Trasferisci';
+        });
+    }
+    </script>
   </body>
 </html>

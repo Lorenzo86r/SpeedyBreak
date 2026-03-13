@@ -118,6 +118,17 @@ function openConfirmModal(){
         return;
     }
 
+    // Check saldo balance if Saldo payment selected
+    let methodEl = document.querySelector('input[name="payment-method"]:checked');
+    if (methodEl && methodEl.value === 'Saldo') {
+        let total = 0;
+        cart.forEach(item => { total += item.price * item.quantity; });
+        if (typeof userSaldo !== 'undefined' && total > userSaldo) {
+            alert("Saldo insufficiente! Il tuo saldo è €" + userSaldo.toFixed(2).replace('.', ',') + " ma il totale è €" + total.toFixed(2).replace('.', ',') + ". Ricarica il saldo dal tuo profilo.");
+            return;
+        }
+    }
+
     const modal = document.getElementById('confirm-modal');
     const modalList = document.getElementById('modal-cart-list');
     const modalTotal = document.getElementById('modal-total');
@@ -144,8 +155,8 @@ function openConfirmModal(){
     
     modalTotal.textContent = '€' + total.toFixed(2);
     
-    // Get values from form
-    const methodEl = document.querySelector('input[name="payment-method"]:checked');
+    // Refresh methodEl in case selection changed
+    methodEl = document.querySelector('input[name="payment-method"]:checked');
     const noteEl = document.getElementById('order-note');
     
     modalMethod.textContent = methodEl ? methodEl.value : '-';

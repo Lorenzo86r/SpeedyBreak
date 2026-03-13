@@ -232,7 +232,7 @@ if (isset($_SESSION["user_id"])) {
               <!-- Ricarica Saldo -->
               <div style="background: white; border-radius: var(--radius-xl); border: 1px solid var(--color-border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden; margin-bottom: var(--space-6);">
                   <div style="padding: var(--space-6) var(--space-8); border-bottom: 1px solid var(--color-border);">
-                      <h3 style="font-size: var(--font-size-lg); color: var(--color-secondary); font-weight: 700; margin: 0;">💳 Ricarica Saldo</h3>
+                      <h3 style="font-size: var(--font-size-lg); color: var(--color-secondary); font-weight: 700; margin: 0;">Ricarica Saldo</h3>
                   </div>
                   <div style="padding: var(--space-6) var(--space-8);">
                       <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-4);">Seleziona un metodo di pagamento e l'importo da ricaricare.</p>
@@ -254,7 +254,7 @@ if (isset($_SESSION["user_id"])) {
                               <div class="recharge-method-card" style="border: 2px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 12px; text-align: center; transition: all 0.2s; background: white;">
                                   <svg width="32" height="32" viewBox="0 0 24 24" style="margin: 0 auto 6px;">
                                       <rect width="24" height="24" rx="4" fill="#f3f4f6"/>
-                                      <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="700" fill="#000"></text>
+                                      <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="700" fill="#000">A</text>
                                   </svg>
                                   <span style="font-size: 12px; font-weight: 600; color: var(--color-text-muted);">Apple Pay</span>
                               </div>
@@ -290,7 +290,7 @@ if (isset($_SESSION["user_id"])) {
               <!-- Trasferisci Saldo -->
               <div style="background: white; border-radius: var(--radius-xl); border: 1px solid var(--color-border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden; margin-bottom: var(--space-6);">
                   <div style="padding: var(--space-6) var(--space-8); border-bottom: 1px solid var(--color-border);">
-                      <h3 style="font-size: var(--font-size-lg); color: var(--color-secondary); font-weight: 700; margin: 0;">🔄 Trasferisci Saldo</h3>
+                      <h3 style="font-size: var(--font-size-lg); color: var(--color-secondary); font-weight: 700; margin: 0;">Trasferisci Saldo</h3>
                   </div>
                   <div style="padding: var(--space-6) var(--space-8);">
                       <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-4);">Invia saldo a un altro utente inserendo il suo username o email.</p>

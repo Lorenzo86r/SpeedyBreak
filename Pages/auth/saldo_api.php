@@ -8,17 +8,9 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "my_saqlain";
+require_once __DIR__ . '/../config.php';
 
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Errore connessione DB']);
-    exit;
-}
+$conn = get_mysqli();
 
 $user_id = intval($_SESSION['user_id']);
 $data = json_decode(file_get_contents("php://input"), true);
@@ -31,10 +23,16 @@ switch ($action) {
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
         $res = $stmt->get_result()->fetch_assoc();
-        echo json_encode(['status' => 'success', 'saldo' => (float)$res['saldo']]);
+        echo json_encode(['status' => 'success', 'saldo' => (float) $res['saldo']]);
         break;
 
     case 'recharge':
+        // VULN-09: Solo admin può ricaricare saldo (senza gateway di pagamento reale)
+        if (($_SESSION['ruolo'] ?? '') !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Solo un amministratore può ricaricare il saldo']);
+            break;
+        }
         $amount = isset($data['amount']) ? floatval($data['amount']) : 0;
         if ($amount <= 0 || $amount > 500) {
             echo json_encode(['status' => 'error', 'message' => 'Importo non valido (min €0.01, max €500)']);
@@ -49,7 +47,7 @@ switch ($action) {
             $stmt2->bind_param("i", $user_id);
             $stmt2->execute();
             $new = $stmt2->get_result()->fetch_assoc();
-            echo json_encode(['status' => 'success', 'saldo' => (float)$new['saldo'], 'message' => 'Ricarica effettuata con successo!']);
+            echo json_encode(['status' => 'success', 'saldo' => (float) $new['saldo'], 'message' => 'Ricarica effettuata con successo!']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Errore durante la ricarica']);
         }
@@ -91,7 +89,7 @@ switch ($action) {
         $stmt_bal->execute();
         $sender = $stmt_bal->get_result()->fetch_assoc();
 
-        if ((float)$sender['saldo'] < $amount) {
+        if ((float) $sender['saldo'] < $amount) {
             echo json_encode(['status' => 'error', 'message' => 'Saldo insufficiente']);
             break;
         }
@@ -122,7 +120,7 @@ switch ($action) {
             $dest_name = $dest['username'] ?: $dest['email'];
             echo json_encode([
                 'status' => 'success',
-                'saldo' => (float)$new_bal['saldo'],
+                'saldo' => (float) $new_bal['saldo'],
                 'message' => "€" . number_format($amount, 2, ',', '.') . " trasferiti a " . $dest_name
             ]);
         } catch (Exception $e) {

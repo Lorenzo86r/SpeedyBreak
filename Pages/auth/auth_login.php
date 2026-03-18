@@ -2,7 +2,23 @@
 session_start();
 require 'db.php';
 
-if(isset($_POST["email"]) && isset($_POST["password"])){
+if (isset($_POST["email"]) && isset($_POST["password"])) {
+    //Rate limiting — max 5 tentativi, poi blocco per 5 minuti
+    if (!isset($_SESSION['login_attempts']))
+        $_SESSION['login_attempts'] = 0;
+    if (!isset($_SESSION['login_lockout']))
+        $_SESSION['login_lockout'] = 0;
+
+    if ($_SESSION['login_attempts'] >= 10 && time() < $_SESSION['login_lockout']) {
+        header("Location: login.php?error=too_many_attempts");
+        exit();
+    }
+
+    // Reset attempts se il lockout è scaduto
+    if (time() >= $_SESSION['login_lockout']) {
+        $_SESSION['login_attempts'] = 0;
+    }
+
     $login = trim($_POST["email"]);
     $password = $_POST["password"];
 
@@ -13,17 +29,22 @@ if(isset($_POST["email"]) && isset($_POST["password"])){
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password_hash'])) {
-            // Login Successful
+            // Login Successful — reset attempts
+            $_SESSION['login_attempts'] = 0;
+            $_SESSION['login_lockout'] = 0;
             $_SESSION["user_id"] = $user['id_utente'];
             $_SESSION["username"] = $user['username'];
             $_SESSION["email"] = $user['email'];
             $_SESSION["ruolo"] = $user['ruolo'];
             $_SESSION["nome"] = $user['nome'] ?? '';
             $_SESSION["cognome"] = $user['cognome'] ?? '';
-            
+
             header("Location: ../../index.php");
             exit();
         } else {
+            // Login fallito — incrementa tentativi
+            $_SESSION['login_attempts']++;
+            $_SESSION['login_lockout'] = time() + 300; // blocco per 5 minuti
             header("Location: login.php?error=invalid");
             exit();
         }

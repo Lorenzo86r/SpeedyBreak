@@ -16,20 +16,12 @@ if (!isset($data['id_ordine'])) {
     exit;
 }
 
-$id_ordine = (int)$data['id_ordine'];
+$id_ordine = (int) $data['id_ordine'];
 $id_utente = $_SESSION['user_id'];
 
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "my_saqlain";
+require_once __DIR__ . '/../config.php';
 
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Errore di connessione al database']);
-    exit;
-}
+$conn = get_mysqli();
 
 // Check if order belongs to user and is in "In attesa" state
 $stmt = $conn->prepare("SELECT stato FROM SB_ordine WHERE id_ordine = ? AND id_utente = ?");

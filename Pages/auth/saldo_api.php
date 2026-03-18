@@ -27,12 +27,6 @@ switch ($action) {
         break;
 
     case 'recharge':
-        // VULN-09: Solo admin può ricaricare saldo (senza gateway di pagamento reale)
-        if (($_SESSION['ruolo'] ?? '') !== 'admin') {
-            http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Solo un amministratore può ricaricare il saldo']);
-            break;
-        }
         $amount = isset($data['amount']) ? floatval($data['amount']) : 0;
         if ($amount <= 0 || $amount > 500) {
             echo json_encode(['status' => 'error', 'message' => 'Importo non valido (min €0.01, max €500)']);

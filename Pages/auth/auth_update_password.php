@@ -17,16 +17,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     require_once 'db.php';
-    
+
     try {
-        $stmt = $pdo->prepare("SELECT password_hash FROM users WHERE id = :id");
+        $stmt = $pdo->prepare("SELECT password_hash FROM SB_utente WHERE id_utente = :id");
         $stmt->bindParam(':id', $_SESSION['user_id']);
         $stmt->execute();
         $user = $stmt->fetch();
 
         if ($user && password_verify($old_password, $user['password_hash'])) {
             $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-            $update_stmt = $pdo->prepare("UPDATE users SET password_hash = :hash WHERE id = :id");
+            $update_stmt = $pdo->prepare("UPDATE SB_utente SET password_hash = :hash WHERE id_utente = :id");
             $update_stmt->bindParam(':hash', $new_password_hash);
             $update_stmt->bindParam(':id', $_SESSION['user_id']);
             $update_stmt->execute();
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: update_password.php?error=wrong_old");
             exit();
         }
-    } catch(PDOException $e) {
+    } catch (PDOException $e) {
         header("Location: update_password.php?error=db");
         exit();
     }

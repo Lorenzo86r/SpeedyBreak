@@ -405,8 +405,8 @@ if ($res_count) {
                                             <?= csrf_field() ?>
                                             <input type="hidden" name="azione" value="delete">
                                             <input type="hidden" name="delete_id" value="<?= $row[$pk] ?>">
-                                            <button type="submit" class="btn btn-danger btn-elimina"
-                                                style="padding: 6px;" title="Elimina">
+                                            <button type="submit" class="btn btn-danger btn-elimina" style="padding: 6px;"
+                                                title="Elimina">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round">

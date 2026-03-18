@@ -33,19 +33,7 @@ if ($res_cat)
     while ($c = $res_cat->fetch_assoc())
         $options_cat[] = $c;
 
-// --- 2. LOGICA DELETE ---
-if (isset($_GET['delete_id'])) {
-    $id_col = $allowed_cols[$tabella]; // colonna PK dalla whitelist, non dal GET, per evitare SQL Injection
-    $id_val = intval($_GET['delete_id']);
-    $stmt_del = $conn->prepare("DELETE FROM $tabella WHERE $id_col = ?");
-    $stmt_del->bind_param("i", $id_val);
-    if ($stmt_del->execute()) {
-        $message = "<div class='alert alert-success'>Eliminato con successo!</div>";
-    } else {
-        $message = "<div class='alert alert-error'>Errore: " . $conn->error . "</div>";
-    }
-    $stmt_del->close();
-}
+// --- 2. LOGICA DELETE (spostata nel blocco POST per protezione CSRF) ---
 
 // --- 3. LOGICA INSERT / UPDATE ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -53,6 +41,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $azione = $_POST['azione'] ?? '';
     $success = false;
     $executed = false;
+
+    // --- LOGICA DELETE (protetta da CSRF via POST) ---
+    if ($azione == 'delete') {
+        $id_col = $allowed_cols[$tabella];
+        $id_val = intval($_POST['delete_id']);
+        $stmt_del = $conn->prepare("DELETE FROM $tabella WHERE $id_col = ?");
+        $stmt_del->bind_param("i", $id_val);
+        if ($stmt_del->execute()) {
+            $message = "<div class='alert alert-success'>Eliminato con successo!</div>";
+        } else {
+            $message = "<div class='alert alert-error'>Errore: " . $conn->error . "</div>";
+        }
+        $stmt_del->close();
+    }
 
     if ($tabella == 'SB_categoria') {
         $desc = trim($_POST['descrizione']);
@@ -398,18 +400,23 @@ if ($res_count) {
                                             $extra = "data-num-prodotti=\"$num_prod\"";
                                         }
                                         ?>
-                                        <a href="?tabella=<?= $tabella ?>&delete_id=<?= $row[$pk] ?>"
-                                            class="btn btn-danger btn-elimina" style="padding: 6px;" <?= $extra ?>
-                                            data-tabella="<?= $tabella ?>" title="Elimina">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <polyline points="3 6 5 6 21 6"></polyline>
-                                                <path
-                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                </path>
-                                            </svg>
-                                        </a>
+                                        <form method="POST" class="form-elimina" style="display:inline;"
+                                            data-tabella="<?= $tabella ?>" <?= $extra ?>>
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="azione" value="delete">
+                                            <input type="hidden" name="delete_id" value="<?= $row[$pk] ?>">
+                                            <button type="submit" class="btn btn-danger btn-elimina"
+                                                style="padding: 6px;" title="Elimina">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                    <path
+                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                    </path>
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -575,8 +582,8 @@ if ($res_count) {
         });
 
         // Alert eliminazione con conteggio prodotti per le categorie
-        document.querySelectorAll('.btn-elimina').forEach(function (btn) {
-            btn.addEventListener('click', function (e) {
+        document.querySelectorAll('.form-elimina').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
                 e.preventDefault();
                 const tabella = this.dataset.tabella;
                 let messaggio = 'Eliminare questo record?';
@@ -591,7 +598,7 @@ if ($res_count) {
                 }
 
                 if (confirm(messaggio)) {
-                    window.location.href = this.href;
+                    this.submit();
                 }
             });
         });

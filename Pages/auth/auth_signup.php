@@ -2,7 +2,7 @@
 session_start();
 require 'db.php';
 
-if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password"])){
+if (isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password"])) {
     if (!isset($_POST["termini"])) {
         header("Location: signup.php?error=missing_terms");
         exit();
@@ -11,6 +11,16 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
     $username = trim($_POST["username"]);
     $email = trim($_POST["email"]);
     $newPassword = $_POST["password"];
+
+    //piccola policy di password debole o corta
+    if (strlen($newPassword) < 8) {
+        header("Location: signup.php?error=weak_password");
+        exit();
+    }
+    if (!preg_match('/[A-Z]/', $newPassword) || !preg_match('/[0-9]/', $newPassword)) {
+        header("Location: signup.php?error=weak_password");
+        exit();
+    }
 
     // Validate email domain — only organizational emails allowed
     $allowed_domains = ['aldini.istruzioneer.it', 'avbo.it'];
@@ -35,7 +45,7 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
 
     // 2. Prepare the SQL statement
     $sql = "INSERT INTO SB_utente (username, email, password_hash, ruolo, nome, cognome) VALUES (:username, :email, :pword, :ruolo, :nome, :cognome)";
-    
+
     try {
         $stmt = $pdo->prepare($sql);
         // 3. Execute with the data
@@ -47,7 +57,7 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
             'nome' => $nome,
             'cognome' => $cognome
         ]);
-        
+
         // Auto-login after successful registration
         $_SESSION["user_id"] = $pdo->lastInsertId();
         $_SESSION["username"] = $username;
@@ -55,7 +65,7 @@ if(isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password
         $_SESSION["ruolo"] = $ruolo;
         $_SESSION["nome"] = $nome;
         $_SESSION["cognome"] = $cognome;
-        
+
         // Redirect to homepage
         header("Location: ../../index.php");
         exit();

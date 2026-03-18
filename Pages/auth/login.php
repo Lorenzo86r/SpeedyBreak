@@ -19,6 +19,7 @@
                   <p>Accedi al tuo account SpeedyBreak</p>
            </header>
            <form action="auth_login.php" method="POST">
+                    <?= require_once "../config.php"; csrf_field() ?>
               <div class="form-group">
                   <label for="femail" class="form-label">Username o Email</label>
                   <input type="text" id="femail" name="email" class="form-control" placeholder="Inserisci username o email" required>

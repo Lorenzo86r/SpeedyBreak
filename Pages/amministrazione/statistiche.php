@@ -28,25 +28,23 @@ if ($is_admin) {
     $stmt_incassi->close();
 }
 
-// 2. Classifica di chi ha fatto più ordini in assoluto (solo admin — VULN-08)
+// 2. Classifica di chi ha fatto più ordini in assoluto (visibile a tutti)
 $top_utenti = [];
-if ($is_admin) {
-    $stmt_top_utenti = $conn->prepare("
-        SELECT u.username, u.email, COUNT(o.id_ordine) as num_ordini
-        FROM SB_utente u
-        JOIN SB_ordine o ON u.id_utente = o.id_utente
-        WHERE o.stato != 'Cancellato'
-        GROUP BY u.id_utente
-        ORDER BY num_ordini DESC
-        LIMIT 10
-    ");
-    $stmt_top_utenti->execute();
-    $res_utenti = $stmt_top_utenti->get_result();
-    while ($r = $res_utenti->fetch_assoc()) {
-        $top_utenti[] = $r;
-    }
-    $stmt_top_utenti->close();
+$stmt_top_utenti = $conn->prepare("
+    SELECT u.username, u.email, COUNT(o.id_ordine) as num_ordini
+    FROM SB_utente u
+    JOIN SB_ordine o ON u.id_utente = o.id_utente
+    WHERE o.stato != 'Cancellato'
+    GROUP BY u.id_utente
+    ORDER BY num_ordini DESC
+    LIMIT 10
+");
+$stmt_top_utenti->execute();
+$res_utenti = $stmt_top_utenti->get_result();
+while ($r = $res_utenti->fetch_assoc()) {
+    $top_utenti[] = $r;
 }
+$stmt_top_utenti->close();
 
 // 3. Classifica prodotti più venduti
 $stmt_top_prod = $conn->prepare("

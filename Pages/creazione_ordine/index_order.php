@@ -324,7 +324,7 @@ $result = $conn->query($sql);
 
                 document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
             }
-            const userSaldo = <?= $user_saldo ?? 0 ?>;
+            const userSaldo = <?= $user_saldo ?? 100 ?>;
         </script>
     </body>
 </html>

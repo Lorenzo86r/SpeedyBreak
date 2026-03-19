@@ -41,7 +41,7 @@ $result = $conn->query($sql);
         <script>
             // passaggio stato login al js
             const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
-            const userSaldo = <?= isset($user_saldo) ? $user_saldo : 0 ?>;
+            const userSaldo = <?= $user_saldo ?? 0 ?>;
         </script>
     </head>
     <body>
@@ -158,7 +158,6 @@ $result = $conn->query($sql);
                             $res_saldo = $conn->query("SELECT saldo FROM SB_utente WHERE id_utente = $uid");
                             if ($res_saldo && $row_s = $res_saldo->fetch_assoc()) {
                                 $user_saldo = (float)$row_s['saldo'];
-                                echo "<h1>".$user_saldo."</h1>";
                             }
                         }
                     ?>

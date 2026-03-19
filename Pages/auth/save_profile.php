@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome']) && isset($_PO
     // Check if the user has an org email — if so, they cannot change nome/cognome
     $org_domains = ['aldini.istruzioneer.it', 'avbo.it'];
     $email_domain = substr(strrchr($email, '@'), 1);
-    
+
     if (in_array(strtolower($email_domain), $org_domains)) {
         header("Location: profile.php?error=org_readonly");
         exit();
@@ -45,12 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome']) && isset($_PO
         header("Location: profile.php?msg=profile_saved");
         exit();
 
-    } catch (PDOException $e) {
+    }
+    catch (PDOException $e) {
         header("Location: profile.php?error=db");
         exit();
     }
 
-} else {
+}
+else {
     header("Location: profile.php");
     exit();
 }

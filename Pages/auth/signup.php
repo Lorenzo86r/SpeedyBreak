@@ -22,7 +22,7 @@
                     <p>Entra a far parte di SpeedyBreak</p>
                 </header>
                 <form action="auth_signup.php" method="POST">
-                    <?= csrf_field() ?>
+                    <?php csrf_field(); ?>
                     <div class="form-group">
                         <label for="fusername" class="form-label">Username</label>
                         <input type="text" id="fusername" name="username" class="form-control"
@@ -62,6 +62,8 @@
                                 Username già in uso. Scegline un altro.
                             <?php elseif ($_GET['error'] == 'missing_terms'): ?>
                                 Devi accettare i Termini e Condizioni per registrarti.
+                            <?php elseif ($_GET['error'] == 'invalid_password'): ?>
+                                La password deve contenere almeno 8 caratteri.
                             <?php elseif ($_GET['error'] == 'db'): ?>
                                 Errore del database.
                             <?php elseif ($_GET['error'] == 'invalid_email'): ?>

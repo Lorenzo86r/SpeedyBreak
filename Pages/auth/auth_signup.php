@@ -70,20 +70,24 @@ if (isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["passwor
         header("Location: ../../index.php");
         exit();
 
-    } catch (PDOException $e) {
-        if ($e->getCode() == 23000) { // Error code 23000 means 'Duplicate Entry'
+    }
+    catch (PDOException $e) {
+        if ($e->getCode() == 23000) {
             if (strpos($e->getMessage(), 'username') !== false) {
                 header("Location: signup.php?error=duplicate_username");
-            } else {
+            }
+            else {
                 header("Location: signup.php?error=exists");
             }
             exit();
-        } else {
+        }
+        else {
             header("Location: signup.php?error=db");
             exit();
         }
     }
-} else {
+}
+else {
     header("Location: signup.php");
     exit();
 }

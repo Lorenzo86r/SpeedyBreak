@@ -3,7 +3,7 @@
     session_start();
 
     // controllo se l'utente ha una sessione attiva
-    if (!isset($_SESSION['id_utente'])) {
+    if (!isset($_SESSION['user_id'])) {
         http_response_code(403); // Accesso negato
         echo "Errore: Devi essere loggato per ordinare.";
         exit;
@@ -22,7 +22,7 @@
 
     $data = json_decode(file_get_contents("php://input"),true);
 
-    $id_utente = $_SESSION['id_utente'];
+    $id_utente = $_SESSION['user_id'];
     $metodo = isset($data['metodo']) ? $data['metodo'] : "Contanti";
     $nota = isset($data['nota']) ? $data['nota'] : "";
     $data_ritiro = date("Y-m-d H:i:s", strtotime("+20 minutes"));

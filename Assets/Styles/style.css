@@ -696,3 +696,125 @@ table.table tbody tr:hover {
     align-items: center;
     gap: var(--space-3);
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS (Side Menu)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Navbar styling for mobile */
+    .navbar {
+        position: relative;
+    }
+    
+    .navbar .nav-container {
+        /* Space for the hamburger */
+        padding-left: 50px;
+    }
+    
+    /* Create a hamburger icon using a pseudo-element */
+    .navbar .nav-container::before {
+        content: "☰";
+        position: absolute;
+        left: var(--space-4);
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 28px;
+        color: var(--color-secondary);
+        cursor: pointer;
+        z-index: 60;
+    }
+
+    /* Transform the nav-links into a side menu */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        left: -280px; /* Start off-screen */
+        width: 280px;
+        height: 100vh;
+        background-color: var(--color-surface);
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 80px var(--space-4) var(--space-4);
+        box-shadow: var(--shadow-xl);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 55;
+        overflow-y: auto;
+    }
+    
+    /* Overlay for the background when menu is open */
+    .navbar::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 54;
+    }
+
+    /* When the navbar is hovered or receives focus, show the side menu */
+    .navbar:hover .nav-links,
+    .navbar:focus-within .nav-links {
+        left: 0;
+    }
+    
+    /* Show the overlay */
+    .navbar:hover::before,
+    .navbar:focus-within::before {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Close (X) icon inside the menu */
+    .nav-links::before {
+        content: "✕";
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 28px;
+        color: var(--color-text-muted);
+        cursor: pointer;
+    }
+
+    /* Adjust link styles for the side menu */
+    .nav-links a.nav-item,
+    .nav-links > li {
+        width: 100%;
+    }
+    
+    .nav-links a.nav-item {
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--font-size-lg);
+        display: block;
+        border-radius: var(--radius-md);
+    }
+
+    /* Accedi button nicely takes full width */
+    .nav-links li:last-child a[title="Accedi o Registrati"] {
+        width: 100%;
+        justify-content: center;
+        margin-top: var(--space-2);
+    }
+    
+    /* Area Personale icon button turns into a full link */
+    .nav-links li:last-child a.nav-icon-btn {
+        width: 100%;
+        border-radius: var(--radius-md);
+        justify-content: flex-start;
+        padding: var(--space-3) var(--space-4);
+        margin-top: var(--space-2);
+    }
+    .nav-links li:last-child a.nav-icon-btn svg {
+        margin-right: var(--space-3);
+    }
+    .nav-links li:last-child a.nav-icon-btn::after {
+        content: ' Area Personale';
+        font-size: var(--font-size-lg);
+        font-weight: 500;
+    }
+}

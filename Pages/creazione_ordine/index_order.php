@@ -41,7 +41,7 @@ $result = $conn->query($sql);
         <script>
             // passaggio stato login al js
             const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
-            const userSaldo = <?= $user_saldo ?? 0 ?>;
+            const userSaldo = <?= isset($user_saldo) ? $user_saldo : 0 ?>;
         </script>
     </head>
     <body>
@@ -86,7 +86,7 @@ $result = $conn->query($sql);
 
         <main class="main-content">
             <div class="container hero text-center" style="background: transparent; border: none; padding-top: var(--space-4); padding-bottom: var(--space-8);">
-                <h1>🍔 Ordina!</h1>
+                <h1>🍔 Ordina! • SpeedyBreak</h1>
                 <p>Seleziona i prodotti che desideri e invia l'ordine al bar.</p>
             </div>
 

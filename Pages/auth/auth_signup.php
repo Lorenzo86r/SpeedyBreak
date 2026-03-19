@@ -22,7 +22,6 @@ if (isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["passwor
         exit();
     }
 
-    // Validate email domain — only organizational emails allowed
     $allowed_domains = ['aldini.istruzioneer.it', 'avbo.it'];
     $email_domain = substr(strrchr($email, '@'), 1);
 
@@ -31,10 +30,8 @@ if (isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["passwor
         exit();
     }
 
-    // All valid organizational emails get the 'customer' role
     $ruolo = 'customer';
 
-    // Extract nome and cognome from email (name.surname@domain)
     $local_part = substr($email, 0, strpos($email, '@'));
     $parts = explode('.', $local_part);
     $nome = ucfirst(strtolower($parts[0] ?? ''));

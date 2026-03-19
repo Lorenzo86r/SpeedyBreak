@@ -158,6 +158,7 @@ $result = $conn->query($sql);
                             $res_saldo = $conn->query("SELECT saldo FROM SB_utente WHERE id_utente = $uid");
                             if ($res_saldo && $row_s = $res_saldo->fetch_assoc()) {
                                 $user_saldo = (float)$row_s['saldo'];
+                                echo "<h1>".$user_saldo."</h1>";
                             }
                         }
                     ?>

@@ -40,7 +40,7 @@ $result = $conn->query($sql);
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
         <script>
             // passaggio stato login al js
-            const isLoggedIn = <?= isset($_SESSION['id_utente']) ? 'true' : 'false' ?>;
+            const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
             const userSaldo = <?= isset($user_saldo) ? $user_saldo : 0 ?>;
         </script>
     </head>
@@ -63,7 +63,7 @@ $result = $conn->query($sql);
                     <?php endif; ?>
                     <li><a class="nav-item" href="../amministrazione/statistiche.php">Statistiche</a></li>
                     <li>
-                        <?php if(isset($_SESSION["id_utente"])): ?>
+                        <?php if(isset($_SESSION["user_id"])): ?>
                             <a class="nav-icon-btn" href="../auth/profile.php" title="Area Personale">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -131,7 +131,7 @@ $result = $conn->query($sql);
                                 <p class="price">€<?= number_format($row['prezzo'], 2, ',', '.') ?></p>
                                 <div class="actions">
                                     <button class="btn btn-primary w-full"
-                                            onclick="addToCart('<?= addslashes($row['nome']) ?>', <?= $row['prezzo'] ?>)" <?= !isset($_SESSION['id_utente']) ? 'disabled title="Effettua il login per ordinare"' : '' ?>>
+                                            onclick="addToCart('<?= addslashes($row['nome']) ?>', <?= $row['prezzo'] ?>)" <?= !isset($_SESSION['user_id']) ? 'disabled title="Effettua il login per ordinare"' : '' ?>>
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                        Aggiungi
                                     </button>
@@ -153,8 +153,8 @@ $result = $conn->query($sql);
                     <?php
                         // Fetch user saldo for payment option
                         $user_saldo = 0;
-                        if (isset($_SESSION['id_utente'])) {
-                            $uid = intval($_SESSION['id_utente']);
+                        if (isset($_SESSION['user_id'])) {
+                            $uid = intval($_SESSION['user_id']);
                             $res_saldo = $conn->query("SELECT saldo FROM SB_utente WHERE id_utente = $uid");
                             if ($res_saldo && $row_s = $res_saldo->fetch_assoc()) {
                                 $user_saldo = (float)$row_s['saldo'];

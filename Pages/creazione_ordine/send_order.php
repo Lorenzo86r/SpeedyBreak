@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['id_utente'])) {
+if (!isset($_SESSION['user_id'])) {
     http_response_code(403);
     echo json_encode(['status' => 'error', 'message' => 'Non autenticato']);
     exit;
@@ -10,7 +10,7 @@ if (!isset($_SESSION['id_utente'])) {
 
 require_once __DIR__ . '/../config.php';
 
-$id_utente = intval($_SESSION['id_utente']);
+$id_utente = intval($_SESSION['user_id']);
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!is_array($data) || empty($data)) {

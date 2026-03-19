@@ -87,8 +87,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $nome = trim($_POST['nome']);
         $desc_prod = trim($_POST['descrizione']);
         $prezzo = floatval($_POST['prezzo']);
+        if($prezzo < 0) $prezzo = 1;
         $cat = intval($_POST['id_categoria']);
         $giacenza = intval($_POST['giacenza']);
+        if($giacenza < 0) $giacenza = 0;
 
         if ($azione == 'add') {
             $stmt = $conn->prepare("INSERT INTO SB_prodotto (nome, descrizione, prezzo, id_categoria, giacenza) VALUES (?, ?, ?, ?, ?)");

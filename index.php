@@ -92,7 +92,7 @@
             </style>
             
             <script>
-                const words = ["Senza Attese.", "Senza Coda.", "Con Gusto.", "Per Te.", "Con BUTT"];
+                const words = ["Senza Attese.", "Senza Coda.", "Con Gusto.", "Per Te.", "Con BUTT."];
                 let i = 0;
                 let charIndex = words[0].length;
                 let isDeleting = true;

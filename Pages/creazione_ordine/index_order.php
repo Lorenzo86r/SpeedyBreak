@@ -41,7 +41,6 @@ $result = $conn->query($sql);
         <script>
             // passaggio stato login al js
             const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
-            const userSaldo = <?= $user_saldo ?? 0 ?>;
         </script>
     </head>
     <body>
@@ -325,6 +324,7 @@ $result = $conn->query($sql);
 
                 document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
             }
+            const userSaldo = <?= $user_saldo ?? 0 ?>;
         </script>
     </body>
 </html>
